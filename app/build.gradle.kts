@@ -84,6 +84,9 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
+    // Compose UI tests pull an old Espresso that breaks on the Android 17 runtime.
+    testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.espresso.core)
     testImplementation(libs.room.testing)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)

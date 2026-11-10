@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Não-Rola</string>
+
+    <!-- Accessibility service (shown in Android settings) -->
+    <string name="a11y_service_summary">Interrompe YouTube Shorts e Instagram Reels.</string>
+    <string name="a11y_service_description">O Não-Rola observa a estrutura da tela do YouTube e do Instagram (e, se você ligar, do Chrome e do Samsung Internet) para reconhecer Shorts e Reels e mostrar uma tela de bloqueio. Tudo é processado no aparelho: textos, mensagens e endereços não são guardados e nada é enviado para a internet — o app nem tem permissão de internet.</string>
+
+    <!-- Block screen -->
+    <string name="block_title">Você realmente queria assistir a isso?</string>
+    <string name="block_body_shorts">O Não-Rola interrompeu os Shorts do YouTube.</string>
+    <string name="block_body_reels">O Não-Rola interrompeu os Reels do Instagram.</string>
+    <string name="block_body_web_shorts">O Não-Rola interrompeu os Shorts do YouTube no navegador.</string>
+    <string name="block_body_web_reels">O Não-Rola interrompeu os Reels do Instagram no navegador.</string>
+    <string name="block_body_app">Este app é feito só de vídeos curtos e está bloqueado pelo Não-Rola.</string>
+    <string name="block_back_youtube">Voltar para o YouTube</string>
+    <string name="block_back_instagram">Voltar para o Instagram</string>
+    <string name="block_back">Voltar</string>
+    <string name="block_leave_youtube">Sair do YouTube</string>
+    <string name="block_leave_instagram">Sair do Instagram</string>
+    <string name="block_leave_browser">Sair do navegador</string>
+    <string name="block_leave_app">Sair do app</string>
+    <string name="block_discipline_note">Modo Disciplina ativo</string>
+    <plurals name="block_snooze">
+        <item quantity="one">Desativar por %d minuto</item>
+        <item quantity="other">Desativar por %d minutos</item>
+    </plurals>
 </resources>
