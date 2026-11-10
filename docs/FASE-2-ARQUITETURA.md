@@ -269,6 +269,7 @@ stateDiagram-v2
 ```
 
 - **Proteção inativa** (plataforma desligada, fora do horário, período de exceção): a política diz "não bloquear" e a sessão permanece em Ocioso. O tempo de vídeo curto continua sendo medido, se a plataforma estiver habilitada.
+- **Tolerância e limite diário** (ambos configuráveis): a tolerância vale **por entrada**; o limite diário **soma** todo o tempo liberado no dia, por plataforma. O que esgotar primeiro bloqueia. O limite diário entra na Fase 4.
 - **Tempo em vídeo curto:** medido enquanto a sessão está em Tolerância, Liberado (DM) ou Pausado com vídeo curto na tela. Vira registros `short_video_sessions` no Room.
 - **Relógio injetado** (`Clock`): todos os tempos são testáveis sem esperar.
 
@@ -280,14 +281,25 @@ Tela → ViewModel → `SettingsRepository.update { … }` (DataStore, gravaçã
 
 | Aspecto | Comportamento |
 |---|---|
-| Ativar | Pela tela Modo Disciplina: escolher **até quando** (horário ou indefinido) e o **tempo de espera para sair** (5, 15, 30 ou 60 min) |
-| Mais rigoroso | Tolerância = 0, sem "Desativar temporariamente", períodos de exceção suspensos, todas as plataformas forçadas a ligadas. A exceção do Reel de DM continua valendo, porque é consumo intencional (dá para mudar isso, se preferir) |
+| Ativar | Pela tela Modo Disciplina: escolher **até quando** (horário ou indefinido), o **tempo de espera para sair** (5, 15, 30 ou 60 min) e as regras abaixo |
+| Sempre | Sem "Desativar temporariamente" na tela de bloqueio |
+| Regras configuráveis na ativação (padrão entre parênteses) | Zerar tolerância e limite diário (sim) · suspender períodos de exceção (sim) · forçar todas as plataformas ligadas (sim) · manter o Reel de DM liberado (sim, porque é consumo intencional) · forçar o **Bloqueio total** (não) |
 | Configurações | Somente leitura, com um aviso visível do porquê |
 | Sair | Só pelo app: "Sair do Modo Disciplina" inicia a espera escolhida. A proteção continua ativa durante a contagem e, no fim, é preciso confirmar. Também termina sozinho no horário definido |
 | O que **não** faz | Não bloqueia as Configurações do Android, não impede desinstalar e não se declara ferramenta de acessibilidade |
 | Transparência | Se o serviço for desligado durante a Disciplina, isso é registrado e mostrado no painel |
 
-### 6.7 Estatísticas
+### 6.7 Bloqueio total
+
+Modo de proteção (em Ajustes) que ignora as opções individuais e bloqueia **tudo** o que o app sabe detectar:
+
+- todas as plataformas e superfícies, incluindo Reels no feed, navegador e outros formatos à medida que forem implementados;
+- sem tolerância, sem limite diário, sem pausa e sem exceção de DM;
+- em qualquer horário.
+
+Fora da Disciplina, liga e desliga livremente. Se a Disciplina foi ativada com "forçar Bloqueio total", ele só sai junto com ela.
+
+### 6.8 Estatísticas
 
 - **Room** guarda: `block_events` (horário, plataforma, superfície, desfecho: bloqueado / voltou / saiu / pausou / liberado por DM), `short_video_sessions` (início, fim, plataforma), `daily_app_usage` (dia, pacote, ms em primeiro plano) e `protection_events` (serviço conectado/desconectado/desabilitado, Disciplina ligada/desligada). **Nenhum conteúdo, texto ou URL.** Retenção: 30 dias.
 - **Tempo total no app:** `UsageStatsReader` → `ForegroundTimeCalculator`, que pareia eventos de retomada e pausa, inclusive na virada do dia e com o app ainda aberto.
@@ -377,7 +389,8 @@ Primeiro uso ─► Permissões (com divulgação em destaque) ─► Painel
 Barra inferior:  Painel · Estatísticas · Ajustes
 Painel ─► cartão de status (abre Permissões quando falta algo)
        └► cartão Modo Disciplina ─► Modo Disciplina
-Ajustes ─► Bloqueio (plataformas, tolerância, pausa, DM, feed experimental, navegador, outros formatos)
+Ajustes ─► Bloqueio (modo Personalizado/Total, plataformas, tolerância, limite diário, pausa, DM,
+        │            feed experimental, navegador, outros formatos)
         ├► Horários e exceções
         ├► Modo Disciplina
         ├► Permissões
@@ -426,9 +439,12 @@ Cada incremento é um commit que compila e passa nos testes.
 
 ---
 
-## 13. Pontos para você confirmar
+## 13. Decisões confirmadas (10/11/2026)
 
-1. **Modo Disciplina** (6.6): as regras propostas servem? Em especial, a exceção do Reel de DM deve continuar valendo durante a Disciplina?
-2. **Tolerância por entrada:** cada vez que você entra no Shorts ganha N segundos. Isso permite "sair e entrar de novo". Quer, na Fase 4, também um **limite diário** somado?
-3. **ID do app** `com.lucasanso.naorola`: pode ser?
-4. **Outro Android disponível agora** (mesmo antigo) para rodar o modo diagnóstico com YouTube e Instagram atualizados? Assim a calibração não precisa esperar o S26.
+Orientação recebida: *"tudo deve ser configurável; um modo que bloqueia tudo deve existir"*.
+
+1. **Modo Disciplina:** cada regra de rigor é uma opção escolhida na ativação (6.6).
+2. **Bloqueio total:** existe como modo independente e pode ser forçado pela Disciplina (6.7).
+3. **Limite diário somado:** opcional, além da tolerância por entrada (6.4). Entra na Fase 4.
+4. **ID do app:** `com.lucasanso.naorola`.
+5. **Sem aparelho por enquanto:** o MVP usa os IDs candidatos e sinais estruturais. A calibração acontece quando houver um Android disponível (seção 11).
