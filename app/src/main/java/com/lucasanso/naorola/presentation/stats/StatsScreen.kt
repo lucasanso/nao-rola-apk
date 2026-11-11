@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -118,16 +119,20 @@ fun StatsScreen() {
                     Text(
                         stringResource(
                             R.string.stats_estimate_formula,
-                            estimate.blocked,
+                            pluralStringResource(R.plurals.count_blocks, estimate.blocked, estimate.blocked),
                             sessionLength(estimate.medianSessionMillis),
-                            estimate.sessions,
+                            pluralStringResource(R.plurals.count_sessions, estimate.sessions, estimate.sessions),
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 is Estimate.Insufficient -> Text(
-                    stringResource(R.string.stats_estimate_insufficient, estimate.needed, estimate.sessions),
+                    stringResource(
+                        R.string.stats_estimate_insufficient,
+                        pluralStringResource(R.plurals.count_sessions, estimate.needed, estimate.needed),
+                        estimate.sessions,
+                    ),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -163,7 +168,7 @@ private fun DailyBarsChart(days: List<DayStats>, selected: LocalDate?, today: Lo
             Row(Modifier.fillMaxSize()) {
                 days.forEach { day ->
                     val isSelected = day.date == selected
-                    val label = stringResource(R.string.stats_bar_description, dayLabel(day.date, today), day.blockedTotal)
+                    val label = pluralStringResource(R.plurals.stats_bar_description, day.blockedTotal, dayLabel(day.date, today), day.blockedTotal)
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -229,7 +234,7 @@ private fun DayRow(day: DayStats, selected: Boolean, isToday: Boolean, onClick: 
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
-            Text(stringResource(R.string.stats_blocked_count, day.blockedTotal), style = MaterialTheme.typography.bodyLarge)
+            Text(pluralStringResource(R.plurals.stats_blocked_count, day.blockedTotal, day.blockedTotal), style = MaterialTheme.typography.bodyLarge)
         }
         val short = (day.shortVideoMillis[Platform.YOUTUBE] ?: 0L) + (day.shortVideoMillis[Platform.INSTAGRAM] ?: 0L) +
             (day.shortVideoMillis[Platform.OTHER] ?: 0L)

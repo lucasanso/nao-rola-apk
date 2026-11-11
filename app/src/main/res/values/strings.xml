@@ -81,16 +81,30 @@
     <string name="stats_per_day">Bloqueios por dia</string>
     <string name="stats_tap_hint">Toque num dia para destacá-lo na lista.</string>
     <string name="stats_day_by_day">Dia a dia</string>
-    <string name="stats_blocked_count">%1$d bloqueados</string>
+    <plurals name="stats_blocked_count">
+        <item quantity="one">%1$d bloqueado</item>
+        <item quantity="other">%1$d bloqueados</item>
+    </plurals>
     <string name="stats_short_video">Vídeo curto na tela: %1$s</string>
     <string name="stats_app_usage">No app: YouTube %1$s · Instagram %2$s</string>
     <string name="stats_app_usage_unknown">No app: sem dados</string>
     <string name="stats_today">hoje</string>
-    <string name="stats_bar_description">%1$s: %2$d bloqueados</string>
+    <plurals name="stats_bar_description">
+        <item quantity="one">%1$s: %2$d bloqueado</item>
+        <item quantity="other">%1$s: %2$d bloqueados</item>
+    </plurals>
     <string name="stats_estimate_title">Exposição evitada (estimativa)</string>
     <string name="stats_estimate_value">≈ %1$s nos últimos 7 dias</string>
-    <string name="stats_estimate_formula">%1$d bloqueios × %2$s, a mediana das suas %3$d sessões de vídeo curto medidas nos últimos 30 dias (tolerância, pausa ou Reel de DM). É uma estimativa conservadora: as sessões medidas são encurtadas pela própria tolerância.</string>
-    <string name="stats_estimate_insufficient">Dados insuficientes. Para estimar sem inventar números, o Não-Rola precisa de pelo menos %1$d sessões de vídeo curto suas medidas (com tolerância, pausa ou Reel de DM). Até agora: %2$d.</string>
+    <string name="stats_estimate_formula">%1$s × %2$s, a mediana de %3$s de vídeo curto medidas nos últimos 30 dias (tolerância, pausa ou Reel de DM). É uma estimativa conservadora: as sessões medidas são encurtadas pela própria tolerância.</string>
+    <plurals name="count_blocks">
+        <item quantity="one">%d bloqueio</item>
+        <item quantity="other">%d bloqueios</item>
+    </plurals>
+    <plurals name="count_sessions">
+        <item quantity="one">%d sessão</item>
+        <item quantity="other">%d sessões</item>
+    </plurals>
+    <string name="stats_estimate_insufficient">Dados insuficientes. Para estimar sem inventar números, o Não-Rola precisa de pelo menos %1$s de vídeo curto medidas (com tolerância, pausa ou Reel de DM). Até agora: %2$d.</string>
     <string name="stats_usage_permission">O tempo dentro de cada app aparece aqui se você permitir o acesso aos dados de uso.</string>
     <string name="stats_note">Bloqueios e tempo com vídeo curto são medidos pelo Não-Rola enquanto a proteção está ligada. O tempo no app vem do Android e inclui tudo o que você fez no YouTube ou Instagram. Histórico guardado por 30 dias.</string>
     <string name="seconds_long">%1$d s</string>
@@ -126,7 +140,10 @@
     <string name="discipline_ends_on_exit">Até você sair pelo app</string>
     <string name="discipline_active_rules">Regras em vigor</string>
     <string name="discipline_no_extra_rules">Nenhuma regra extra além da trava das configurações e da pausa desativada.</string>
-    <string name="discipline_service_stops">O serviço de acessibilidade foi desligado %1$d vez(es) durante a Disciplina.</string>
+    <plurals name="discipline_service_stops">
+        <item quantity="one">O serviço de acessibilidade foi desligado %1$d vez durante a Disciplina.</item>
+        <item quantity="other">O serviço de acessibilidade foi desligado %1$d vezes durante a Disciplina.</item>
+    </plurals>
     <string name="discipline_request_exit">Quero sair</string>
     <string name="discipline_request_exit_body">Será preciso esperar %1$d min, com a proteção ativa.</string>
     <string name="discipline_wait">Você poderá sair em %1$s</string>
@@ -169,7 +186,18 @@
     <string name="schedule_weekdays">Seg a sex</string>
     <string name="schedule_weekend">Fim de semana</string>
     <string name="schedule_summary_always">Sempre ativa</string>
-    <string name="schedule_summary">%1$d horários · %2$d exceções · %3$d pausas</string>
+    <plurals name="count_windows">
+        <item quantity="one">%d horário</item>
+        <item quantity="other">%d horários</item>
+    </plurals>
+    <plurals name="count_exceptions">
+        <item quantity="one">%d exceção</item>
+        <item quantity="other">%d exceções</item>
+    </plurals>
+    <plurals name="count_pauses">
+        <item quantity="one">%d pausa</item>
+        <item quantity="other">%d pausas</item>
+    </plurals>
 
     <!-- Settings hub -->
     <string name="settings_title">Ajustes</string>

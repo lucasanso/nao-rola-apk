@@ -147,7 +147,7 @@ private fun UsageCard(state: DashboardState) {
             UsageState.NeedsPermission -> {
                 Text(stringResource(R.string.usage_no_permission), style = MaterialTheme.typography.bodyMedium)
                 OutlinedButton(onClick = { SystemSettings.openUsageAccess(context) }) { Text(stringResource(R.string.usage_grant)) }
-                state.shortVideoLines()
+                ShortVideoLines(state)
             }
             is UsageState.Available -> {
                 UsageLine(stringResource(R.string.app_youtube), usage.youtubeMillis, state.shortVideoYoutubeMillis)
@@ -163,9 +163,9 @@ private fun UsageCard(state: DashboardState) {
 }
 
 @Composable
-private fun DashboardState.shortVideoLines() {
-    UsageLine(stringResource(R.string.app_youtube), inAppMillis = null, shortVideoMillis = shortVideoYoutubeMillis)
-    UsageLine(stringResource(R.string.app_instagram), inAppMillis = null, shortVideoMillis = shortVideoInstagramMillis)
+private fun ShortVideoLines(state: DashboardState) {
+    UsageLine(stringResource(R.string.app_youtube), inAppMillis = null, shortVideoMillis = state.shortVideoYoutubeMillis)
+    UsageLine(stringResource(R.string.app_instagram), inAppMillis = null, shortVideoMillis = state.shortVideoInstagramMillis)
 }
 
 @Composable

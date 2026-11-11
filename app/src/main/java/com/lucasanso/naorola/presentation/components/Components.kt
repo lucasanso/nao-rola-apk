@@ -97,8 +97,8 @@ fun ScreenScaffold(
 
 @Composable
 fun SectionCard(
-    title: String? = null,
     modifier: Modifier = Modifier,
+    title: String? = null,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     content: @Composable ColumnScope.() -> Unit,
 ) {

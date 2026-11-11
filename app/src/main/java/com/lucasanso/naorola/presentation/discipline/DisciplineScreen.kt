@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -141,7 +142,9 @@ private fun ActiveDiscipline(state: DisciplineUiState, viewModel: DisciplineView
         )
     }
     if (state.serviceStopsDuringDiscipline > 0) {
-        NoticeCard(stringResource(R.string.discipline_service_stops, state.serviceStopsDuringDiscipline))
+        NoticeCard(
+            pluralStringResource(R.plurals.discipline_service_stops, state.serviceStopsDuringDiscipline, state.serviceStopsDuringDiscipline),
+        )
     }
     SectionCard(title = stringResource(R.string.discipline_active_rules)) {
         val active = buildList {

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lucasanso.naorola.R
@@ -49,7 +50,11 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
                     if (activeWindows.isEmpty() && exceptionWindows.isEmpty() && exceptionPeriods.isEmpty()) {
                         stringResource(R.string.schedule_summary_always)
                     } else {
-                        stringResource(R.string.schedule_summary, activeWindows.size, exceptionWindows.size, exceptionPeriods.size)
+                        listOf(
+                            pluralStringResource(R.plurals.count_windows, activeWindows.size, activeWindows.size),
+                            pluralStringResource(R.plurals.count_exceptions, exceptionWindows.size, exceptionWindows.size),
+                            pluralStringResource(R.plurals.count_pauses, exceptionPeriods.size, exceptionPeriods.size),
+                        ).joinToString(" · ")
                     }
                 },
                 onClick = { onNavigate(Routes.SCHEDULE) },

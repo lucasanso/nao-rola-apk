@@ -4,11 +4,11 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.1.0.apk`](release/NaoRola-0.1.0.apk) (2,4 MB, Android 12+). SHA-256: `6de0b011bc2ca488e0a906027da52a870424e5c401c1425771bc0cadcf3219aa`
+> **APK:** [`release/NaoRola-0.2.0.apk`](release/NaoRola-0.2.0.apk) (3,2 MB, Android 12+). SHA-256: `fd53aeac813daeb13754a8aaff4e33cb03320d19744fd1916aa570deacfb1825`. Assinado com a mesma chave da 0.1.0: instala por cima, sem perder configurações nem histórico.
 
-## Estado atual: MVP, ainda sem calibração
+## Estado atual: funcional, ainda sem calibração
 
-A versão 0.1.0 é o primeiro APK instalável. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
+A versão 0.2.0 completa as funções planejadas que não dependem do aparelho. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
 
 | Parte | Situação |
 |---|---|
@@ -17,17 +17,23 @@ A versão 0.1.0 é o primeiro APK instalável. **Ela ainda não foi testada num 
 | Shorts/Reels no navegador (Chrome, Samsung Internet) | Implementado (opcional); id da barra do Samsung Internet a confirmar |
 | Apps só de vídeo curto (TikTok, Kwai) | Implementado (opcional), por nome de pacote |
 | Painel: status, bloqueados hoje, tempo no app, tempo com vídeo curto | Implementado |
-| Modo Disciplina, horários e exceções | Lógica pronta e testada; **telas na Fase 4** |
-| Reels dentro do feed, prateleira de Shorts | **Fase 4**, depende de capturas reais |
-| Estatísticas de 7 dias, estimativa de exposição evitada | **Fase 4** |
+| Limite diário somado, tolerância "sem limite por entrada" | Implementado e testado |
+| Modo Disciplina (regras configuráveis, espera para sair) | Implementado e testado |
+| Horários de funcionamento, exceções semanais, pausas programadas | Implementado e testado |
+| Estatísticas de 7 dias, estimativa de exposição evitada | Implementado (estimativa só com 10+ sessões medidas) |
+| Reels dentro do feed, prateleira de Shorts | **Pendente**, depende de capturas reais |
 
 ## Capturas de tela
 
 Geradas a partir do app real, com Robolectric e dados de exemplo.
 
-| Painel (ativo) | Painel (desligado) | Bloqueio | Permissões | Tela de bloqueio | Escuro |
+| Painel | Estatísticas | Tela de bloqueio | Bloqueio | Disciplina | Horários |
 |---|---|---|---|---|---|
-| ![](docs/screenshots/02-painel-ativo.png) | ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/04-bloqueio.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/07-tela-de-bloqueio.png) | ![](docs/screenshots/06-painel-escuro.png) |
+| ![](docs/screenshots/02-painel-ativo.png) | ![](docs/screenshots/09-estatisticas.png) | ![](docs/screenshots/07-tela-de-bloqueio.png) | ![](docs/screenshots/04-bloqueio.png) | ![](docs/screenshots/11-disciplina.png) | ![](docs/screenshots/10-horarios.png) |
+
+| Painel (desligado) | Permissões | Ajustes | Escuro | Bloqueio (escuro) |
+|---|---|---|---|---|
+| ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/03-ajustes.png) | ![](docs/screenshots/06-painel-escuro.png) | ![](docs/screenshots/08-tela-de-bloqueio-escuro.png) |
 
 ---
 
@@ -43,7 +49,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.1.0.apk
+adb install -r release/NaoRola-0.2.0.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -55,6 +61,16 @@ Copie o APK para o celular e abra no **Meus Arquivos**. Dependendo da liberaçã
 Versões futuras precisam ser assinadas com a **mesma chave** para instalar por cima e manter configurações e histórico. A chave não fica no repositório (veja [Assinatura](#assinatura)).
 
 ---
+
+## O que dá para configurar
+
+| Onde | O quê |
+|---|---|
+| *Ajustes › Bloqueio* | Modo **Personalizado** ou **Bloqueio total**. Plataformas (YouTube Shorts, Instagram Reels, navegador, apps só de vídeo curto). Tolerância por entrada (nenhuma, 5 s a 60 s ou sem limite). **Limite diário** somado por plataforma. Pausa temporária e sua duração. Reel recebido por DM liberado. |
+| *Ajustes › Horários e exceções* | Proteção sempre ativa ou só em horários semanais, exceções semanais (proteção desligada) e pausas programadas. |
+| *Ajustes › Modo Disciplina* | Duração (1 h a 24 h ou até sair pelo app), espera para sair (5 a 60 min) e regras: zerar tolerância e limite, suspender exceções, forçar todas as plataformas, manter Reel de DM, forçar Bloqueio total. Configurações ficam travadas; a pausa some da tela de bloqueio. |
+
+**Como tolerância e limite diário se combinam:** a cada entrada, o vídeo curto pode ficar na tela pelo menor entre a tolerância e o que resta do limite do dia. Sem tolerância nem limite, o bloqueio é imediato. Para "10 minutos por dia, como quiser", use tolerância **Sem limite** + limite diário **10 min**.
 
 ## Primeiro uso: permissões
 
@@ -161,11 +177,11 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. O APK 0.1.0 foi assinado com uma chave de release gerada no ambiente de build. Para publicar atualizações por cima dele, é preciso guardar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 e 0.2.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-109 testes automatizados (81 no `:engine`, 28 no `:app`), mais 5 de captura de tela.
+122 testes automatizados (88 no `:engine`, 34 no `:app`), mais 6 de captura de tela.
 
 | Suíte | Cobre |
 |---|---|
@@ -173,13 +189,16 @@ Sem esse arquivo, o release é assinado com a chave de debug. O APK 0.1.0 foi as
 | `InstagramContentDetectorTest` | Aba Reels, Reel do feed e da DM, ids renomeados, **Stories nunca bloqueados**, feed e DM reconhecidos, troca de página |
 | `BrowserContentDetectorTest` | URLs de Shorts/Reels, URLs legítimas e enganosas, barra de endereço por id e por posição |
 | `ShortVideoClassifierTest`, `TreeScannerTest`, `StructureDumpTest` | Limiar, veto, limite de nós, privacidade do resumo e do diagnóstico, ida e volta do formato |
-| `BlockingPolicyTest`, `DisciplineTest`, `ScheduleAndCodecTest` | Bloqueio total, regras configuráveis da Disciplina, trava das configurações, horários (inclusive após a meia-noite) |
+| `BlockingPolicyTest`, `DisciplineTest`, `ScheduleAndCodecTest` | Bloqueio total, limite diário, regras configuráveis da Disciplina, trava das configurações, horários (inclusive após a meia-noite) |
+| `StatsAndTrackerTest` | Uso do dia por plataforma (virada da meia-noite), série de 7 dias, estimativa só com dados suficientes |
 | `BlockingSessionMachineTest` | Tolerância, voltar com nova tentativa, sair, pausa, Reel de DM, troca de app, tela desligada, tempo exposto |
 | `ForegroundTimeCalculatorTest` | Tempo dentro de cada app a partir de eventos de uso |
-| `SettingsRepositoryTest`, `StatsRepositoryTest` | Persistência real (DataStore, Room), trava da Disciplina, contagens do dia, retenção |
+| `SettingsRepositoryTest`, `StatsRepositoryTest`, `DailyUsageHistoryTest` | Persistência real (DataStore, Room), trava da Disciplina, contagens do dia, retenção, uso por dia (dia sem dados nunca vira zero) |
+| `DatabaseMigrationTest` | Atualização do banco da 0.1.0 (v1 → v2) sem perder histórico |
 | `BlockScreenTest`, `BlockingOverlayManagerTest` | Botões da tela de bloqueio e janela do overlay |
 | `ServiceLifecycleTest` | Serviço ligado/desligado pelo usuário refletido no app |
-| `AppSmokeTest` | Passeio por todas as telas, gravando alterações |
+| `AppSmokeTest`, `DisciplineFlowTest`, `ScheduleFlowTest` | Passeio por todas as telas gravando alterações; ativar a Disciplina trava as configurações e inicia a espera para sair; criar horário e exceção |
+| `ScheduleFormatTest` | Janelas (meia-noite, dias) e rótulos |
 
 Roteiro no aparelho: [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md).
 
@@ -198,6 +217,8 @@ release/  APK instalável
 - Atualizações do YouTube e do Instagram podem quebrar a detecção até sair uma versão nova. Sem servidor, não há atualização remota de regras.
 - O vídeo pode continuar tocando sob a tela de bloqueio até você tocar em Voltar (o pedido de foco de áudio é só uma tentativa).
 - A prateleira de Shorts e os Reels dentro do feed ainda não são cobertos.
+- A estimativa de exposição evitada é conservadora e só aparece com pelo menos 10 sessões de vídeo curto medidas.
+- O tempo dentro dos apps depende do acesso aos dados de uso e do que o Android ainda guarda: dias antigos sem registro aparecem como "sem dados".
 - O Android pode encerrar o serviço por falha, atualização ou economia de bateria; o Painel mostra quando isso acontece.
 - Você continua dono do aparelho: o serviço pode ser desativado nas configurações do Android, inclusive durante o Modo Disciplina.
 - Interface somente em português.

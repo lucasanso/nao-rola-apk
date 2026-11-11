@@ -10,7 +10,8 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.1.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.2.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1b | Atualização | Com a 0.1.0 instalada e usada, instalar a 0.2.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
 | P4 | Ativar serviço | *Acessibilidade › Apps instalados › Não-Rola* › ativar | Volte ao app: "Proteção ativa" | |
@@ -69,7 +70,23 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | C7 | Navegador: `youtube.com/watch?v=…` | **Nada bloqueado** | |
 | C8 | Apps só de vídeo curto ligado + TikTok instalado | Abrir o TikTok bloqueia; só há o botão "Sair do app" | |
 
-## 6. Persistência e robustez
+## 6. Limite diário, horários, Disciplina e estatísticas
+
+| ID | Cenário | Esperado | Resultado |
+|---|---|---|---|
+| L1 | Tolerância "Sem limite" + limite diário 5 min | Shorts tocam até somar 5 min no dia, mesmo saindo e voltando; depois, bloqueio imediato até a meia-noite | |
+| L2 | Tolerância 30 s + limite diário 1 min | Cada entrada dura no máximo 30 s; após 1 min somado, bloqueio imediato | |
+| H1 | Horário só seg–sex 08:00–18:00, testar fora dele | Nada bloqueado; Painel: "Desprotegido · fora do horário" | |
+| H2 | Exceção semanal agora | Nada bloqueado durante a exceção | |
+| H3 | Pausa programada começando em 2 min por 1 h | Bloqueia antes, libera durante, volta a bloquear depois | |
+| D1 | Ativar Disciplina (espera 5 min) | Ajustes de Bloqueio e Horários ficam travados; tela de bloqueio sem "Desativar" | |
+| D2 | "Quero sair" | Contagem de 5 min; proteção continua; depois "Confirmar saída" libera | |
+| D3 | Desligar o serviço nas configurações do Android durante a Disciplina | Ao reativar, a tela da Disciplina mostra quantas vezes foi desligado | |
+| D4 | Disciplina com "Forçar Bloqueio total" | Reel de DM também bloqueado; navegador e apps de vídeo curto protegidos | |
+| E1 | Estatísticas após alguns dias de uso | Barras por dia batem com a lista "Dia a dia"; dias antigos sem dados aparecem como "sem dados" | |
+| E2 | Estimativa de exposição evitada | Só aparece após 10 sessões medidas; mostra a fórmula | |
+
+## 7. Persistência e robustez
 
 | ID | Cenário | Esperado | Resultado |
 |---|---|---|---|
@@ -80,7 +97,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | R5 | Uma hora de uso normal com o serviço ligado | Sem travamentos perceptíveis no YouTube/Instagram; anote o consumo de bateria do Não-Rola | |
 | R6 | Contadores | "Hoje" soma os bloqueios; virada do dia zera | |
 
-## 7. Aparência
+## 8. Aparência
 
 | ID | Cenário | Esperado | Resultado |
 |---|---|---|---|
