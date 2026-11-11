@@ -99,9 +99,14 @@ class BlockingSessionMachine(private val policies: PolicyProvider) {
     private fun onObserved(input: SessionInput.Observed, out: MutableList<Command>) {
         val classification = input.classification
         if (classification is Classification.NotShortVideo) {
-            lastContext = classification.context
-            lastContextPackage = input.packageName
-            lastContextAt = input.time
+            // An unrecognised screen in the same app (e.g. loading between a DM and the Reel)
+            // must not erase a known context; it still expires with its original timestamp.
+            val keepKnownContext = classification.context == ScreenContext.UNKNOWN && input.packageName == lastContextPackage
+            if (!keepKnownContext) {
+                lastContext = classification.context
+                lastContextPackage = input.packageName
+                lastContextAt = input.time
+            }
             if (state !is SessionState.Idle) endSession(input.time, out, outcome = null)
             return
         }

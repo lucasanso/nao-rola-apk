@@ -167,6 +167,24 @@ class BlockingSessionMachineTest {
         assertEquals(7_000L, swipe.filterIsInstance<Command.RecordExposure>().single().exposure.durationMillis)
     }
 
+    @Test fun loadingScreenBetweenDirectAndReelKeepsTheException() {
+        other(1_000, ig, ScreenContext.DIRECT_MESSAGES)
+        other(1_500, ig, ScreenContext.UNKNOWN) // transition / loading screen
+        assertEquals(listOf(BlockOutcome.ALLOWED_FROM_DIRECT), reels(2_500, page = 3).outcomes())
+    }
+
+    @Test fun unknownScreenDoesNotExtendTheDirectWindow() {
+        other(1_000, ig, ScreenContext.DIRECT_MESSAGES)
+        other(1_000 + SessionConfig.DIRECT_ORIGIN_WINDOW_MS, ig, ScreenContext.UNKNOWN)
+        assertTrue(reels(1_000 + SessionConfig.DIRECT_ORIGIN_WINDOW_MS + 1, page = 1).any { it is Command.ShowBlockScreen })
+    }
+
+    @Test fun knownNonDirectScreenClearsTheException() {
+        other(1_000, ig, ScreenContext.DIRECT_MESSAGES)
+        other(1_500, ig, ScreenContext.FEED)
+        assertTrue(reels(2_000, page = 1).any { it is Command.ShowBlockScreen })
+    }
+
     @Test fun reelNotFromDirectIsBlocked() {
         other(1_000, ig, ScreenContext.FEED)
         assertTrue(reels(2_000, page = 1).any { it is Command.ShowBlockScreen })
