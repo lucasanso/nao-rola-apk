@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Não-Rola</string>
+
+    <!-- Accessibility service (shown in Android settings) -->
+    <string name="a11y_service_summary">Interrompe YouTube Shorts e Instagram Reels.</string>
+    <string name="a11y_service_description">O Não-Rola observa a estrutura da tela do YouTube e do Instagram (e, se você ligar, do Chrome e do Samsung Internet) para reconhecer Shorts e Reels e mostrar uma tela de bloqueio. Tudo é processado no aparelho: textos, mensagens e endereços não são guardados e nada é enviado para a internet — o app nem tem permissão de internet.</string>
+
+    <!-- Block screen -->
+    <string name="block_title">Você realmente queria assistir a isso?</string>
+    <string name="block_body_shorts">O Não-Rola interrompeu os Shorts do YouTube.</string>
+    <string name="block_body_reels">O Não-Rola interrompeu os Reels do Instagram.</string>
+    <string name="block_body_web_shorts">O Não-Rola interrompeu os Shorts do YouTube no navegador.</string>
+    <string name="block_body_web_reels">O Não-Rola interrompeu os Reels do Instagram no navegador.</string>
+    <string name="block_body_app">Este app é feito só de vídeos curtos e está bloqueado pelo Não-Rola.</string>
+    <string name="block_back_youtube">Voltar para o YouTube</string>
+    <string name="block_back_instagram">Voltar para o Instagram</string>
+    <string name="block_back">Voltar</string>
+    <string name="block_leave_youtube">Sair do YouTube</string>
+    <string name="block_leave_instagram">Sair do Instagram</string>
+    <string name="block_leave_browser">Sair do navegador</string>
+    <string name="block_leave_app">Sair do app</string>
+    <string name="block_discipline_note">Modo Disciplina ativo</string>
+    <plurals name="block_snooze">
+        <item quantity="one">Desativar por %d minuto</item>
+        <item quantity="other">Desativar por %d minutos</item>
+    </plurals>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Painel</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="nav_stats">Estatísticas</string>
+    <string name="action_back">Voltar</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_subtitle">Consumir com intenção, não por impulso.</string>
+    <string name="status_active">Proteção ativa</string>
+    <string name="status_active_body">Shorts e Reels são interrompidos quando aparecem.</string>
+    <string name="status_off">Proteção desligada</string>
+    <string name="status_off_body">Ative o serviço de acessibilidade do Não-Rola para começar.</string>
+    <string name="status_not_running">Serviço parado</string>
+    <string name="status_not_running_body">O serviço está ativado, mas o Android não o está executando. Desative e ative de novo nas configurações de acessibilidade.</string>
+    <string name="status_advanced_protection">Bloqueado pela Proteção Avançada</string>
+    <string name="status_advanced_protection_body">Com a Proteção Avançada do Android ligada, só ferramentas de acessibilidade podem usar esse recurso. O Não-Rola não é uma delas.</string>
+    <string name="status_paused">Pausado até %1$s</string>
+    <string name="status_paused_body">Você desativou o bloqueio temporariamente.</string>
+    <string name="status_action_fix">Resolver</string>
+    <string name="badge_total">Bloqueio total</string>
+    <string name="badge_discipline">Disciplina</string>
+    <string name="today_title">Hoje</string>
+    <string name="today_blocked_label">conteúdos bloqueados</string>
+    <string name="today_breakdown">Shorts %1$d · Reels %2$d · Outros %3$d</string>
+    <string name="platforms_title">Plataformas</string>
+    <string name="platform_youtube">YouTube Shorts</string>
+    <string name="platform_instagram">Instagram Reels</string>
+    <string name="platform_browser">Navegador</string>
+    <string name="platform_other_apps">Apps de vídeo curto</string>
+    <string name="platform_protected">Protegido</string>
+    <string name="platform_unprotected">Desprotegido</string>
+    <string name="platform_not_installed">Não instalado</string>
+    <string name="reason_platform_off">desligado nos ajustes</string>
+    <string name="reason_outside_schedule">fora do horário</string>
+    <string name="reason_exception">período de exceção</string>
+    <string name="reason_snoozed">pausado</string>
+    <string name="reason_service_off">serviço desligado</string>
+    <string name="usage_title">Tempo de uso hoje</string>
+    <string name="app_youtube">YouTube</string>
+    <string name="app_instagram">Instagram</string>
+    <string name="usage_in_app">%1$s no app</string>
+    <string name="usage_short_video">%1$s com vídeo curto na tela</string>
+    <string name="usage_no_permission">Para ver o tempo dentro de cada app, permita o acesso aos dados de uso.</string>
+    <string name="usage_grant">Permitir</string>
+    <string name="usage_note">“No app” é todo o tempo dentro do YouTube ou Instagram, segundo o Android. “Com vídeo curto na tela” é medido pelo próprio Não-Rola, só enquanto a proteção está ligada, e inclui tolerância e pausas.</string>
+    <string name="minutes_short">%1$d min</string>
+    <string name="hours_minutes_short">%1$d h %2$d min</string>
+    <string name="less_than_a_minute">menos de 1 min</string>
+
+    <!-- Detection health -->
+    <string name="suspect_title">Possível falha de detecção</string>
+    <string name="suspect_body">Você ficou na aba %1$s e o Não-Rola não reconheceu o player. Isso costuma acontecer depois de uma atualização do app. Uma captura de diagnóstico dessa tela permite corrigir as regras.</string>
+    <string name="suspect_youtube">Shorts do YouTube</string>
+    <string name="suspect_instagram">Reels do Instagram</string>
+    <string name="suspect_open_diagnostics">Abrir Diagnóstico</string>
+    <string name="suspect_dismiss">Dispensar</string>
+
+    <!-- Statistics -->
+    <string name="stats_title">Estatísticas</string>
+    <string name="stats_week">Últimos 7 dias</string>
+    <string name="stats_per_day">Bloqueios por dia</string>
+    <string name="stats_tap_hint">Toque num dia para destacá-lo na lista.</string>
+    <string name="stats_day_by_day">Dia a dia</string>
+    <plurals name="stats_blocked_count">
+        <item quantity="one">%1$d bloqueado</item>
+        <item quantity="other">%1$d bloqueados</item>
+    </plurals>
+    <string name="stats_short_video">Vídeo curto na tela: %1$s</string>
+    <string name="stats_app_usage">No app: YouTube %1$s · Instagram %2$s</string>
+    <string name="stats_app_usage_unknown">No app: sem dados</string>
+    <string name="stats_today">hoje</string>
+    <plurals name="stats_bar_description">
+        <item quantity="one">%1$s: %2$d bloqueado</item>
+        <item quantity="other">%1$s: %2$d bloqueados</item>
+    </plurals>
+    <string name="stats_estimate_title">Exposição evitada (estimativa)</string>
+    <string name="stats_estimate_value">≈ %1$s nos últimos 7 dias</string>
+    <string name="stats_estimate_formula">%1$s × %2$s, a mediana de %3$s de vídeo curto medidas nos últimos 30 dias (tolerância, pausa ou Reel de DM). É uma estimativa conservadora: as sessões medidas são encurtadas pela própria tolerância.</string>
+    <plurals name="count_blocks">
+        <item quantity="one">%d bloqueio</item>
+        <item quantity="other">%d bloqueios</item>
+    </plurals>
+    <plurals name="count_sessions">
+        <item quantity="one">%d sessão</item>
+        <item quantity="other">%d sessões</item>
+    </plurals>
+    <string name="stats_estimate_insufficient">Dados insuficientes. Para estimar sem inventar números, o Não-Rola precisa de pelo menos %1$s de vídeo curto medidas (com tolerância, pausa ou Reel de DM). Até agora: %2$d.</string>
+    <string name="stats_usage_permission">O tempo dentro de cada app aparece aqui se você permitir o acesso aos dados de uso.</string>
+    <string name="stats_note">Bloqueios e tempo com vídeo curto são medidos pelo Não-Rola enquanto a proteção está ligada. O tempo no app vem do Android e inclui tudo o que você fez no YouTube ou Instagram. Histórico guardado por 30 dias.</string>
+    <string name="seconds_long">%1$d s</string>
+
+    <!-- Discipline -->
+    <string name="discipline_title">Modo Disciplina</string>
+    <string name="discipline_intro">Deixa o bloqueio mais rigoroso e trava as configurações. Para sair, só pelo próprio app e depois de uma espera que você escolhe agora, com a proteção ativa durante a contagem.</string>
+    <string name="discipline_honesty">Você continua dono do aparelho: o serviço pode ser desligado nas configurações do Android. Se isso acontecer, fica registrado aqui.</string>
+    <string name="discipline_duration">Duração</string>
+    <string name="discipline_until_exit">Até eu sair</string>
+    <string name="hours_short">%1$d h</string>
+    <string name="discipline_exit_delay">Espera para sair</string>
+    <string name="discipline_exit_delay_body">Quando você pedir para sair, a proteção continua ativa por este tempo antes de liberar a saída.</string>
+    <string name="discipline_rules">Regras</string>
+    <string name="rule_zero_tolerance">Zerar tolerância e limite diário</string>
+    <string name="rule_zero_tolerance_body">Nenhum vídeo curto é liberado antes do bloqueio.</string>
+    <string name="rule_suspend_exceptions">Suspender períodos de exceção</string>
+    <string name="rule_suspend_exceptions_body">Horários de exceção deixam de valer enquanto durar.</string>
+    <string name="rule_force_all">Forçar todas as plataformas</string>
+    <string name="rule_force_all_body">YouTube, Instagram, navegador e apps de vídeo curto ficam protegidos.</string>
+    <string name="rule_keep_direct">Manter Reel de DM liberado</string>
+    <string name="rule_keep_direct_body">O Reel aberto numa conversa continua tocando; o próximo é bloqueado.</string>
+    <string name="rule_force_total">Forçar Bloqueio total</string>
+    <string name="rule_force_total_body">Bloqueia tudo, sem nenhuma exceção.</string>
+    <string name="discipline_activate">Ativar Modo Disciplina</string>
+    <string name="discipline_confirm_title">Ativar agora?</string>
+    <string name="discipline_confirm_body">As configurações ficam travadas e a pausa some da tela de bloqueio. Para sair será preciso pedir e esperar %1$d min.</string>
+    <string name="discipline_confirm">Ativar</string>
+    <string name="discipline_cancel">Cancelar</string>
+    <string name="discipline_active">Modo Disciplina ativo</string>
+    <string name="discipline_since">Desde %1$s</string>
+    <string name="discipline_ends_at">Termina em %1$s</string>
+    <string name="discipline_ends_on_exit">Até você sair pelo app</string>
+    <string name="discipline_active_rules">Regras em vigor</string>
+    <string name="discipline_no_extra_rules">Nenhuma regra extra além da trava das configurações e da pausa desativada.</string>
+    <plurals name="discipline_service_stops">
+        <item quantity="one">O serviço de acessibilidade foi desligado %1$d vez durante a Disciplina.</item>
+        <item quantity="other">O serviço de acessibilidade foi desligado %1$d vezes durante a Disciplina.</item>
+    </plurals>
+    <string name="discipline_request_exit">Quero sair</string>
+    <string name="discipline_request_exit_body">Será preciso esperar %1$d min, com a proteção ativa.</string>
+    <string name="discipline_wait">Você poderá sair em %1$s</string>
+    <string name="discipline_cancel_request">Cancelar pedido</string>
+    <string name="discipline_confirm_exit">Confirmar saída</string>
+    <string name="discipline_ready">A espera terminou. Você pode sair agora.</string>
+    <string name="settings_discipline_on">Ativo</string>
+    <string name="settings_discipline_off">Desativado</string>
+
+    <!-- Schedules and exceptions -->
+    <string name="schedule_title">Horários e exceções</string>
+    <string name="schedule_when">Quando a proteção funciona</string>
+    <string name="schedule_always">Sempre</string>
+    <string name="schedule_only_windows">Só nos horários abaixo</string>
+    <string name="schedule_windows_empty">Nenhum horário definido: a proteção funciona sempre.</string>
+    <string name="schedule_add_window">Adicionar horário</string>
+    <string name="schedule_exceptions">Exceções semanais</string>
+    <string name="schedule_exceptions_body">Horários fixos em que a proteção fica desligada (por exemplo, sábado à noite).</string>
+    <string name="schedule_add_exception">Adicionar exceção</string>
+    <string name="schedule_exceptions_empty">Nenhuma exceção semanal.</string>
+    <string name="schedule_pauses">Pausas programadas</string>
+    <string name="schedule_pauses_body">Períodos únicos com a proteção desligada (por exemplo, uma tarde de folga).</string>
+    <string name="schedule_add_pause">Programar pausa</string>
+    <string name="schedule_pauses_empty">Nenhuma pausa programada.</string>
+    <string name="schedule_total_note">No Bloqueio total, horários e exceções não valem: a proteção funciona sempre.</string>
+    <string name="schedule_editor_title">Horário</string>
+    <string name="schedule_days">Dias</string>
+    <string name="schedule_start">Início %1$s</string>
+    <string name="schedule_end">Fim %1$s</string>
+    <string name="schedule_next_day">(dia seguinte)</string>
+    <string name="schedule_invalid">Escolha ao menos um dia e horários diferentes.</string>
+    <string name="schedule_save">Salvar</string>
+    <string name="schedule_pause_title">Pausa programada</string>
+    <string name="schedule_pause_date">Data %1$s</string>
+    <string name="schedule_pause_time">Começa às %1$s</string>
+    <string name="schedule_pause_duration">Duração</string>
+    <string name="schedule_pause_in_past">A pausa precisa terminar no futuro.</string>
+    <string name="schedule_ok">OK</string>
+    <string name="schedule_every_day">Todos os dias</string>
+    <string name="schedule_weekdays">Seg a sex</string>
+    <string name="schedule_weekend">Fim de semana</string>
+    <string name="schedule_summary_always">Sempre ativa</string>
+    <plurals name="count_windows">
+        <item quantity="one">%d horário</item>
+        <item quantity="other">%d horários</item>
+    </plurals>
+    <plurals name="count_exceptions">
+        <item quantity="one">%d exceção</item>
+        <item quantity="other">%d exceções</item>
+    </plurals>
+    <plurals name="count_pauses">
+        <item quantity="one">%d pausa</item>
+        <item quantity="other">%d pausas</item>
+    </plurals>
+
+    <!-- Settings hub -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_blocking">Bloqueio</string>
+    <string name="settings_blocking_summary_total">Bloqueio total</string>
+    <string name="settings_blocking_summary_personalized">Personalizado</string>
+    <string name="settings_permissions">Permissões</string>
+    <string name="settings_permissions_summary">Acessibilidade, dados de uso e bateria</string>
+    <string name="settings_dynamic_color">Cores do sistema</string>
+    <string name="settings_dynamic_color_summary">Usar as cores do seu papel de parede (Material You)</string>
+    <string name="settings_diagnostics">Diagnóstico</string>
+    <string name="settings_diagnostics_summary">Capturas de estrutura e log técnico</string>
+    <string name="settings_about">Sobre</string>
+
+    <!-- Blocking settings -->
+    <string name="blocking_title">Bloqueio</string>
+    <string name="blocking_mode">Modo</string>
+    <string name="mode_personalized">Personalizado</string>
+    <string name="mode_total">Bloqueio total</string>
+    <string name="mode_personalized_body">Você escolhe o que bloquear e quais exceções valem.</string>
+    <string name="mode_total_body">Bloqueia tudo o que o Não-Rola reconhece, em qualquer horário, sem tolerância, sem pausa e sem exceções.</string>
+    <string name="blocking_total_overrides">O Bloqueio total ignora as opções abaixo.</string>
+    <string name="blocking_platforms">O que bloquear</string>
+    <string name="toggle_youtube">YouTube Shorts</string>
+    <string name="toggle_youtube_body">Player de Shorts. Vídeos comuns continuam liberados.</string>
+    <string name="toggle_instagram">Instagram Reels</string>
+    <string name="toggle_instagram_body">Visualizador de Reels. Feed, Stories, mensagens e perfis continuam liberados.</string>
+    <string name="toggle_browser">Shorts e Reels no navegador</string>
+    <string name="toggle_browser_body">Lê só a barra de endereço do Chrome e do Samsung Internet. Endereços não são guardados.</string>
+    <string name="toggle_other_apps">Apps só de vídeos curtos</string>
+    <string name="toggle_other_apps_body">TikTok e Kwai: bloqueia o app inteiro.</string>
+    <string name="blocking_exceptions">Tolerância e exceções</string>
+    <string name="tolerance_title">Tolerância antes do bloqueio</string>
+    <string name="tolerance_body">Quanto tempo um vídeo curto pode ficar na tela antes do bloqueio, a cada vez que você entra.</string>
+    <string name="tolerance_none">Nenhuma</string>
+    <string name="seconds_short">%1$d s</string>
+    <string name="tolerance_unlimited">Sem limite</string>
+    <string name="tolerance_unlimited_needs_daily">“Sem limite” por entrada só libera vídeos curtos se houver um limite diário. Sem ele, o bloqueio é imediato.</string>
+    <string name="daily_limit_title">Limite diário</string>
+    <string name="daily_limit_body">Soma todo o tempo liberado no dia, por plataforma (tolerância e Reel de DM). Quando acaba, o bloqueio é imediato até a meia-noite.</string>
+    <string name="daily_limit_off">Sem limite</string>
+    <string name="snooze_title">Permitir desativar temporariamente</string>
+    <string name="snooze_body">Mostra o botão de pausa na tela de bloqueio.</string>
+    <string name="snooze_duration">Duração da pausa</string>
+    <string name="direct_title">Liberar Reel recebido por mensagem</string>
+    <string name="direct_body">O Reel que você abrir numa conversa toca normalmente; ao passar para o próximo, o bloqueio volta.</string>
+    <string name="locked_by_discipline">O Modo Disciplina está ativo: as configurações só podem ser alteradas depois de sair dele.</string>
+
+    <!-- Permissions -->
+    <string name="permissions_title">Permissões</string>
+    <string name="perm_required">Obrigatória</string>
+    <string name="perm_optional">Opcional</string>
+    <string name="perm_recommended">Recomendado</string>
+    <string name="perm_granted">Concedida</string>
+    <string name="perm_missing">Pendente</string>
+    <string name="perm_a11y_title">Serviço de acessibilidade</string>
+    <string name="perm_a11y_body">É a única forma de o Não-Rola saber que um Short ou Reel está na tela e mostrar o bloqueio por cima.</string>
+    <string name="perm_a11y_action">Abrir configurações de acessibilidade</string>
+    <string name="perm_a11y_steps">No Samsung: Acessibilidade › Apps instalados › Não-Rola › ativar.</string>
+    <string name="perm_restricted_title">Apareceu “configuração restrita”?</string>
+    <string name="perm_restricted_body">O Android 13+ restringe apps instalados por arquivo. Tente ativar uma vez, depois abra as informações do app, toque em ⋮ e escolha “Permitir configurações restritas”. Volte e ative de novo.</string>
+    <string name="perm_restricted_action">Abrir informações do app</string>
+    <string name="perm_usage_title">Acesso aos dados de uso</string>
+    <string name="perm_usage_body">Só para mostrar quanto tempo você passou dentro do YouTube e do Instagram. Sem ela, o resto funciona normalmente.</string>
+    <string name="perm_usage_action">Abrir acesso aos dados de uso</string>
+    <string name="perm_battery_title">Bateria sem restrições</string>
+    <string name="perm_battery_ok">O Android não está restringindo o Não-Rola.</string>
+    <string name="perm_battery_body">Evita que a economia de bateria interrompa a proteção. No Samsung, inclua também o Não-Rola em Bateria › Limites de uso em segundo plano › Apps que nunca entram em suspensão.</string>
+    <string name="perm_battery_action">Abrir otimização de bateria</string>
+    <string name="perm_advanced_title">Proteção Avançada ligada</string>
+    <string name="perm_advanced_body">Com a Proteção Avançada, o Android só permite serviços de ferramentas de acessibilidade. O Não-Rola não é uma ferramenta de acessibilidade e não vai fingir ser: para usá-lo, é preciso desligar a Proteção Avançada.</string>
+    <string name="perm_advanced_action">Abrir segurança</string>
+    <string name="disclosure_title">Antes de ativar</string>
+    <string name="disclosure_body">Ao ativar o serviço de acessibilidade, o Não-Rola passa a observar a estrutura da tela dos apps que você escolheu (YouTube, Instagram e, se ligar, Chrome e Samsung Internet) para reconhecer Shorts e Reels.\n\n• Textos, mensagens, nomes e endereços não são guardados.\n• Nada sai do aparelho: o app não tem permissão de internet.\n• O Android pode lembrar periodicamente que o app vê a tela. Isso é esperado.\n• Você pode desativar quando quiser, nas configurações do Android.</string>
+    <string name="disclosure_accept">Entendi, abrir configurações</string>
+    <string name="disclosure_decline">Agora não</string>
+
+    <!-- Diagnostics -->
+    <string name="diagnostics_title">Diagnóstico</string>
+    <string name="diagnostics_body">Use quando um Short ou Reel não for bloqueado, ou quando algo for bloqueado por engano. Toque em Capturar e abra a tela com problema: o Não-Rola salva só a estrutura da tela (tipos de elementos, identificadores e posições), sem nenhum texto.</string>
+    <string name="diagnostics_capture">Capturar próxima tela</string>
+    <string name="diagnostics_waiting">Aguardando a próxima tela… (cancelar)</string>
+    <string name="diagnostics_needs_service">Ative o serviço de acessibilidade para capturar.</string>
+    <string name="diagnostics_captures">Capturas</string>
+    <string name="diagnostics_empty">Nenhuma captura ainda.</string>
+    <string name="diagnostics_delete_all">Apagar todas</string>
+    <string name="diagnostics_label_hint">Marque o que deveria ter acontecido em cada tela. Capturas marcadas viram testes automáticos dos detectores (docs/capturas no repositório).</string>
+    <string name="diagnostics_expect_block">Deveria bloquear</string>
+    <string name="diagnostics_expect_allow">Não deveria bloquear</string>
+    <string name="diagnostics_log">Log técnico</string>
+    <string name="diagnostics_log_body">Registra conclusões dos detectores e erros, nunca o conteúdo da tela.</string>
+    <string name="diagnostics_log_empty">O log está vazio.</string>
+    <string name="action_share">Compartilhar</string>
+    <string name="action_delete">Apagar</string>
+    <string name="action_clear">Limpar</string>
+    <string name="share_chooser">Compartilhar com</string>
+
+    <!-- About -->
+    <string name="about_title">Sobre</string>
+    <string name="about_version">Versão %1$s</string>
+    <string name="about_philosophy">O Não-Rola interrompe Shorts e Reels para que YouTube e Instagram continuem úteis para conteúdo que você escolheu ver, sem a rolagem infinita.</string>
+    <string name="about_privacy_title">Privacidade</string>
+    <string name="about_privacy_body">• Funciona offline e não tem permissão de internet.\n• Não coleta dados pessoais nem guarda textos, mensagens ou endereços.\n• O histórico guarda só horários e tipos de bloqueio, por 30 dias.\n• Backup em nuvem e transferência entre aparelhos estão desativados.</string>
+    <string name="about_rules_title">Regras de detecção</string>
+    <string name="about_rule_line">%1$s %2$s — %3$s</string>
+    <string name="about_limits_title">Limitações conhecidas</string>
+    <string name="about_limits_body">• As regras ainda não foram calibradas num aparelho real; algumas telas podem não ser reconhecidas.\n• Atualizações do YouTube e do Instagram podem quebrar a detecção até sair uma versão nova do Não-Rola.\n• A prateleira de Shorts e os Reels dentro do feed ainda não são cobertos.\n• O vídeo pode continuar tocando sob a tela de bloqueio até você tocar em Voltar.\n• Você continua dono do aparelho: dá para desativar o serviço nas configurações do Android.</string>
+</resources>
