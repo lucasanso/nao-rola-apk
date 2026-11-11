@@ -43,6 +43,13 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
                 ),
                 onClick = { onNavigate(Routes.BLOCKING) },
             )
+            NavRow(
+                title = stringResource(R.string.discipline_title),
+                summary = stringResource(
+                    if (state.settings.discipline.active) R.string.settings_discipline_on else R.string.settings_discipline_off,
+                ),
+                onClick = { onNavigate(Routes.DISCIPLINE) },
+            )
             NavRow(stringResource(R.string.settings_permissions), stringResource(R.string.settings_permissions_summary)) {
                 onNavigate(Routes.PERMISSIONS)
             }

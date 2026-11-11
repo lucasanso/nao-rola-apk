@@ -26,6 +26,7 @@ import com.lucasanso.naorola.R
 import com.lucasanso.naorola.presentation.about.AboutScreen
 import com.lucasanso.naorola.presentation.dashboard.DashboardScreen
 import com.lucasanso.naorola.presentation.diagnostics.DiagnosticsScreen
+import com.lucasanso.naorola.presentation.discipline.DisciplineScreen
 import com.lucasanso.naorola.presentation.permissions.PermissionsScreen
 import com.lucasanso.naorola.presentation.settings.BlockingSettingsScreen
 import com.lucasanso.naorola.presentation.settings.SettingsHubScreen
@@ -36,6 +37,7 @@ object Routes {
     const val STATS = "stats"
     const val SETTINGS = "settings"
     const val BLOCKING = "settings/blocking"
+    const val DISCIPLINE = "settings/discipline"
     const val PERMISSIONS = "settings/permissions"
     const val DIAGNOSTICS = "settings/diagnostics"
     const val ABOUT = "settings/about"
@@ -92,6 +94,7 @@ fun NaoRolaNavHost() {
             composable(Routes.SETTINGS) { SettingsHubScreen(onNavigate = { nav.navigate(it) }) }
             composable(Routes.BLOCKING) { BlockingSettingsScreen(onBack = back) }
             composable(Routes.PERMISSIONS) { PermissionsScreen(onBack = back) }
+            composable(Routes.DISCIPLINE) { DisciplineScreen(onBack = back) }
             composable(Routes.DIAGNOSTICS) { DiagnosticsScreen(onBack = back) }
             composable(Routes.ABOUT) { AboutScreen(onBack = back, onOpenDiagnostics = { nav.navigate(Routes.DIAGNOSTICS) }) }
         }

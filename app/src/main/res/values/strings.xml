@@ -95,6 +95,47 @@
     <string name="stats_note">Bloqueios e tempo com vídeo curto são medidos pelo Não-Rola enquanto a proteção está ligada. O tempo no app vem do Android e inclui tudo o que você fez no YouTube ou Instagram. Histórico guardado por 30 dias.</string>
     <string name="seconds_long">%1$d s</string>
 
+    <!-- Discipline -->
+    <string name="discipline_title">Modo Disciplina</string>
+    <string name="discipline_intro">Deixa o bloqueio mais rigoroso e trava as configurações. Para sair, só pelo próprio app e depois de uma espera que você escolhe agora, com a proteção ativa durante a contagem.</string>
+    <string name="discipline_honesty">Você continua dono do aparelho: o serviço pode ser desligado nas configurações do Android. Se isso acontecer, fica registrado aqui.</string>
+    <string name="discipline_duration">Duração</string>
+    <string name="discipline_until_exit">Até eu sair</string>
+    <string name="hours_short">%1$d h</string>
+    <string name="discipline_exit_delay">Espera para sair</string>
+    <string name="discipline_exit_delay_body">Quando você pedir para sair, a proteção continua ativa por este tempo antes de liberar a saída.</string>
+    <string name="discipline_rules">Regras</string>
+    <string name="rule_zero_tolerance">Zerar tolerância e limite diário</string>
+    <string name="rule_zero_tolerance_body">Nenhum vídeo curto é liberado antes do bloqueio.</string>
+    <string name="rule_suspend_exceptions">Suspender períodos de exceção</string>
+    <string name="rule_suspend_exceptions_body">Horários de exceção deixam de valer enquanto durar.</string>
+    <string name="rule_force_all">Forçar todas as plataformas</string>
+    <string name="rule_force_all_body">YouTube, Instagram, navegador e apps de vídeo curto ficam protegidos.</string>
+    <string name="rule_keep_direct">Manter Reel de DM liberado</string>
+    <string name="rule_keep_direct_body">O Reel aberto numa conversa continua tocando; o próximo é bloqueado.</string>
+    <string name="rule_force_total">Forçar Bloqueio total</string>
+    <string name="rule_force_total_body">Bloqueia tudo, sem nenhuma exceção.</string>
+    <string name="discipline_activate">Ativar Modo Disciplina</string>
+    <string name="discipline_confirm_title">Ativar agora?</string>
+    <string name="discipline_confirm_body">As configurações ficam travadas e a pausa some da tela de bloqueio. Para sair será preciso pedir e esperar %1$d min.</string>
+    <string name="discipline_confirm">Ativar</string>
+    <string name="discipline_cancel">Cancelar</string>
+    <string name="discipline_active">Modo Disciplina ativo</string>
+    <string name="discipline_since">Desde %1$s</string>
+    <string name="discipline_ends_at">Termina em %1$s</string>
+    <string name="discipline_ends_on_exit">Até você sair pelo app</string>
+    <string name="discipline_active_rules">Regras em vigor</string>
+    <string name="discipline_no_extra_rules">Nenhuma regra extra além da trava das configurações e da pausa desativada.</string>
+    <string name="discipline_service_stops">O serviço de acessibilidade foi desligado %1$d vez(es) durante a Disciplina.</string>
+    <string name="discipline_request_exit">Quero sair</string>
+    <string name="discipline_request_exit_body">Será preciso esperar %1$d min, com a proteção ativa.</string>
+    <string name="discipline_wait">Você poderá sair em %1$s</string>
+    <string name="discipline_cancel_request">Cancelar pedido</string>
+    <string name="discipline_confirm_exit">Confirmar saída</string>
+    <string name="discipline_ready">A espera terminou. Você pode sair agora.</string>
+    <string name="settings_discipline_on">Ativo</string>
+    <string name="settings_discipline_off">Desativado</string>
+
     <!-- Settings hub -->
     <string name="settings_title">Ajustes</string>
     <string name="settings_blocking">Bloqueio</string>
