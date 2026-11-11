@@ -28,6 +28,7 @@ import com.lucasanso.naorola.detection.rules.InstagramRules
 import com.lucasanso.naorola.detection.rules.YouTubeRules
 import com.lucasanso.naorola.domain.model.BlockEvent
 import com.lucasanso.naorola.domain.model.BlockOutcome
+import com.lucasanso.naorola.domain.model.ScheduleWindow
 import com.lucasanso.naorola.domain.model.ShortVideoExposure
 import com.lucasanso.naorola.domain.model.Surface
 import com.lucasanso.naorola.presentation.theme.NaoRolaTheme
@@ -42,6 +43,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.DayOfWeek
 
 /**
  * Renders screenshots of the real app (Robolectric native graphics).
@@ -78,6 +80,26 @@ class ScreenshotTest {
     fun protectionActiveDark() {
         simulateActiveProtection()
         launch { waitText("Proteção ativa"); waitText("7"); shot(it, "06-painel-escuro") }
+    }
+
+    @Test fun scheduleAndDiscipline() {
+        runBlocking {
+            app.container.settingsRepository.edit {
+                it.copy(
+                    activeWindows = listOf(ScheduleWindow(DayOfWeek.entries.take(5).toSet(), 8 * 60, 22 * 60)),
+                    exceptionWindows = listOf(ScheduleWindow(setOf(DayOfWeek.SATURDAY), 20 * 60, 23 * 60)),
+                    toleranceSeconds = 10,
+                    dailyLimitMinutes = 15,
+                )
+            }
+        }
+        launch {
+            waitText("Proteção desligada")
+            rule.onNodeWithText("Ajustes").performClick(); waitText("Horários e exceções")
+            rule.onNodeWithText("Horários e exceções").performClick(); waitText("Seg a sex · 08:00–22:00"); shot(it, "10-horarios")
+            rule.onNodeWithContentDescription("Voltar").performClick(); waitText("Modo Disciplina")
+            rule.onNodeWithText("Modo Disciplina").performClick(); waitText("Espera para sair"); shot(it, "11-disciplina")
+        }
     }
 
     @Test fun blockScreen() = blockScreenShot("07-tela-de-bloqueio")

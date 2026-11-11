@@ -136,6 +136,41 @@
     <string name="settings_discipline_on">Ativo</string>
     <string name="settings_discipline_off">Desativado</string>
 
+    <!-- Schedules and exceptions -->
+    <string name="schedule_title">Horários e exceções</string>
+    <string name="schedule_when">Quando a proteção funciona</string>
+    <string name="schedule_always">Sempre</string>
+    <string name="schedule_only_windows">Só nos horários abaixo</string>
+    <string name="schedule_windows_empty">Nenhum horário definido: a proteção funciona sempre.</string>
+    <string name="schedule_add_window">Adicionar horário</string>
+    <string name="schedule_exceptions">Exceções semanais</string>
+    <string name="schedule_exceptions_body">Horários fixos em que a proteção fica desligada (por exemplo, sábado à noite).</string>
+    <string name="schedule_add_exception">Adicionar exceção</string>
+    <string name="schedule_exceptions_empty">Nenhuma exceção semanal.</string>
+    <string name="schedule_pauses">Pausas programadas</string>
+    <string name="schedule_pauses_body">Períodos únicos com a proteção desligada (por exemplo, uma tarde de folga).</string>
+    <string name="schedule_add_pause">Programar pausa</string>
+    <string name="schedule_pauses_empty">Nenhuma pausa programada.</string>
+    <string name="schedule_total_note">No Bloqueio total, horários e exceções não valem: a proteção funciona sempre.</string>
+    <string name="schedule_editor_title">Horário</string>
+    <string name="schedule_days">Dias</string>
+    <string name="schedule_start">Início %1$s</string>
+    <string name="schedule_end">Fim %1$s</string>
+    <string name="schedule_next_day">(dia seguinte)</string>
+    <string name="schedule_invalid">Escolha ao menos um dia e horários diferentes.</string>
+    <string name="schedule_save">Salvar</string>
+    <string name="schedule_pause_title">Pausa programada</string>
+    <string name="schedule_pause_date">Data %1$s</string>
+    <string name="schedule_pause_time">Começa às %1$s</string>
+    <string name="schedule_pause_duration">Duração</string>
+    <string name="schedule_pause_in_past">A pausa precisa terminar no futuro.</string>
+    <string name="schedule_ok">OK</string>
+    <string name="schedule_every_day">Todos os dias</string>
+    <string name="schedule_weekdays">Seg a sex</string>
+    <string name="schedule_weekend">Fim de semana</string>
+    <string name="schedule_summary_always">Sempre ativa</string>
+    <string name="schedule_summary">%1$d horários · %2$d exceções · %3$d pausas</string>
+
     <!-- Settings hub -->
     <string name="settings_title">Ajustes</string>
     <string name="settings_blocking">Bloqueio</string>

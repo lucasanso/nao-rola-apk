@@ -44,6 +44,17 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate(Routes.BLOCKING) },
             )
             NavRow(
+                title = stringResource(R.string.schedule_title),
+                summary = with(state.settings) {
+                    if (activeWindows.isEmpty() && exceptionWindows.isEmpty() && exceptionPeriods.isEmpty()) {
+                        stringResource(R.string.schedule_summary_always)
+                    } else {
+                        stringResource(R.string.schedule_summary, activeWindows.size, exceptionWindows.size, exceptionPeriods.size)
+                    }
+                },
+                onClick = { onNavigate(Routes.SCHEDULE) },
+            )
+            NavRow(
                 title = stringResource(R.string.discipline_title),
                 summary = stringResource(
                     if (state.settings.discipline.active) R.string.settings_discipline_on else R.string.settings_discipline_off,
