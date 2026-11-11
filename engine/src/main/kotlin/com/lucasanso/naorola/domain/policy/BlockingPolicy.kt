@@ -14,7 +14,14 @@ enum class InactiveReason { PLATFORM_OFF, OUTSIDE_SCHEDULE, EXCEPTION, SNOOZED }
 data class EffectivePolicy(
     val protects: Boolean,
     val inactiveReason: InactiveReason?,
-    val toleranceMillis: Long,
+    /**
+     * How long short-video content may stay on screen in this entry before the block:
+     * the smaller of the per-entry tolerance and what is left of the daily limit.
+     */
+    val allowanceMillis: Long,
+    /** Daily limit in effect (null = none) and what is left of it today. */
+    val dailyLimitMillis: Long?,
+    val dailyRemainingMillis: Long?,
     val snoozeAllowed: Boolean,
     val snoozeMillis: Long,
     val allowReelFromDirect: Boolean,
@@ -24,7 +31,17 @@ data class EffectivePolicy(
 
 object BlockingPolicy {
 
-    fun evaluate(settings: ProtectionSettings, surface: Surface, now: Long, zone: ZoneId): EffectivePolicy {
+    /**
+     * @param usedTodayMillis short-video time already allowed today on this surface's platform
+     *   (counts towards the daily limit).
+     */
+    fun evaluate(
+        settings: ProtectionSettings,
+        surface: Surface,
+        now: Long,
+        zone: ZoneId,
+        usedTodayMillis: Long = 0L,
+    ): EffectivePolicy {
         val discipline = settings.discipline.isActive(now)
         val rules = settings.discipline.rules
         val total = settings.mode == ProtectionMode.TOTAL || (discipline && rules.forceTotalMode)
@@ -41,11 +58,31 @@ object BlockingPolicy {
             else -> null
         }
 
-        val zeroTolerance = total || (discipline && rules.zeroTolerance)
+        val noFreeTime = total || (discipline && rules.zeroTolerance)
+        val perEntry: Long? = when {
+            noFreeTime -> 0L
+            settings.toleranceSeconds == ProtectionSettings.UNLIMITED_TOLERANCE -> null
+            else -> settings.toleranceSeconds.coerceAtLeast(0) * MILLIS_PER_SECOND
+        }
+        val dailyLimit: Long? = if (noFreeTime || settings.dailyLimitMinutes <= 0) {
+            null
+        } else {
+            settings.dailyLimitMinutes * DisciplineState.MILLIS_PER_MINUTE
+        }
+        val dailyRemaining = dailyLimit?.let { (it - usedTodayMillis).coerceAtLeast(0L) }
+        val allowance = when {
+            // No cap at all would mean "never block": treat it as no free time instead.
+            perEntry == null && dailyRemaining == null -> 0L
+            perEntry == null -> dailyRemaining!!
+            dailyRemaining == null -> perEntry
+            else -> minOf(perEntry, dailyRemaining)
+        }
         return EffectivePolicy(
             protects = reason == null,
             inactiveReason = reason,
-            toleranceMillis = if (zeroTolerance) 0L else settings.toleranceSeconds.coerceAtLeast(0) * MILLIS_PER_SECOND,
+            allowanceMillis = allowance,
+            dailyLimitMillis = dailyLimit,
+            dailyRemainingMillis = dailyRemaining,
             snoozeAllowed = !total && !discipline && settings.snoozeAllowed,
             snoozeMillis = settings.snoozeMinutes.coerceAtLeast(1) * DisciplineState.MILLIS_PER_MINUTE,
             allowReelFromDirect = !total && settings.allowReelFromDirect && (!discipline || rules.keepReelFromDirect),

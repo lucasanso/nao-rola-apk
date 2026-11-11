@@ -131,8 +131,8 @@ class BlockingSessionMachine(private val policies: PolicyProvider) {
                 state = SessionState.AllowedSingle(c.surface, packageName, now, c.pageKey)
                 out += record(now, c.surface, BlockOutcome.ALLOWED_FROM_DIRECT)
             }
-            policy.toleranceMillis > 0 -> {
-                val blockAt = now + policy.toleranceMillis
+            policy.allowanceMillis > 0 -> {
+                val blockAt = now + policy.allowanceMillis
                 state = SessionState.Watching(c.surface, packageName, now, blockAt)
                 out += Command.ScheduleTick(blockAt)
                 out += record(now, c.surface, BlockOutcome.TOLERANCE_STARTED)
@@ -146,8 +146,8 @@ class BlockingSessionMachine(private val policies: PolicyProvider) {
         when {
             !protects(policy, now) -> if (s.blockAt != null) state = s.copy(blockAt = null)
             s.blockAt == null ->
-                if (policy.toleranceMillis > 0) {
-                    val blockAt = now + policy.toleranceMillis
+                if (policy.allowanceMillis > 0) {
+                    val blockAt = now + policy.allowanceMillis
                     state = s.copy(blockAt = blockAt)
                     out += Command.ScheduleTick(blockAt)
                 } else {
@@ -164,8 +164,8 @@ class BlockingSessionMachine(private val policies: PolicyProvider) {
             s.pageKey == null && pageKey != null -> state = s.copy(pageKey = pageKey)
             s.pageKey != null && pageKey != null && pageKey != s.pageKey ->
                 // Swiped to the next Reel: from here on the normal rules apply.
-                if (policy.toleranceMillis > 0) {
-                    val blockAt = now + policy.toleranceMillis
+                if (policy.allowanceMillis > 0) {
+                    val blockAt = now + policy.allowanceMillis
                     state = SessionState.Watching(s.surface, s.packageName, s.since, blockAt)
                     out += Command.ScheduleTick(blockAt)
                 } else {

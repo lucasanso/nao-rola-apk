@@ -59,7 +59,7 @@ class BlockingPolicyTest {
         Surface.entries.forEach { surface ->
             val p = policy(s, surface)
             assertTrue("$surface", p.protects)
-            assertEquals(0L, p.toleranceMillis)
+            assertEquals(0L, p.allowanceMillis)
             assertFalse(p.snoozeAllowed)
             assertFalse(p.allowReelFromDirect)
             assertTrue(p.totalMode)
@@ -68,9 +68,32 @@ class BlockingPolicyTest {
 
     @Test fun toleranceAndSnoozeInPersonalizedMode() {
         val p = policy(ProtectionSettings(toleranceSeconds = 15, snoozeMinutes = 5))
-        assertEquals(15_000L, p.toleranceMillis)
+        assertEquals(15_000L, p.allowanceMillis)
         assertTrue(p.snoozeAllowed)
         assertEquals(5 * 60_000L, p.snoozeMillis)
+    }
+
+    @Test fun dailyLimitCapsTheAllowance() {
+        val s = ProtectionSettings(toleranceSeconds = 60, dailyLimitMinutes = 5)
+        assertEquals(60_000L, policy(s).allowanceMillis)
+        val nearlyUsed = BlockingPolicy.evaluate(s, Surface.SHORTS_PLAYER, now, zone, usedTodayMillis = 4 * 60_000L + 30_000L)
+        assertEquals(30_000L, nearlyUsed.allowanceMillis)
+        assertEquals(30_000L, nearlyUsed.dailyRemainingMillis)
+        val exhausted = BlockingPolicy.evaluate(s, Surface.SHORTS_PLAYER, now, zone, usedTodayMillis = 10 * 60_000L)
+        assertEquals(0L, exhausted.allowanceMillis)
+    }
+
+    @Test fun unlimitedPerEntryNeedsADailyLimit() {
+        val unlimited = ProtectionSettings(toleranceSeconds = ProtectionSettings.UNLIMITED_TOLERANCE)
+        assertEquals(0L, policy(unlimited).allowanceMillis) // no cap at all is never "free"
+        val withDaily = unlimited.copy(dailyLimitMinutes = 15)
+        assertEquals(15 * 60_000L, policy(withDaily).allowanceMillis)
+    }
+
+    @Test fun totalModeAndDisciplineIgnoreTheDailyLimit() {
+        val s = ProtectionSettings(mode = ProtectionMode.TOTAL, toleranceSeconds = 60, dailyLimitMinutes = 30)
+        assertEquals(0L, policy(s).allowanceMillis)
+        assertEquals(null, policy(s).dailyLimitMillis)
     }
 
     @Test fun snoozeTurnsProtectionOffUntilItEnds() {
@@ -96,7 +119,7 @@ class BlockingPolicyTest {
         val s = Discipline.activate(base, now - 1, endsAt = null, exitDelayMinutes = 15, rules = DisciplineRules())
         val p = policy(s)
         assertTrue(p.protects) // forced on, exceptions suspended, snooze cleared
-        assertEquals(0L, p.toleranceMillis)
+        assertEquals(0L, p.allowanceMillis)
         assertFalse(p.snoozeAllowed)
         assertTrue(p.allowReelFromDirect) // kept by default
         assertTrue(p.disciplineActive)
@@ -110,7 +133,7 @@ class BlockingPolicyTest {
         val s = Discipline.activate(
             ProtectionSettings(toleranceSeconds = 10, instagramEnabled = false), now - 1, null, 15, rules,
         )
-        assertEquals(10_000L, policy(s).toleranceMillis)
+        assertEquals(10_000L, policy(s).allowanceMillis)
         assertFalse(policy(s, Surface.REELS_VIEWER).protects)
         assertFalse(policy(s).allowReelFromDirect)
     }

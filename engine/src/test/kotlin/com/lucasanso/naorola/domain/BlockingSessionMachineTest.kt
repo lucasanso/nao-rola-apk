@@ -25,14 +25,16 @@ class BlockingSessionMachineTest {
 
     private fun policy(
         protects: Boolean = true,
-        toleranceMillis: Long = 0,
+        allowanceMillis: Long = 0,
         snoozeAllowed: Boolean = true,
         allowDirect: Boolean = true,
         discipline: Boolean = false,
     ) = EffectivePolicy(
         protects = protects,
         inactiveReason = if (protects) null else InactiveReason.PLATFORM_OFF,
-        toleranceMillis = toleranceMillis,
+        allowanceMillis = allowanceMillis,
+        dailyLimitMillis = null,
+        dailyRemainingMillis = null,
         snoozeAllowed = snoozeAllowed,
         snoozeMillis = 10 * 60_000L,
         allowReelFromDirect = allowDirect,
@@ -93,7 +95,7 @@ class BlockingSessionMachineTest {
     }
 
     @Test fun toleranceLetsContentPlayThenBlocksAndMeasuresExposure() {
-        policy = policy(toleranceMillis = 10_000)
+        policy = policy(allowanceMillis = 10_000)
         val enter = shorts(1_000)
         assertTrue(enter.contains(Command.ScheduleTick(11_000)))
         assertTrue(enter.none { it is Command.ShowBlockScreen })
@@ -104,8 +106,18 @@ class BlockingSessionMachineTest {
         assertEquals(10_000L, exposure.durationMillis)
     }
 
+    @Test fun dailyAllowanceShrinksAcrossEntries() {
+        policy = policy(allowanceMillis = 8_000) // e.g. what is left of the daily limit
+        shorts(1_000)
+        other(4_000)
+        policy = policy(allowanceMillis = 5_000) // 3 s were used in the first entry
+        val second = shorts(10_000)
+        assertTrue(second.contains(Command.ScheduleTick(15_000)))
+        assertTrue(machine.handle(SessionInput.Tick(15_000)).any { it is Command.ShowBlockScreen })
+    }
+
     @Test fun leavingDuringToleranceRecordsExposureAndResets() {
-        policy = policy(toleranceMillis = 10_000)
+        policy = policy(allowanceMillis = 10_000)
         shorts(1_000)
         val out = other(4_000)
         assertEquals(3_000L, out.filterIsInstance<Command.RecordExposure>().single().exposure.durationMillis)
@@ -188,7 +200,7 @@ class BlockingSessionMachineTest {
     @Test fun screenOffAndServiceStopCloseEverything() {
         shorts(1_000)
         assertTrue(machine.handle(SessionInput.ScreenOff(2_000)).contains(Command.HideBlockScreen))
-        policy = policy(toleranceMillis = 60_000)
+        policy = policy(allowanceMillis = 60_000)
         shorts(3_000)
         val out = machine.handle(SessionInput.ServiceStopping(4_000))
         assertEquals(1_000L, out.filterIsInstance<Command.RecordExposure>().single().exposure.durationMillis)

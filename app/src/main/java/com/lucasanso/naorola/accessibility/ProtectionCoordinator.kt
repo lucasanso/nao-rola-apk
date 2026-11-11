@@ -15,6 +15,7 @@ import com.lucasanso.naorola.domain.model.ProtectionSettings
 import com.lucasanso.naorola.domain.policy.BlockingPolicy
 import com.lucasanso.naorola.domain.session.BlockingSessionMachine
 import com.lucasanso.naorola.domain.session.Command
+import com.lucasanso.naorola.domain.session.DailyExposureTracker
 import com.lucasanso.naorola.domain.session.SessionInput
 import com.lucasanso.naorola.domain.session.UserAction
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 
@@ -55,8 +57,11 @@ class ProtectionCoordinator(
     private var appliedPackages: Set<String>? = null
     private var lastLogKey: String? = null
 
+    /** Short-video time already allowed today (daily limit); updated as exposures are recorded. */
+    private val dailyUsage = DailyExposureTracker()
+
     private val machine = BlockingSessionMachine { surface, now ->
-        BlockingPolicy.evaluate(settings, surface, now, ZoneId.systemDefault())
+        BlockingPolicy.evaluate(settings, surface, now, ZoneId.systemDefault(), dailyUsage.usedToday(surface.platform, now))
     }
     private val overlay = BlockingOverlayManager(context, logger, onAction = ::onUserAction)
     private val audio = AudioFocusMuter(context)
@@ -78,6 +83,11 @@ class ProtectionCoordinator(
         }
         mainScope.launch { container.settingsRepository.uiPreferences.collect { dynamicColor = it.dynamicColor } }
         mainScope.launch { container.diagnostics.armed.collect { applyMonitoredPackages() } }
+        engineScope.launch {
+            runCatching { container.statsRepository.today().first() }
+                .onSuccess { dailyUsage.seed(clock.nowMillis(), it.exposureMillisByPlatform) }
+                .onFailure { logger.error(TAG, "Falha ao carregar o uso de hoje", it) }
+        }
         ContextCompat.registerReceiver(
             context, screenOffReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF), ContextCompat.RECEIVER_NOT_EXPORTED,
         )
@@ -148,9 +158,12 @@ class ProtectionCoordinator(
                     runCatching { container.statsRepository.record(command.event) }
                         .onFailure { logger.error(TAG, "Falha ao gravar evento", it) }
                 }
-                is Command.RecordExposure -> container.appScope.launch {
-                    runCatching { container.statsRepository.recordExposure(command.exposure) }
-                        .onFailure { logger.error(TAG, "Falha ao gravar tempo", it) }
+                is Command.RecordExposure -> {
+                    dailyUsage.add(command.exposure)
+                    container.appScope.launch {
+                        runCatching { container.statsRepository.recordExposure(command.exposure) }
+                            .onFailure { logger.error(TAG, "Falha ao gravar tempo", it) }
+                    }
                 }
                 is Command.PersistSnooze -> container.appScope.launch {
                     container.settingsRepository.setSnoozedUntil(command.untilMillis)

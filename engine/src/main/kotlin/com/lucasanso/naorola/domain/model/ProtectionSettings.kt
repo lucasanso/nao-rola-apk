@@ -19,7 +19,10 @@ data class ProtectionSettings(
     val feedReelsEnabled: Boolean = false,
     /** Block apps that are only short videos (TikTok, Kwai…). */
     val otherAppsEnabled: Boolean = false,
+    /** Free time per entry before blocking; [UNLIMITED_TOLERANCE] = no per-entry cap. */
     val toleranceSeconds: Int = 0,
+    /** Total short-video time allowed per day and platform; 0 = no daily limit. */
+    val dailyLimitMinutes: Int = 0,
     val snoozeAllowed: Boolean = true,
     val snoozeMinutes: Int = DEFAULT_SNOOZE_MINUTES,
     /** Epoch millis until which blocking is paused ("Desativar temporariamente"); 0 = not paused. */
@@ -36,7 +39,9 @@ data class ProtectionSettings(
 ) {
     companion object {
         const val DEFAULT_SNOOZE_MINUTES = 10
-        val TOLERANCE_CHOICES_SECONDS = listOf(0, 5, 10, 15, 30, 60)
+        const val UNLIMITED_TOLERANCE = -1
+        val TOLERANCE_CHOICES_SECONDS = listOf(0, 5, 10, 15, 30, 60, UNLIMITED_TOLERANCE)
+        val DAILY_LIMIT_CHOICES_MINUTES = listOf(0, 5, 10, 15, 30, 60)
         val SNOOZE_CHOICES_MINUTES = listOf(5, 10, 15, 30)
     }
 }

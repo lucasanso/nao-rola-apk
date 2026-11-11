@@ -109,6 +109,11 @@
     <string name="tolerance_body">Quanto tempo um vídeo curto pode ficar na tela antes do bloqueio, a cada vez que você entra.</string>
     <string name="tolerance_none">Nenhuma</string>
     <string name="seconds_short">%1$d s</string>
+    <string name="tolerance_unlimited">Sem limite</string>
+    <string name="tolerance_unlimited_needs_daily">“Sem limite” por entrada só libera vídeos curtos se houver um limite diário. Sem ele, o bloqueio é imediato.</string>
+    <string name="daily_limit_title">Limite diário</string>
+    <string name="daily_limit_body">Soma todo o tempo liberado no dia, por plataforma (tolerância e Reel de DM). Quando acaba, o bloqueio é imediato até a meia-noite.</string>
+    <string name="daily_limit_off">Sem limite</string>
     <string name="snooze_title">Permitir desativar temporariamente</string>
     <string name="snooze_body">Mostra o botão de pausa na tela de bloqueio.</string>
     <string name="snooze_duration">Duração da pausa</string>

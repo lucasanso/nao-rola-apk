@@ -118,9 +118,37 @@ fun BlockingSettingsScreen(onBack: () -> Unit) {
             ChoiceChips(
                 options = ProtectionSettings.TOLERANCE_CHOICES_SECONDS,
                 selected = s.toleranceSeconds,
-                label = { if (it == 0) stringResource(R.string.tolerance_none) else stringResource(R.string.seconds_short, it) },
+                label = {
+                    when (it) {
+                        0 -> stringResource(R.string.tolerance_none)
+                        ProtectionSettings.UNLIMITED_TOLERANCE -> stringResource(R.string.tolerance_unlimited)
+                        else -> stringResource(R.string.seconds_short, it)
+                    }
+                },
                 enabled = optionsEnabled,
             ) { v -> update { it.copy(toleranceSeconds = v) } }
+            if (s.toleranceSeconds == ProtectionSettings.UNLIMITED_TOLERANCE && s.dailyLimitMinutes <= 0) {
+                Text(
+                    stringResource(R.string.tolerance_unlimited_needs_daily),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+            HorizontalDivider()
+            Column {
+                Text(stringResource(R.string.daily_limit_title), style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    stringResource(R.string.daily_limit_body),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            ChoiceChips(
+                options = ProtectionSettings.DAILY_LIMIT_CHOICES_MINUTES,
+                selected = s.dailyLimitMinutes,
+                label = { if (it == 0) stringResource(R.string.daily_limit_off) else stringResource(R.string.minutes_short, it) },
+                enabled = optionsEnabled,
+            ) { v -> update { it.copy(dailyLimitMinutes = v) } }
             HorizontalDivider()
             SwitchRow(stringResource(R.string.snooze_title), stringResource(R.string.snooze_body), s.snoozeAllowed, optionsEnabled) { v ->
                 update { it.copy(snoozeAllowed = v) }

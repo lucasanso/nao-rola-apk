@@ -102,6 +102,7 @@ class SettingsRepository(
             feedReelsEnabled = p[Keys.FEED_REELS] ?: defaults.feedReelsEnabled,
             otherAppsEnabled = p[Keys.OTHER_APPS] ?: defaults.otherAppsEnabled,
             toleranceSeconds = p[Keys.TOLERANCE_SECONDS] ?: defaults.toleranceSeconds,
+            dailyLimitMinutes = p[Keys.DAILY_LIMIT_MINUTES] ?: defaults.dailyLimitMinutes,
             snoozeAllowed = p[Keys.SNOOZE_ALLOWED] ?: defaults.snoozeAllowed,
             snoozeMinutes = p[Keys.SNOOZE_MINUTES] ?: defaults.snoozeMinutes,
             snoozedUntil = p[Keys.SNOOZED_UNTIL] ?: defaults.snoozedUntil,
@@ -134,6 +135,7 @@ class SettingsRepository(
         p[Keys.FEED_REELS] = s.feedReelsEnabled
         p[Keys.OTHER_APPS] = s.otherAppsEnabled
         p[Keys.TOLERANCE_SECONDS] = s.toleranceSeconds
+        p[Keys.DAILY_LIMIT_MINUTES] = s.dailyLimitMinutes
         p[Keys.SNOOZE_ALLOWED] = s.snoozeAllowed
         p[Keys.SNOOZE_MINUTES] = s.snoozeMinutes
         p[Keys.SNOOZED_UNTIL] = s.snoozedUntil
@@ -162,6 +164,7 @@ class SettingsRepository(
         val FEED_REELS = booleanPreferencesKey("feed_reels_enabled")
         val OTHER_APPS = booleanPreferencesKey("other_apps_enabled")
         val TOLERANCE_SECONDS = intPreferencesKey("tolerance_seconds")
+        val DAILY_LIMIT_MINUTES = intPreferencesKey("daily_limit_minutes")
         val SNOOZE_ALLOWED = booleanPreferencesKey("snooze_allowed")
         val SNOOZE_MINUTES = intPreferencesKey("snooze_minutes")
         val SNOOZED_UNTIL = longPreferencesKey("snoozed_until")
