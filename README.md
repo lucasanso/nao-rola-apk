@@ -4,11 +4,11 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.2.0.apk`](release/NaoRola-0.2.0.apk) (3,2 MB, Android 12+). SHA-256: `fd53aeac813daeb13754a8aaff4e33cb03320d19744fd1916aa570deacfb1825`. Assinado com a mesma chave da 0.1.0: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.3.0.apk`](release/NaoRola-0.3.0.apk) (3,2 MB, Android 12+). SHA-256: `e5cdb58e29fa2a2d2051d5bd62555c2a8283e9490d1a623a2c86b8dfe30108de`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual: funcional, ainda sem calibração
 
-A versão 0.2.0 completa as funções planejadas que não dependem do aparelho. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
+A versão 0.3.0 completa as funções planejadas que não dependem do aparelho e avisa quando a detecção parece ter quebrado. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
 
 | Parte | Situação |
 |---|---|
@@ -21,6 +21,7 @@ A versão 0.2.0 completa as funções planejadas que não dependem do aparelho. 
 | Modo Disciplina (regras configuráveis, espera para sair) | Implementado e testado |
 | Horários de funcionamento, exceções semanais, pausas programadas | Implementado e testado |
 | Estatísticas de 7 dias, estimativa de exposição evitada | Implementado (estimativa só com 10+ sessões medidas) |
+| Aviso de "possível falha de detecção" (aba Shorts/Reels aberta sem o player ser reconhecido) | Implementado e testado |
 | Reels dentro do feed, prateleira de Shorts | **Pendente**, depende de capturas reais |
 
 ## Capturas de tela
@@ -31,9 +32,9 @@ Geradas a partir do app real, com Robolectric e dados de exemplo.
 |---|---|---|---|---|---|
 | ![](docs/screenshots/02-painel-ativo.png) | ![](docs/screenshots/09-estatisticas.png) | ![](docs/screenshots/07-tela-de-bloqueio.png) | ![](docs/screenshots/04-bloqueio.png) | ![](docs/screenshots/11-disciplina.png) | ![](docs/screenshots/10-horarios.png) |
 
-| Painel (desligado) | Permissões | Ajustes | Escuro | Bloqueio (escuro) |
-|---|---|---|---|---|
-| ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/03-ajustes.png) | ![](docs/screenshots/06-painel-escuro.png) | ![](docs/screenshots/08-tela-de-bloqueio-escuro.png) |
+| Painel (desligado) | Aviso de detecção | Permissões | Ajustes | Escuro | Bloqueio (escuro) |
+|---|---|---|---|---|---|
+| ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/12-alerta-deteccao.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/03-ajustes.png) | ![](docs/screenshots/06-painel-escuro.png) | ![](docs/screenshots/08-tela-de-bloqueio-escuro.png) |
 
 ---
 
@@ -49,7 +50,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.2.0.apk
+adb install -r release/NaoRola-0.3.0.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -120,6 +121,8 @@ Capturas que mais ajudam:
 
 Cada captura também registra a conclusão do detector, para mostrar o que foi ou não reconhecido. Os arquivos viram testes automáticos: o mesmo formato é lido pelos testes do `:engine`.
 
+**Aviso automático.** Se você ficar na aba Shorts ou Reels por alguns segundos e o player não for reconhecido, o Painel mostra **"Possível falha de detecção"**. Isso costuma indicar que uma atualização do YouTube ou do Instagram mudou a tela. Toque em *Abrir Diagnóstico*, depois em *Capturar próxima tela*, e volte à aba: essa é exatamente a captura que permite corrigir as regras. O aviso some sozinho quando a detecção volta a funcionar.
+
 ---
 
 ## Como funciona
@@ -177,21 +180,22 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 e 0.2.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0, 0.2.0 e 0.3.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-122 testes automatizados (88 no `:engine`, 34 no `:app`), mais 6 de captura de tela.
+134 testes automatizados (97 no `:engine`, 37 no `:app`), mais 7 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|
 | `YouTubeContentDetectorTest` | Shorts pela aba e pela Início, ids renomeados, mini player, vídeo comum (inclusive tela cheia), prateleira de Shorts não bloqueada |
 | `InstagramContentDetectorTest` | Aba Reels, Reel do feed e da DM, ids renomeados, **Stories nunca bloqueados**, feed e DM reconhecidos, troca de página |
 | `BrowserContentDetectorTest` | URLs de Shorts/Reels, URLs legítimas e enganosas, barra de endereço por id e por posição |
+| `DetectionHealthMonitorTest` | Aviso de falha de detecção: só após alguns segundos na aba sem player, nunca por Stories ou vídeo comum, some quando a detecção volta; inclui o detector real numa tela de Shorts "quebrada" |
 | `ShortVideoClassifierTest`, `TreeScannerTest`, `StructureDumpTest` | Limiar, veto, limite de nós, privacidade do resumo e do diagnóstico, ida e volta do formato |
 | `BlockingPolicyTest`, `DisciplineTest`, `ScheduleAndCodecTest` | Bloqueio total, limite diário, regras configuráveis da Disciplina, trava das configurações, horários (inclusive após a meia-noite) |
 | `StatsAndTrackerTest` | Uso do dia por plataforma (virada da meia-noite), série de 7 dias, estimativa só com dados suficientes |
-| `BlockingSessionMachineTest` | Tolerância, voltar com nova tentativa, sair, pausa, Reel de DM, troca de app, tela desligada, tempo exposto |
+| `BlockingSessionMachineTest` | Tolerância, voltar com nova tentativa, sair, pausa, Reel de DM (inclusive com tela de carregamento no meio), troca de app, tela desligada, tempo exposto |
 | `ForegroundTimeCalculatorTest` | Tempo dentro de cada app a partir de eventos de uso |
 | `SettingsRepositoryTest`, `StatsRepositoryTest`, `DailyUsageHistoryTest` | Persistência real (DataStore, Room), trava da Disciplina, contagens do dia, retenção, uso por dia (dia sem dados nunca vira zero) |
 | `DatabaseMigrationTest` | Atualização do banco da 0.1.0 (v1 → v2) sem perder histórico |
@@ -199,6 +203,7 @@ Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 e 0.
 | `ServiceLifecycleTest` | Serviço ligado/desligado pelo usuário refletido no app |
 | `AppSmokeTest`, `DisciplineFlowTest`, `ScheduleFlowTest` | Passeio por todas as telas gravando alterações; ativar a Disciplina trava as configurações e inicia a espera para sair; criar horário e exceção |
 | `ScheduleFormatTest` | Janelas (meia-noite, dias) e rótulos |
+| `SuspicionCardTest` | Aviso de detecção no Painel: abre o Diagnóstico e pode ser dispensado |
 
 Roteiro no aparelho: [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md).
 

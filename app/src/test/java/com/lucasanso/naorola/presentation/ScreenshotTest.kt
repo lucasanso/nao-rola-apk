@@ -28,6 +28,7 @@ import com.lucasanso.naorola.detection.rules.InstagramRules
 import com.lucasanso.naorola.detection.rules.YouTubeRules
 import com.lucasanso.naorola.domain.model.BlockEvent
 import com.lucasanso.naorola.domain.model.BlockOutcome
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ScheduleWindow
 import com.lucasanso.naorola.domain.model.ShortVideoExposure
 import com.lucasanso.naorola.domain.model.Surface
@@ -100,6 +101,12 @@ class ScreenshotTest {
             rule.onNodeWithContentDescription("Voltar").performClick(); waitText("Modo Disciplina")
             rule.onNodeWithText("Modo Disciplina").performClick(); waitText("Espera para sair"); shot(it, "11-disciplina")
         }
+    }
+
+    @Test fun detectionSuspicion() {
+        simulateActiveProtection()
+        runBlocking { app.container.settingsRepository.setDetectionSuspicion(Platform.YOUTUBE, System.currentTimeMillis()) }
+        launch { waitText("Possível falha de detecção"); shot(it, "12-alerta-deteccao") }
     }
 
     @Test fun blockScreen() = blockScreenShot("07-tela-de-bloqueio")

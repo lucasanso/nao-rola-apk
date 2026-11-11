@@ -10,8 +10,8 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.2.0.apk` | App aparece com o ícone do Não-Rola | |
-| P1b | Atualização | Com a 0.1.0 instalada e usada, instalar a 0.2.0 por cima | Configurações e contagem de hoje mantidas | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.3.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.3.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
 | P4 | Ativar serviço | *Acessibilidade › Apps instalados › Não-Rola* › ativar | Volte ao app: "Proteção ativa" | |
@@ -43,6 +43,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | I4 | Feed de fotos, perfis, mensagens | **Nada bloqueado** | |
 | I5 | Reel recebido por DM, com "Liberar Reel recebido por mensagem" ligado | O Reel aberto toca; ao passar para o próximo, bloqueio | |
 | I6 | Mesmo cenário com a opção desligada | Bloqueio imediato | |
+| I6b | Reel de DM com conexão lenta (tela de carregamento antes do Reel) | O Reel aberto continua liberado | |
 | I7 | Rolar o feed com um Reel visível | Nada bloqueado no feed (cobertura é Fase 4); tocar no Reel abre o visualizador e bloqueia | |
 
 ## 4. Tela de bloqueio
@@ -85,6 +86,8 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | D4 | Disciplina com "Forçar Bloqueio total" | Reel de DM também bloqueado; navegador e apps de vídeo curto protegidos | |
 | E1 | Estatísticas após alguns dias de uso | Barras por dia batem com a lista "Dia a dia"; dias antigos sem dados aparecem como "sem dados" | |
 | E2 | Estimativa de exposição evitada | Só aparece após 10 sessões medidas; mostra a fórmula | |
+| F1 | Se algum Short ou Reel **não** for bloqueado na aba Shorts/Reels: ficar ~5 s na aba e voltar ao Painel | Painel mostra "Possível falha de detecção"; *Abrir Diagnóstico › Capturar próxima tela* e voltar à aba gera a captura que corrige a regra | |
+| F2 | Depois de F1, quando a detecção voltar a funcionar (ou tocar em Dispensar) | O aviso some | |
 
 ## 7. Persistência e robustez
 
