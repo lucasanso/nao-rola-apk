@@ -448,3 +448,28 @@ Orientação recebida: *"tudo deve ser configurável; um modo que bloqueia tudo 
 3. **Limite diário somado:** opcional, além da tolerância por entrada (6.4). Entra na Fase 4.
 4. **ID do app:** `com.lucasanso.naorola`.
 5. **Sem aparelho por enquanto:** o MVP usa os IDs candidatos e sinais estruturais. A calibração acontece quando houver um Android disponível (seção 11).
+
+---
+
+## 14. Como ficou na implementação (0.3.1)
+
+O plano acima foi seguido. Alguns nomes mudaram e algumas peças surgiram durante a implementação:
+
+| Planejado | Implementado | Observação |
+|---|---|---|
+| `SystemActions` | `ScreenAccess` (implementada pelo `NaoRolaAccessibilityService`) | Reúne voltar/início, janela ativa, app em primeiro plano e apps observados numa interface estreita |
+| `ServiceInfoUpdater` | `MonitoredPackages` + `ScreenAccess.setMonitoredPackages` | A lista nunca fica vazia (vazia significaria "todos os apps" para o Android) |
+| `ServiceStatus` | `AppContainer.serviceConnected` (`StateFlow`) | — |
+| `BlockScreenView` | `BlockScreen` (Compose) dentro do `BlockingOverlayManager` | — |
+| `RegionCoverOverlay` | **Não implementado** | Depende de capturas reais dos Reels no feed |
+| `DailyUsageSync` | `DailyUsageHistory` | Guarda dias fechados; um dia sem dados no Android fica "desconhecido", nunca zero |
+| `StatsRecorder` | `StatsRepository` | A gravação é disparada pelos comandos da máquina de sessão no `ProtectionCoordinator` |
+| — | `ProtectionCoordinator` | Liga serviço e engine: eventos → limitador → detector → classificador → máquina de sessão → comandos, numa thread única |
+| — | `DailyExposureTracker` | Uso do dia em memória para aplicar o limite diário sem esperar o banco |
+| — | `DetectionHealthMonitor` | Aviso de "possível falha de detecção" (aba Shorts/Reels selecionada sem player reconhecido) |
+| — | `SettingsEditGuard` | Toda edição de configuração passa por ele: a Disciplina não tem como ser contornada pelas telas |
+| — | `CapturedScreensTest` + `docs/capturas/` | Capturas reais rotuladas no app viram testes automáticos dos detectores |
+
+**Versões fixadas:** Gradle 9.9.0, AGP 9.5.1 (Kotlin embutido), Kotlin 2.4.21, KSP 2.3.13, Compose BOM 2026.09.00, Room 2.8.5 (banco v2, com migração automática da v1), DataStore 1.3.0, Robolectric 4.17 (runtime Android 17). `compileSdk`/`targetSdk` 37, `minSdk` 31.
+
+**Verificação contínua:** `.github/workflows/ci.yml` roda os testes do `:engine` e do `:app` e o lint em cada pull request e em cada push na `main`.
