@@ -47,6 +47,20 @@ class StructureDumpTest {
         }
     }
 
+    @Test fun expectationLabelIsWrittenReadAndReplaced() {
+        val dump = StructureDump.write(Screens.youtubeShortsTab(), notes = mapOf("detector" to "youtube"))
+        assertEquals(null, StructureDump.expectationOf(dump))
+        val labelled = StructureDump.withExpectation(dump, StructureDump.Expectation.BLOCK)
+        assertEquals(StructureDump.Expectation.BLOCK, StructureDump.expectationOf(labelled))
+        assertEquals("youtube", StructureDump.notesOf(labelled)["detector"])
+        val relabelled = StructureDump.withExpectation(labelled, StructureDump.Expectation.ALLOW)
+        assertEquals(StructureDump.Expectation.ALLOW, StructureDump.expectationOf(relabelled))
+        assertEquals(1, relabelled.lines().count { it.startsWith("# esperado=") })
+        assertEquals(null, StructureDump.expectationOf(StructureDump.withExpectation(relabelled, null)))
+        // The tree itself is untouched by labels.
+        assertEquals(StructureDump.parse(dump).root?.childCount, StructureDump.parse(relabelled).root?.childCount)
+    }
+
     @Test fun parsesFixtureFileFromResources() {
         val text = javaClass.getResource("/fixtures/youtube_shorts_sintetico.txt")!!.readText()
         val tree = StructureDump.parse(text)

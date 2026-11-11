@@ -26,6 +26,9 @@ data class DiagnosticContext(
     val versionOf: (String) -> String?,
 )
 
+/** A saved capture and the label the user gave it ("should block" / "should not block"). */
+data class CaptureInfo(val file: File, val expectation: StructureDump.Expectation?)
+
 /**
  * Diagnostic mode: when armed, the next screen of a supported app is saved as a structure-only
  * dump (see [StructureDump]) together with what the detector concluded. Files stay in the app's
@@ -40,8 +43,8 @@ class DiagnosticRecorder(
     private val _armed = MutableStateFlow(false)
     val armed: StateFlow<Boolean> = _armed.asStateFlow()
 
-    private val _files = MutableStateFlow(listFiles())
-    val files: StateFlow<List<File>> = _files.asStateFlow()
+    private val _files = MutableStateFlow(listCaptures())
+    val files: StateFlow<List<CaptureInfo>> = _files.asStateFlow()
 
     fun arm() {
         _armed.value = true
@@ -77,22 +80,44 @@ class DiagnosticRecorder(
         }
     }
 
+    /**
+     * Records what should have happened on the captured screen. Labelled captures placed in
+     * docs/capturas become automated tests of the detectors.
+     */
+    fun setExpectation(file: File, expectation: StructureDump.Expectation?) {
+        if (file.parentFile != directory || !file.exists()) return
+        try {
+            file.writeText(StructureDump.withExpectation(file.readText(), expectation))
+        } catch (e: Exception) {
+            logger.error(TAG, "Falha ao rotular captura", e)
+        }
+        refresh()
+    }
+
     fun delete(file: File) {
         if (file.parentFile == directory) file.delete()
         refresh()
     }
 
     fun deleteAll() {
-        listFiles().forEach { it.delete() }
+        captureFiles().forEach { it.delete() }
         refresh()
     }
 
     fun refresh() {
-        _files.value = listFiles()
+        _files.value = listCaptures()
     }
 
-    private fun listFiles(): List<File> =
-        directory.listFiles { f -> f.isFile && f.name.endsWith(".txt") }?.sortedByDescending { it.lastModified() }.orEmpty()
+    private fun captureFiles(): List<File> =
+        directory.listFiles { f -> f.isFile && f.name.endsWith(".txt") }?.toList().orEmpty()
+
+    /** Newest first, by the time in the file name (relabelling must not reorder the list). */
+    private fun listCaptures(): List<CaptureInfo> = captureFiles()
+        .sortedByDescending { STAMP.find(it.name)?.value ?: it.lastModified().toString() }
+        .map { file ->
+            val header = runCatching { file.useLines { lines -> lines.takeWhile { it.startsWith("#") }.joinToString("\n") } }
+            CaptureInfo(file, header.getOrNull()?.let(StructureDump::expectationOf))
+        }
 
     private fun timestamp(pattern: String) = SimpleDateFormat(pattern, Locale.ROOT).format(Date(clock.nowMillis()))
 
@@ -103,6 +128,7 @@ class DiagnosticRecorder(
 
     private companion object {
         const val TAG = "Diagnostico"
+        val STAMP = Regex("""\d{8}-\d{6}(?=\.txt$)""")
         val RULE_SETS = listOf(YouTubeRules.INFO, InstagramRules.INFO, BrowserRules.INFO)
             .joinToString { "${it.name} ${it.version}" }
     }

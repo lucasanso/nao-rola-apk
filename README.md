@@ -4,11 +4,11 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.3.0.apk`](release/NaoRola-0.3.0.apk) (3,2 MB, Android 12+). SHA-256: `e5cdb58e29fa2a2d2051d5bd62555c2a8283e9490d1a623a2c86b8dfe30108de`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.3.1.apk`](release/NaoRola-0.3.1.apk) (3,2 MB, Android 12+). SHA-256: `02a445f346a4da1037f4881307ffd45d366bf1140d0485af96d5d038e9460e06`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual: funcional, ainda sem calibração
 
-A versão 0.3.0 completa as funções planejadas que não dependem do aparelho e avisa quando a detecção parece ter quebrado. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
+A versão 0.3.1 completa as funções planejadas que não dependem do aparelho e avisa quando a detecção parece ter quebrado. **Ela ainda não foi testada num aparelho real.** Os identificadores de tela que os detectores procuram vêm de fontes públicas e de análise estrutural. Eles precisam ser confirmados com o **modo diagnóstico** num Android com YouTube e Instagram atualizados (veja [Calibração](#calibração)).
 
 | Parte | Situação |
 |---|---|
@@ -50,7 +50,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.3.0.apk
+adb install -r release/NaoRola-0.3.1.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -103,7 +103,10 @@ Esta é a etapa que transforma regras candidatas em regras confirmadas.
 
 1. Em *Ajustes › Diagnóstico*, toque em **Capturar próxima tela**.
 2. Abra a tela que quer registrar. O app salva **só a estrutura** (tipos de elemento, identificadores, posições relativas), sem nenhum texto, nome, mensagem ou endereço.
-3. Toque em **Compartilhar** na captura e envie o arquivo (por exemplo, adicionando-o em `docs/capturas/` neste repositório).
+3. Na lista de capturas, marque **Deveria bloquear** ou **Não deveria bloquear**.
+4. Toque em **Compartilhar** e coloque o arquivo em [`docs/capturas/`](docs/capturas/README.md) (de preferência numa branch ou pull request).
+
+Toda captura marcada nessa pasta vira um **teste automático** (`CapturedScreensTest`): o CI mostra na hora quais telas reais o detector erra, com os sinais que viu. Cada correção de regra fica verificada contra a tela que a motivou.
 
 Capturas que mais ajudam:
 
@@ -180,17 +183,18 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0, 0.2.0 e 0.3.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.3.1 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-134 testes automatizados (97 no `:engine`, 37 no `:app`), mais 7 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
+138 testes automatizados (99 no `:engine`, 39 no `:app`), mais 7 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|
 | `YouTubeContentDetectorTest` | Shorts pela aba e pela Início, ids renomeados, mini player, vídeo comum (inclusive tela cheia), prateleira de Shorts não bloqueada |
 | `InstagramContentDetectorTest` | Aba Reels, Reel do feed e da DM, ids renomeados, **Stories nunca bloqueados**, feed e DM reconhecidos, troca de página |
 | `BrowserContentDetectorTest` | URLs de Shorts/Reels, URLs legítimas e enganosas, barra de endereço por id e por posição |
+| `CapturedScreensTest` | Toda captura real rotulada em `docs/capturas/` é classificada como o rótulo diz (vazio até a calibração) |
 | `DetectionHealthMonitorTest` | Aviso de falha de detecção: só após alguns segundos na aba sem player, nunca por Stories ou vídeo comum, some quando a detecção volta; inclui o detector real numa tela de Shorts "quebrada" |
 | `ShortVideoClassifierTest`, `TreeScannerTest`, `StructureDumpTest` | Limiar, veto, limite de nós, privacidade do resumo e do diagnóstico, ida e volta do formato |
 | `BlockingPolicyTest`, `DisciplineTest`, `ScheduleAndCodecTest` | Bloqueio total, limite diário, regras configuráveis da Disciplina, trava das configurações, horários (inclusive após a meia-noite) |
@@ -204,6 +208,7 @@ Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0, 0.2
 | `AppSmokeTest`, `DisciplineFlowTest`, `ScheduleFlowTest` | Passeio por todas as telas gravando alterações; ativar a Disciplina trava as configurações e inicia a espera para sair; criar horário e exceção |
 | `ScheduleFormatTest` | Janelas (meia-noite, dias) e rótulos |
 | `SuspicionCardTest` | Aviso de detecção no Painel: abre o Diagnóstico e pode ser dispensado |
+| `DiagnosticRecorderTest` | Uma captura por pedido, rótulo gravado no arquivo sem reordenar a lista, nada fora da pasta de capturas |
 
 Roteiro no aparelho: [docs/TESTES-MANUAIS.md](docs/TESTES-MANUAIS.md).
 

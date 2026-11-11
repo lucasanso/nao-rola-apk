@@ -20,6 +20,37 @@ import java.util.Locale
 object StructureDump {
     const val HEADER = "# naorola-structure-dump v1"
     private const val NONE = "-"
+    private const val EXPECTATION_KEY = "esperado"
+
+    /** What should have happened on the captured screen, set by the user in the app. */
+    enum class Expectation(val label: String) {
+        BLOCK("bloquear"),
+        ALLOW("liberar"),
+        ;
+
+        companion object {
+            fun fromLabel(value: String?): Expectation? = entries.firstOrNull { it.label == value?.trim() }
+        }
+    }
+
+    /** Header notes ("# key=value" lines before the first node). */
+    fun notesOf(text: String): Map<String, String> = text.lineSequence()
+        .map { it.trimEnd() }
+        .takeWhile { it.isEmpty() || it.startsWith("#") }
+        .filter { it.startsWith("# ") && '=' in it }
+        .associate { it.removePrefix("# ").substringBefore('=').trim() to it.substringAfter('=').trim() }
+
+    fun expectationOf(text: String): Expectation? = Expectation.fromLabel(notesOf(text)[EXPECTATION_KEY])
+
+    /** Returns [text] with the expectation line set (or removed when [expectation] is null). */
+    fun withExpectation(text: String, expectation: Expectation?): String {
+        val lines = text.lines().filterNot { it.startsWith("# $EXPECTATION_KEY=") }.toMutableList()
+        if (expectation != null) {
+            val at = if (lines.firstOrNull() == HEADER) 1 else 0
+            lines.add(at, "# $EXPECTATION_KEY=${expectation.label}")
+        }
+        return lines.joinToString("\n")
+    }
 
     /** Navigation labels that may be written (they are app UI, not user content). */
     val LABEL_ALLOWLIST: Set<String> = setOf(

@@ -10,8 +10,8 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.3.0.apk` | App aparece com o ícone do Não-Rola | |
-| P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.3.0 por cima | Configurações e contagem de hoje mantidas | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.3.1.apk` | App aparece com o ícone do Não-Rola | |
+| P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.3.1 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
 | P4 | Ativar serviço | *Acessibilidade › Apps instalados › Não-Rola* › ativar | Volte ao app: "Proteção ativa" | |

@@ -18,3 +18,10 @@ kotlin {
 dependencies {
     testImplementation(libs.junit)
 }
+
+// Real labelled captures (docs/capturas) are test inputs: adding one re-runs the tests.
+val capturas: Directory = rootProject.layout.projectDirectory.dir("docs/capturas")
+tasks.test {
+    inputs.files(fileTree(capturas)).withPropertyName("capturas").withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty("naorola.capturas", capturas.asFile.absolutePath)
+}

@@ -292,6 +292,9 @@
     <string name="diagnostics_captures">Capturas</string>
     <string name="diagnostics_empty">Nenhuma captura ainda.</string>
     <string name="diagnostics_delete_all">Apagar todas</string>
+    <string name="diagnostics_label_hint">Marque o que deveria ter acontecido em cada tela. Capturas marcadas viram testes automáticos dos detectores (docs/capturas no repositório).</string>
+    <string name="diagnostics_expect_block">Deveria bloquear</string>
+    <string name="diagnostics_expect_allow">Não deveria bloquear</string>
     <string name="diagnostics_log">Log técnico</string>
     <string name="diagnostics_log_body">Registra conclusões dos detectores e erros, nunca o conteúdo da tela.</string>
     <string name="diagnostics_log_empty">O log está vazio.</string>
