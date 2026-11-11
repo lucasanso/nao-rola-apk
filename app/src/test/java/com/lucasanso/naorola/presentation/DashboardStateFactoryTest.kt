@@ -81,6 +81,14 @@ class DashboardStateFactoryTest {
         assertEquals(PlatformStatus.Protected, statusOf(state, PlatformKey.YOUTUBE))
     }
 
+    @Test fun detectionSuspicionsAreShown() {
+        val state = DashboardStateFactory.build(
+            ProtectionSettings(), healthy, true, TodaySummary(), null, now, ZoneOffset.UTC, setOf(Platform.INSTAGRAM),
+        )
+        assertEquals(setOf(Platform.INSTAGRAM), state.suspectedDetection)
+        assertTrue(build().suspectedDetection.isEmpty())
+    }
+
     @Test fun countsAndUsageComeOnlyFromMeasuredData() {
         val today = TodaySummary(
             blockedByPlatform = mapOf(Platform.YOUTUBE to 3, Platform.INSTAGRAM to 2),

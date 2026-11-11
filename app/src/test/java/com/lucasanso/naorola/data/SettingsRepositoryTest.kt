@@ -5,6 +5,7 @@ import com.lucasanso.naorola.core.AppLogger
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.data.settings.SettingsRepository
 import com.lucasanso.naorola.domain.model.DisciplineRules
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ProtectionMode
 import com.lucasanso.naorola.domain.model.ScheduleWindow
 import com.lucasanso.naorola.domain.policy.Discipline
@@ -72,6 +73,15 @@ class SettingsRepositoryTest {
         assertTrue(repo.changeDiscipline { s, t -> Discipline.confirmExit(s, t) })
         assertTrue(repo.edit { it.copy(youtubeEnabled = false) } is EditResult.Applied)
         assertFalse(repo.settings.first().youtubeEnabled)
+    }
+
+    @Test fun detectionSuspicionsAreStoredAndCleared() = runTest(UnconfinedTestDispatcher()) {
+        val repo = repository(backgroundScope)
+        repo.setDetectionSuspicion(Platform.YOUTUBE, 123L)
+        repo.setDetectionSuspicion(Platform.OTHER, 5L) // not tracked
+        assertEquals(mapOf(Platform.YOUTUBE to 123L), repo.detectionSuspicions.first())
+        repo.setDetectionSuspicion(Platform.YOUTUBE, null)
+        assertTrue(repo.detectionSuspicions.first().isEmpty())
     }
 
     @Test fun snoozeIsStored() = runTest(UnconfinedTestDispatcher()) {

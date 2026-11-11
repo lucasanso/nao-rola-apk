@@ -91,7 +91,12 @@ fun NaoRolaNavHost() {
             exitTransition = { fadeOut() },
         ) {
             val back: () -> Unit = { nav.popBackStack() }
-            composable(Routes.DASHBOARD) { DashboardScreen(onOpenPermissions = { nav.navigate(Routes.PERMISSIONS) }) }
+            composable(Routes.DASHBOARD) {
+                DashboardScreen(
+                    onOpenPermissions = { nav.navigate(Routes.PERMISSIONS) },
+                    onOpenDiagnostics = { nav.navigate(Routes.DIAGNOSTICS) },
+                )
+            }
             composable(Routes.STATS) { StatsScreen() }
             composable(Routes.SETTINGS) { SettingsHubScreen(onNavigate = { nav.navigate(it) }) }
             composable(Routes.BLOCKING) { BlockingSettingsScreen(onBack = back) }

@@ -13,6 +13,7 @@ import com.lucasanso.naorola.core.AppLogger
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.domain.model.DisciplineRules
 import com.lucasanso.naorola.domain.model.DisciplineState
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ProtectionMode
 import com.lucasanso.naorola.domain.model.ProtectionSettings
 import com.lucasanso.naorola.domain.policy.Discipline
@@ -47,6 +48,24 @@ class SettingsRepository(
     }
 
     val settings: Flow<ProtectionSettings> = preferences.map(::read).distinctUntilChanged()
+
+    /** Platforms whose detector looks outdated (see DetectionHealthMonitor), with the start time. */
+    val detectionSuspicions: Flow<Map<Platform, Long>> = preferences.map { p ->
+        buildMap {
+            p[Keys.SUSPECT_YOUTUBE]?.takeIf { it > 0 }?.let { put(Platform.YOUTUBE, it) }
+            p[Keys.SUSPECT_INSTAGRAM]?.takeIf { it > 0 }?.let { put(Platform.INSTAGRAM, it) }
+        }
+    }.distinctUntilChanged()
+
+    /** [sinceMillis] null clears the suspicion. Only YouTube and Instagram are tracked. */
+    suspend fun setDetectionSuspicion(platform: Platform, sinceMillis: Long?) {
+        val key = when (platform) {
+            Platform.YOUTUBE -> Keys.SUSPECT_YOUTUBE
+            Platform.INSTAGRAM -> Keys.SUSPECT_INSTAGRAM
+            Platform.OTHER -> return
+        }
+        dataStore.edit { it[key] = sinceMillis ?: 0L }
+    }
 
     val uiPreferences: Flow<UiPreferences> = preferences.map {
         UiPreferences(it[Keys.DISCLOSURE_ACCEPTED] ?: false, it[Keys.DYNAMIC_COLOR] ?: false)
@@ -184,6 +203,8 @@ class SettingsRepository(
         val DR_FORCE_TOTAL = booleanPreferencesKey("discipline_force_total")
         val DISCLOSURE_ACCEPTED = booleanPreferencesKey("disclosure_accepted")
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+        val SUSPECT_YOUTUBE = longPreferencesKey("detection_suspect_youtube_since")
+        val SUSPECT_INSTAGRAM = longPreferencesKey("detection_suspect_instagram_since")
     }
 
     private companion object {

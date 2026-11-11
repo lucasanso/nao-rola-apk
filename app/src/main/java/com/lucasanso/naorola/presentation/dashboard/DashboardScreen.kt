@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lucasanso.naorola.R
 import com.lucasanso.naorola.core.SystemSettings
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.presentation.common.containerViewModel
 import com.lucasanso.naorola.presentation.components.PillTone
 import com.lucasanso.naorola.presentation.components.ScreenScaffold
@@ -34,7 +36,7 @@ import com.lucasanso.naorola.presentation.components.durationText
 import java.util.Date
 
 @Composable
-fun DashboardScreen(onOpenPermissions: () -> Unit) {
+fun DashboardScreen(onOpenPermissions: () -> Unit, onOpenDiagnostics: () -> Unit) {
     val viewModel = containerViewModel { DashboardViewModel(it) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) {
@@ -48,6 +50,9 @@ fun DashboardScreen(onOpenPermissions: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         StatusCard(state, onOpenPermissions)
+        state.suspectedDetection.sortedBy { it.ordinal }.forEach { platform ->
+            SuspicionCard(platform, onOpenDiagnostics) { viewModel.dismissSuspicion(platform) }
+        }
         TodayCard(state)
         PlatformsCard(state)
         UsageCard(state)
@@ -96,6 +101,20 @@ private fun StatusCard(state: DashboardState, onOpenPermissions: () -> Unit) {
             Button(onClick = onOpenPermissions, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.status_action_fix))
             }
+        }
+    }
+}
+
+@Composable
+private fun SuspicionCard(platform: Platform, onOpenDiagnostics: () -> Unit, onDismiss: () -> Unit) {
+    val where = stringResource(if (platform == Platform.INSTAGRAM) R.string.suspect_instagram else R.string.suspect_youtube)
+    SectionCard(containerColor = MaterialTheme.colorScheme.tertiaryContainer) {
+        val onColor = MaterialTheme.colorScheme.onTertiaryContainer
+        Text(stringResource(R.string.suspect_title), style = MaterialTheme.typography.titleMedium, color = onColor)
+        Text(stringResource(R.string.suspect_body, where), style = MaterialTheme.typography.bodyMedium, color = onColor)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = onOpenDiagnostics) { Text(stringResource(R.string.suspect_open_diagnostics)) }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.suspect_dismiss)) }
         }
     }
 }

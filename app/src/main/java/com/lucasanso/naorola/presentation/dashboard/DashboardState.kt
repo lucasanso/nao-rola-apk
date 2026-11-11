@@ -45,6 +45,8 @@ data class DashboardState(
     val usage: UsageState = UsageState.NeedsPermission,
     val shortVideoYoutubeMillis: Long = 0,
     val shortVideoInstagramMillis: Long = 0,
+    /** Platforms whose detector looks outdated (user should make a diagnostic capture). */
+    val suspectedDetection: Set<Platform> = emptySet(),
 ) {
     val blockedTotal: Int get() = blockedYoutube + blockedInstagram + blockedOther
     val needsAttention: Boolean get() = status != ProtectionStatus.ACTIVE && status != ProtectionStatus.PAUSED
@@ -63,6 +65,7 @@ object DashboardStateFactory {
         usageByPackage: Map<String, Long>?,
         now: Long,
         zone: ZoneId,
+        suspicions: Set<Platform> = emptySet(),
     ): DashboardState {
         val discipline = settings.discipline.isActive(now)
         val total = settings.mode == ProtectionMode.TOTAL || (discipline && settings.discipline.rules.forceTotalMode)
@@ -117,6 +120,7 @@ object DashboardStateFactory {
             },
             shortVideoYoutubeMillis = today.exposureMillisByPlatform[Platform.YOUTUBE] ?: 0L,
             shortVideoInstagramMillis = today.exposureMillisByPlatform[Platform.INSTAGRAM] ?: 0L,
+            suspectedDetection = suspicions,
         )
     }
 }

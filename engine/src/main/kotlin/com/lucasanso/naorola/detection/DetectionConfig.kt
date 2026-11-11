@@ -27,4 +27,11 @@ object DetectionConfig {
 
     /** A negative signal at least this strong cancels a positive classification. */
     const val CLASSIFIER_VETO = 60
+
+    /**
+     * Health check: on the Shorts/Reels tab without the player being recognised for this long
+     * (and at least this many evaluations), the detector is probably outdated.
+     */
+    const val SUSPECT_MIN_MILLIS = 4_000L
+    const val SUSPECT_MIN_OBSERVATIONS = 3
 }

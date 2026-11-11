@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lucasanso.naorola.detection.rules.InstagramRules
 import com.lucasanso.naorola.detection.rules.YouTubeRules
 import com.lucasanso.naorola.di.AppContainer
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.monitoring.HealthSnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,15 +28,27 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
     )
     private val usage = MutableStateFlow<Map<String, Long>?>(null)
 
-    val state: StateFlow<DashboardState> = combine(
+    private val settingsAndSuspicions = combine(
         container.settingsRepository.settings,
+        container.settingsRepository.detectionSuspicions,
+    ) { settings, suspicions -> settings to suspicions.keys }
+
+    val state: StateFlow<DashboardState> = combine(
+        settingsAndSuspicions,
         health,
         container.serviceConnected,
         container.statsRepository.today(),
         usage,
-    ) { settings, health, connected, today, usage ->
-        DashboardStateFactory.build(settings, health, connected, today, usage, container.clock.nowMillis(), ZoneId.systemDefault())
+    ) { (settings, suspicions), health, connected, today, usage ->
+        DashboardStateFactory.build(
+            settings, health, connected, today, usage, container.clock.nowMillis(), ZoneId.systemDefault(), suspicions,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardState())
+
+    /** The user saw the warning; it comes back if the problem happens again. */
+    fun dismissSuspicion(platform: Platform) {
+        viewModelScope.launch { container.settingsRepository.setDetectionSuspicion(platform, null) }
+    }
 
     /** System facts can change while the app is in the background: re-read them on resume. */
     fun refresh() {

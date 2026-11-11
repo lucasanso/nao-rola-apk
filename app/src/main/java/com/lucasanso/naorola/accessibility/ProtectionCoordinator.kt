@@ -9,6 +9,8 @@ import com.lucasanso.naorola.blocking.AudioFocusMuter
 import com.lucasanso.naorola.blocking.BlockScreenContent
 import com.lucasanso.naorola.blocking.BlockingOverlayManager
 import com.lucasanso.naorola.detection.classifier.Classification
+import com.lucasanso.naorola.detection.health.DetectionHealthMonitor
+import com.lucasanso.naorola.detection.health.HealthEvent
 import com.lucasanso.naorola.detection.signal.DetectionResult
 import com.lucasanso.naorola.di.AppContainer
 import com.lucasanso.naorola.domain.model.ProtectionSettings
@@ -50,6 +52,7 @@ class ProtectionCoordinator(
     private val engineScope = CoroutineScope(job + engine)
 
     private val throttle = EvaluationThrottle()
+    private val detectionHealth = DetectionHealthMonitor()
 
     @Volatile private var settings = ProtectionSettings()
 
@@ -83,6 +86,8 @@ class ProtectionCoordinator(
         }
         mainScope.launch { container.settingsRepository.uiPreferences.collect { dynamicColor = it.dynamicColor } }
         mainScope.launch { container.diagnostics.armed.collect { applyMonitoredPackages() } }
+        // Follows the saved suspicions, so dismissing a warning lets it be raised again later.
+        mainScope.launch { container.settingsRepository.detectionSuspicions.collect { detectionHealth.seed(it.keys) } }
         engineScope.launch {
             runCatching { container.statsRepository.today().first() }
                 .onSuccess { dailyUsage.seed(clock.nowMillis(), it.exposureMillisByPlatform) }
@@ -131,11 +136,22 @@ class ProtectionCoordinator(
             val detection = detector.detect(tree)
             val classification = container.classifier.classify(detection)
             container.diagnostics.captureIfArmed(tree, detection, classification)
+            detectionHealth.observe(now, detection, classification)?.let(::onHealthEvent)
             logTransition(pkg, detection, classification)
             handle(SessionInput.Observed(now, pkg, classification))
         } catch (e: Exception) {
             logger.error(TAG, "Falha ao avaliar a tela", e)
         }
+    }
+
+    private fun onHealthEvent(event: HealthEvent) {
+        val since = (event as? HealthEvent.Suspected)?.sinceMillis
+        if (since != null) {
+            logger.warn(TAG, "Possível falha de detecção: ${event.platform} (aba selecionada sem player reconhecido)")
+        } else {
+            logger.info(TAG, "Detecção voltou a funcionar: ${event.platform}")
+        }
+        container.appScope.launch { container.settingsRepository.setDetectionSuspicion(event.platform, since) }
     }
 
     private fun onUserAction(action: UserAction) {
