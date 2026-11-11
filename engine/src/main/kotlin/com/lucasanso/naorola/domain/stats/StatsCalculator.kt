@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-/** One day of history. App usage is null when the user has not granted usage access. */
+/** One day of history. App usage is null when unknown (no usage access, or Android no longer has that day). */
 data class DayStats(
     val date: LocalDate,
     val blocked: Map<Platform, Int>,
@@ -43,7 +43,7 @@ object StatsCalculator {
                 date = day,
                 blocked = blockedByDay[day].orEmpty(),
                 shortVideoMillis = exposureByDay[day].orEmpty(),
-                appUsageMillis = appUsage?.let { it[day].orEmpty() },
+                appUsageMillis = appUsage?.get(day),
             )
         }
     }

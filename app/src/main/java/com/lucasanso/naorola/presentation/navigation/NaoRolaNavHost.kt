@@ -29,9 +29,11 @@ import com.lucasanso.naorola.presentation.diagnostics.DiagnosticsScreen
 import com.lucasanso.naorola.presentation.permissions.PermissionsScreen
 import com.lucasanso.naorola.presentation.settings.BlockingSettingsScreen
 import com.lucasanso.naorola.presentation.settings.SettingsHubScreen
+import com.lucasanso.naorola.presentation.stats.StatsScreen
 
 object Routes {
     const val DASHBOARD = "dashboard"
+    const val STATS = "stats"
     const val SETTINGS = "settings"
     const val BLOCKING = "settings/blocking"
     const val PERMISSIONS = "settings/permissions"
@@ -43,6 +45,7 @@ private data class TopLevel(val route: String, @StringRes val label: Int, @Drawa
 
 private val TOP_LEVEL = listOf(
     TopLevel(Routes.DASHBOARD, R.string.nav_dashboard, R.drawable.ic_dashboard),
+    TopLevel(Routes.STATS, R.string.nav_stats, R.drawable.ic_bar_chart),
     TopLevel(Routes.SETTINGS, R.string.nav_settings, R.drawable.ic_tune),
 )
 
@@ -85,6 +88,7 @@ fun NaoRolaNavHost() {
         ) {
             val back: () -> Unit = { nav.popBackStack() }
             composable(Routes.DASHBOARD) { DashboardScreen(onOpenPermissions = { nav.navigate(Routes.PERMISSIONS) }) }
+            composable(Routes.STATS) { StatsScreen() }
             composable(Routes.SETTINGS) { SettingsHubScreen(onNavigate = { nav.navigate(it) }) }
             composable(Routes.BLOCKING) { BlockingSettingsScreen(onBack = back) }
             composable(Routes.PERMISSIONS) { PermissionsScreen(onBack = back) }

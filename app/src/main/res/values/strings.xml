@@ -29,6 +29,7 @@
     <!-- Navigation -->
     <string name="nav_dashboard">Painel</string>
     <string name="nav_settings">Ajustes</string>
+    <string name="nav_stats">Estatísticas</string>
     <string name="action_back">Voltar</string>
 
     <!-- Dashboard -->
@@ -73,6 +74,26 @@
     <string name="minutes_short">%1$d min</string>
     <string name="hours_minutes_short">%1$d h %2$d min</string>
     <string name="less_than_a_minute">menos de 1 min</string>
+
+    <!-- Statistics -->
+    <string name="stats_title">Estatísticas</string>
+    <string name="stats_week">Últimos 7 dias</string>
+    <string name="stats_per_day">Bloqueios por dia</string>
+    <string name="stats_tap_hint">Toque num dia para destacá-lo na lista.</string>
+    <string name="stats_day_by_day">Dia a dia</string>
+    <string name="stats_blocked_count">%1$d bloqueados</string>
+    <string name="stats_short_video">Vídeo curto na tela: %1$s</string>
+    <string name="stats_app_usage">No app: YouTube %1$s · Instagram %2$s</string>
+    <string name="stats_app_usage_unknown">No app: sem dados</string>
+    <string name="stats_today">hoje</string>
+    <string name="stats_bar_description">%1$s: %2$d bloqueados</string>
+    <string name="stats_estimate_title">Exposição evitada (estimativa)</string>
+    <string name="stats_estimate_value">≈ %1$s nos últimos 7 dias</string>
+    <string name="stats_estimate_formula">%1$d bloqueios × %2$s, a mediana das suas %3$d sessões de vídeo curto medidas nos últimos 30 dias (tolerância, pausa ou Reel de DM). É uma estimativa conservadora: as sessões medidas são encurtadas pela própria tolerância.</string>
+    <string name="stats_estimate_insufficient">Dados insuficientes. Para estimar sem inventar números, o Não-Rola precisa de pelo menos %1$d sessões de vídeo curto suas medidas (com tolerância, pausa ou Reel de DM). Até agora: %2$d.</string>
+    <string name="stats_usage_permission">O tempo dentro de cada app aparece aqui se você permitir o acesso aos dados de uso.</string>
+    <string name="stats_note">Bloqueios e tempo com vídeo curto são medidos pelo Não-Rola enquanto a proteção está ligada. O tempo no app vem do Android e inclui tudo o que você fez no YouTube ou Instagram. Histórico guardado por 30 dias.</string>
+    <string name="seconds_long">%1$d s</string>
 
     <!-- Settings hub -->
     <string name="settings_title">Ajustes</string>

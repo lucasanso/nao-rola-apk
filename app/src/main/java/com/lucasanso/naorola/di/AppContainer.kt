@@ -12,7 +12,9 @@ import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.data.db.NaoRolaDatabase
 import com.lucasanso.naorola.data.log.LocalLogStore
 import com.lucasanso.naorola.data.settings.SettingsRepository
+import com.lucasanso.naorola.data.stats.DailyUsageHistory
 import com.lucasanso.naorola.data.stats.ProtectionEventType
+import com.lucasanso.naorola.data.stats.UsageSource
 import com.lucasanso.naorola.data.stats.StatsRepository
 import com.lucasanso.naorola.detection.classifier.ShortVideoClassifier
 import com.lucasanso.naorola.detection.detector.DetectorRegistry
@@ -62,6 +64,10 @@ class AppContainer(private val context: Context) {
     }
 
     val statsRepository: StatsRepository by lazy { StatsRepository(database.statsDao(), clock) }
+
+    val dailyUsageHistory: DailyUsageHistory by lazy {
+        DailyUsageHistory(database.statsDao(), UsageSource { p, from, to -> usageStats.foregroundMillis(p, from, to) }, clock)
+    }
 
     val detectors = DetectorRegistry.default()
     val classifier = ShortVideoClassifier()

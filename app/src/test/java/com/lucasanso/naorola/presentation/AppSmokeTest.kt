@@ -83,6 +83,10 @@ class AppSmokeTest {
             waitText("Regras de detecção")
             back()
 
+            rule.onNodeWithText("Estatísticas").performClick()
+            waitText("Bloqueios por dia")
+            waitText("Dia a dia")
+
             rule.onNodeWithText("Painel").performClick()
             waitText("Bloqueio total")
         }

@@ -52,6 +52,9 @@ android {
     }
     buildFeatures { compose = true }
     testOptions { unitTests.isIncludeAndroidResources = true }
+    // Room schemas as assets of the DEBUG variant only (local unit tests read the variant's merged
+    // assets), so migrations are tested against the real exported schemas. Release does not ship them.
+    sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
 }
 

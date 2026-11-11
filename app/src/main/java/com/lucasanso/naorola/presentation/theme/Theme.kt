@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
@@ -97,6 +98,19 @@ private val NaoRolaShapes = Shapes(
     medium = RoundedCornerShape(16.dp),
     large = RoundedCornerShape(24.dp),
 )
+
+/**
+ * Chart marks use fixed brand tones validated for contrast, lightness and chroma against the
+ * light and dark chart surfaces (they do not follow dynamic color, so data keeps its identity).
+ */
+object ChartColors {
+    val BarLight = Color(0xFF9C4330)
+    val BarDark = Color(0xFFDB6B53)
+}
+
+@Composable
+fun chartBarColor(): Color =
+    if (MaterialTheme.colorScheme.surface.luminance() < 0.5f) ChartColors.BarDark else ChartColors.BarLight
 
 @Composable
 fun NaoRolaTheme(

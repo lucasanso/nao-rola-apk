@@ -9,6 +9,7 @@ import com.lucasanso.naorola.domain.model.BlockEvent
 import com.lucasanso.naorola.domain.model.BlockOutcome
 import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ShortVideoExposure
+import com.lucasanso.naorola.domain.model.Surface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,9 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-enum class ProtectionEventType { SERVICE_CONNECTED, SERVICE_DISCONNECTED }
+enum class ProtectionEventType { SERVICE_CONNECTED, SERVICE_DISCONNECTED, DISCIPLINE_ON, DISCIPLINE_OFF }
+
+data class ProtectionEvent(val timeMillis: Long, val type: ProtectionEventType)
 
 /** Today's numbers for the dashboard. Only things the app measured itself. */
 data class TodaySummary(
@@ -52,6 +55,20 @@ class StatsRepository(
         ),
     )
 
+    suspend fun eventsSince(since: Long): List<BlockEvent> = dao.eventsSince(since).mapNotNull { e ->
+        val surface = enumOrNull<Surface>(e.surface) ?: return@mapNotNull null
+        val outcome = enumOrNull<BlockOutcome>(e.outcome) ?: return@mapNotNull null
+        BlockEvent(e.timeMillis, surface, outcome)
+    }
+
+    suspend fun exposuresSince(since: Long): List<ShortVideoExposure> = dao.exposuresSince(since).mapNotNull { e ->
+        enumOrNull<Surface>(e.surface)?.let { ShortVideoExposure(it, e.startMillis, e.endMillis) }
+    }
+
+    suspend fun protectionEventsSince(since: Long): List<ProtectionEvent> = dao.protectionEventsSince(since).mapNotNull { e ->
+        enumOrNull<ProtectionEventType>(e.type)?.let { ProtectionEvent(e.timeMillis, it) }
+    }
+
     suspend fun recordProtection(type: ProtectionEventType) =
         dao.insertProtectionEvent(ProtectionEventEntity(timeMillis = clock.nowMillis(), type = type.name))
 
@@ -74,6 +91,8 @@ class StatsRepository(
         dao.purgeEvents(before)
         dao.purgeExposures(before)
         dao.purgeProtectionEvents(before)
+        val today = Instant.ofEpochMilli(clock.nowMillis()).atZone(zone()).toLocalDate()
+        dao.purgeDailyUsage(today.minusDays(days).toEpochDay())
     }
 
     private fun startOfDayTicks(): Flow<Long> = flow {
@@ -86,7 +105,9 @@ class StatsRepository(
         }
     }
 
-    private fun platformOf(name: String): Platform? = runCatching { Platform.valueOf(name) }.getOrNull()
+    private fun platformOf(name: String): Platform? = enumOrNull<Platform>(name)
+
+    private inline fun <reified E : Enum<E>> enumOrNull(name: String): E? = runCatching { enumValueOf<E>(name) }.getOrNull()
 
     companion object {
         const val RETENTION_DAYS = 30L

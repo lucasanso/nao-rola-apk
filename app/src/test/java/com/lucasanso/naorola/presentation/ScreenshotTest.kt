@@ -66,6 +66,7 @@ class ScreenshotTest {
             waitText("Proteção ativa")
             waitText("7")
             shot(it, "02-painel-ativo")
+            rule.onNodeWithText("Estatísticas").performClick(); waitText("Bloqueios por dia"); shot(it, "09-estatisticas")
             rule.onNodeWithText("Ajustes").performClick(); waitText("Bloqueio"); shot(it, "03-ajustes")
             rule.onNodeWithText("Bloqueio").performClick(); waitText("Tolerância e exceções"); shot(it, "04-bloqueio")
             rule.onNodeWithContentDescription("Voltar").performClick(); waitText("Permissões")
@@ -117,6 +118,10 @@ class ScreenshotTest {
             repeat(4) { stats.record(BlockEvent(now - it * 600_000L, Surface.SHORTS_PLAYER, BlockOutcome.BLOCKED)) }
             repeat(3) { stats.record(BlockEvent(now - it * 500_000L, Surface.REELS_VIEWER, BlockOutcome.BLOCKED)) }
             stats.recordExposure(ShortVideoExposure(Surface.SHORTS_PLAYER, now - 300_000L, now - 120_000L))
+            val day = 24 * 3_600_000L
+            listOf(9, 6, 11, 4, 8, 5).forEachIndexed { i, count ->
+                repeat(count) { stats.record(BlockEvent(now - (6 - i) * day + it * 60_000L, Surface.SHORTS_PLAYER, BlockOutcome.BLOCKED)) }
+            }
         }
     }
 
