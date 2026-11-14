@@ -13,6 +13,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lucasanso.naorola.R
 import com.lucasanso.naorola.presentation.about.AboutScreen
+import com.lucasanso.naorola.presentation.ads.AdsScreen
 import com.lucasanso.naorola.presentation.dashboard.DashboardScreen
 import com.lucasanso.naorola.presentation.diagnostics.DiagnosticsScreen
 import com.lucasanso.naorola.presentation.discipline.DisciplineScreen
@@ -38,6 +40,7 @@ object Routes {
     const val STATS = "stats"
     const val SETTINGS = "settings"
     const val BLOCKING = "settings/blocking"
+    const val ADS = "settings/ads"
     const val DISCIPLINE = "settings/discipline"
     const val SCHEDULE = "settings/schedule"
     const val PERMISSIONS = "settings/permissions"
@@ -53,8 +56,12 @@ private val TOP_LEVEL = listOf(
     TopLevel(Routes.SETTINGS, R.string.nav_settings, R.drawable.ic_tune),
 )
 
+/**
+ * @param requestedRoute screen asked for from outside (e.g. Samsung Internet opening the ad
+ *   blocker's settings); [onRouteHandled] is called once it has been opened.
+ */
 @Composable
-fun NaoRolaNavHost() {
+fun NaoRolaNavHost(requestedRoute: String? = null, onRouteHandled: () -> Unit = {}) {
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     val route = entry?.destination?.route
@@ -100,11 +107,19 @@ fun NaoRolaNavHost() {
             composable(Routes.STATS) { StatsScreen() }
             composable(Routes.SETTINGS) { SettingsHubScreen(onNavigate = { nav.navigate(it) }) }
             composable(Routes.BLOCKING) { BlockingSettingsScreen(onBack = back) }
+            composable(Routes.ADS) { AdsScreen(onBack = back) }
             composable(Routes.PERMISSIONS) { PermissionsScreen(onBack = back) }
             composable(Routes.DISCIPLINE) { DisciplineScreen(onBack = back) }
             composable(Routes.SCHEDULE) { ScheduleScreen(onBack = back) }
             composable(Routes.DIAGNOSTICS) { DiagnosticsScreen(onBack = back) }
             composable(Routes.ABOUT) { AboutScreen(onBack = back, onOpenDiagnostics = { nav.navigate(Routes.DIAGNOSTICS) }) }
+        }
+        // After NavHost in the same composition, so the graph is already set.
+        LaunchedEffect(requestedRoute) {
+            if (requestedRoute != null) {
+                nav.navigate(requestedRoute) { launchSingleTop = true }
+                onRouteHandled()
+            }
         }
     }
 }

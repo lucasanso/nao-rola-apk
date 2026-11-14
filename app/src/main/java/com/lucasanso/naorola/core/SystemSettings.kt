@@ -37,6 +37,10 @@ object SystemSettings {
 
     fun openSecurity(context: Context) = start(context, Intent(Settings.ACTION_SECURITY_SETTINGS))
 
+    /** Private DNS lives under the network settings; there is no public intent for it directly. */
+    fun openNetworkSettings(context: Context) =
+        start(context, Intent(Settings.ACTION_WIRELESS_SETTINGS), fallback = Intent(Settings.ACTION_SETTINGS))
+
     /** Lets the user send a file (diagnostic capture, log) with an app of their choice. */
     fun shareFile(context: Context, file: File, chooserTitle: String) {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)

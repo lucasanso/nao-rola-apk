@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.lucasanso.naorola.adblock.BrowserFilters
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.data.db.NaoRolaDatabase
 import com.lucasanso.naorola.data.log.LocalLogStore
@@ -69,6 +70,8 @@ class AppContainer(private val context: Context) {
     val dailyUsageHistory: DailyUsageHistory by lazy {
         DailyUsageHistory(database.statsDao(), UsageSource { p, from, to -> usageStats.foregroundMillis(p, from, to) }, clock)
     }
+
+    val browserFilters = BrowserFilters(context, logger)
 
     val detectors = DetectorRegistry.default()
     val classifier = ShortVideoClassifier()

@@ -45,6 +45,11 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
                 onClick = { onNavigate(Routes.BLOCKING) },
             )
             NavRow(
+                title = stringResource(R.string.settings_ads),
+                summary = stringResource(if (state.settings.adBlockEnabled) R.string.settings_ads_on else R.string.settings_ads_off),
+                onClick = { onNavigate(Routes.ADS) },
+            )
+            NavRow(
                 title = stringResource(R.string.schedule_title),
                 summary = with(state.settings) {
                     if (activeWindows.isEmpty() && exceptionWindows.isEmpty() && exceptionPeriods.isEmpty()) {

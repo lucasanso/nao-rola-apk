@@ -1,0 +1,88 @@
+! Não-Rola · lista própria de bloqueio de anúncios para o Samsung Internet
+! Só domínios que servem anúncios. Rastreadores e players de vídeo ficam de fora para não quebrar sites.
+! Formato AdBlock (||dominio^). Para uma lista maior, importe uma pelo app (Ajustes › Anúncios).
+!
+! Google
+||doubleclick.net^
+||googlesyndication.com^
+||googleadservices.com^
+||googletagservices.com^
+||adservice.google.com^
+||adservice.google.com.br^
+||2mdn.net^
+||youtube.com/pagead/
+||youtube.com/api/stats/ads
+! Amazon, Microsoft, Meta, X, LinkedIn
+||amazon-adsystem.com^
+||bat.bing.com^
+||atdmt.com^
+||an.facebook.com^
+||ads-twitter.com^
+||ads.linkedin.com^
+! Redes de anúncios e leilões
+||adnxs.com^
+||adsrvr.org^
+||criteo.com^
+||criteo.net^
+||pubmatic.com^
+||rubiconproject.com^
+||openx.net^
+||casalemedia.com^
+||indexww.com^
+||smartadserver.com^
+||adform.net^
+||teads.tv^
+||media.net^
+||33across.com^
+||sharethrough.com^
+||triplelift.com^
+||contextweb.com^
+||lijit.com^
+||sovrn.com^
+||gumgum.com^
+||bidswitch.net^
+||adroll.com^
+||advertising.com^
+||yieldlab.net^
+||adition.com^
+||smaato.net^
+||spotxchange.com^
+||springserve.com^
+||serving-sys.com^
+||flashtalking.com^
+||adzerk.net^
+||buysellads.com^
+||yieldmo.com^
+||onetag-sys.com^
+||sonobi.com^
+||emxdgt.com^
+||lkqd.net^
+||admixer.net^
+||adtelligent.com^
+||undertone.com^
+||zedo.com^
+||adblade.com^
+||infolinks.com^
+||kargo.com^
+||nativo.com^
+||zemanta.com^
+! Verificação de anúncios
+||moatads.com^
+||adsafeprotected.com^
+||doubleverify.com^
+! Recomendação patrocinada ("conteúdo recomendado")
+||taboola.com^
+||outbrain.com^
+||mgid.com^
+||revcontent.com^
+! Pop-ups e redirecionamentos
+||propellerads.com^
+||popads.net^
+||popcash.net^
+||exoclick.com^
+||adsterra.com^
+||hilltopads.net^
+||juicyads.com^
+||trafficjunky.net^
+||clickadu.com^
+||a-ads.com^

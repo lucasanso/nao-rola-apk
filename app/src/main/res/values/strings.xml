@@ -334,4 +334,41 @@ Desligar aqui desativa o serviço de verdade. Para religar: botão “Religar pr
     <string name="cover_short">Oculto</string>
     <string name="hide_feeds_title">Esconder Shorts e Reels nos feeds</string>
     <string name="hide_feeds_body">Cobre a prateleira de Shorts, os Reels no meio do feed e os botões das abas Shorts e Reels. Tocar no que está coberto abre o vídeo, que é bloqueado normalmente.</string>
+
+    <!-- Anúncios -->
+    <string name="settings_ads">Anúncios</string>
+    <string name="settings_ads_on">Ligado · YouTube, Instagram e Samsung Internet</string>
+    <string name="settings_ads_off">Desligado nos apps · Samsung Internet à parte</string>
+    <string name="ads_title">Anúncios</string>
+    <string name="ads_apps_title">YouTube e Instagram</string>
+    <string name="ads_toggle">Bloquear anúncios</string>
+    <string name="ads_toggle_body">Cobre posts, cards e stories patrocinados e toca em “Pular anúncio” no YouTube assim que o botão aparece. Vale também fora dos horários e durante pausas.</string>
+    <string name="ads_apps_limits">O que não dá para fazer: anúncios do YouTube que não podem ser pulados continuam tocando (o app só toca no botão que o próprio YouTube mostra), e um anúncio novo pode aparecer por um instante antes de ser coberto.</string>
+    <string name="ads_browsers_title">Navegadores</string>
+    <string name="ads_samsung_title">Samsung Internet</string>
+    <string name="ads_samsung_body">O Samsung Internet aceita bloqueadores de outros apps. Para ligar: abra o Samsung Internet › menu (☰) › Bloqueadores de anúncios › ative o Não-Rola. Funciona mesmo com o serviço de acessibilidade desligado.</string>
+    <string name="ads_samsung_open">Abrir o Samsung Internet</string>
+    <string name="ads_samsung_missing">O Samsung Internet não está instalado neste aparelho.</string>
+    <plurals name="ads_list_count">
+        <item quantity="one">Lista do Não-Rola: %d regra</item>
+        <item quantity="other">Lista do Não-Rola: %d regras</item>
+    </plurals>
+    <plurals name="ads_imported_count">
+        <item quantity="one">Lista importada: %d regra</item>
+        <item quantity="other">Lista importada: %d regras</item>
+    </plurals>
+    <string name="ads_import">Importar lista</string>
+    <string name="ads_import_body">Para bloquear mais, importe um arquivo de lista (formato AdBlock, hosts ou um domínio por linha), por exemplo uma lista pública que você baixou. O Não-Rola não acessa a internet: a lista só muda quando você importa de novo.</string>
+    <string name="ads_import_remove">Remover lista importada</string>
+    <plurals name="ads_import_ok">
+        <item quantity="one">%d regra importada.</item>
+        <item quantity="other">%d regras importadas.</item>
+    </plurals>
+    <string name="ads_import_empty">Nenhuma regra encontrada no arquivo.</string>
+    <string name="ads_import_too_large">Arquivo grande demais (máximo 8 MB).</string>
+    <string name="ads_import_unreadable">Não foi possível ler o arquivo.</string>
+    <string name="ads_import_truncated">A lista foi cortada em 150 mil regras para não deixar o navegador lento.</string>
+    <string name="ads_chrome_title">Chrome</string>
+    <string name="ads_chrome_body">O Chrome não permite que outros apps bloqueiem os anúncios dele, então o Não-Rola não consegue agir ali. Alternativa do próprio Android, para o celular inteiro: Configurações › Conexões › Mais configurações de conexão › DNS privado, com um provedor que filtra anúncios (por exemplo dns.adguard-dns.com). Essa escolha é sua: as consultas de endereço passam por esse provedor.</string>
+    <string name="ads_chrome_open">Abrir configurações de rede</string>
 </resources>
