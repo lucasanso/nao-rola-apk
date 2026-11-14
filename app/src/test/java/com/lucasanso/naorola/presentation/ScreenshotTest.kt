@@ -103,6 +103,16 @@ class ScreenshotTest {
         }
     }
 
+    @Test fun adsScreen() {
+        shadowOf(app.packageManager).installPackage(PackageInfo().apply { packageName = "com.sec.android.app.sbrowser" })
+        launch {
+            waitText("Proteção desligada")
+            rule.onNodeWithText("Ajustes").performClick(); waitText("Anúncios")
+            rule.onNodeWithText("Anúncios").performClick(); waitText("Bloquear anúncios"); waitText("Abrir o Samsung Internet")
+            shot(it, "13-anuncios")
+        }
+    }
+
     @Test fun detectionSuspicion() {
         simulateActiveProtection()
         runBlocking { app.container.settingsRepository.setDetectionSuspicion(Platform.YOUTUBE, System.currentTimeMillis()) }

@@ -451,7 +451,7 @@ Orientação recebida: *"tudo deve ser configurável; um modo que bloqueia tudo 
 
 ---
 
-## 14. Como ficou na implementação (0.3.1)
+## 14. Como ficou na implementação (0.4.0)
 
 O plano acima foi seguido. Alguns nomes mudaram e algumas peças surgiram durante a implementação:
 
@@ -461,7 +461,12 @@ O plano acima foi seguido. Alguns nomes mudaram e algumas peças surgiram durant
 | `ServiceInfoUpdater` | `MonitoredPackages` + `ScreenAccess.setMonitoredPackages` | A lista nunca fica vazia (vazia significaria "todos os apps" para o Android) |
 | `ServiceStatus` | `AppContainer.serviceConnected` (`StateFlow`) | — |
 | `BlockScreenView` | `BlockScreen` (Compose) dentro do `BlockingOverlayManager` | — |
-| `RegionCoverOverlay` | **Não implementado** | Depende de capturas reais dos Reels no feed |
+| `RegionCoverOverlay` | `RegionCoverOverlay` (0.4.0) | Uma única janela de acessibilidade que **não recebe toques** desenha todas as capas. Entre avaliações, as capas acompanham a rolagem pelo `scrollDeltaY` dos eventos; resultados atrasados são realinhados pelo total rolado desde a leitura da tela |
+| Regiões no `DetectionResult` | `Region` (limites, tipo, plataforma, lista onde está) + `YouTubeRegionFinder` / `InstagramRegionFinder` | O `TreeScanner` agrupa o conteúdo de cada item das listas; o formato "cartões em pé lado a lado" acha a prateleira de Shorts mesmo sem ids. Pagers nunca são tratados como feed |
+| — | `CoverPolicy` | Capas de vídeo curto seguem plataforma, horários e pausa; Bloqueio total e Disciplina forçam. Capas de anúncio dependem só da chave de anúncios |
+| — | `UiAction` + `UiNode.click()` | "Pular anúncio" do YouTube: clica no nó (ou no ancestral clicável), no máximo uma vez a cada 1,5 s |
+| — | `ContentBlockerProvider` + `BrowserFilters` + `FilterList` | Bloqueador para o Samsung Internet (interface pública "content blocker" API_1.0): lista própria + lista importada pelo usuário, sem internet |
+| — | Botão "Desligar para usar o banco" + bloco de Configurações rápidas | Desliga o serviço de verdade (`disableSelf`) para apps de banco; nada é escondido |
 | `DailyUsageSync` | `DailyUsageHistory` | Guarda dias fechados; um dia sem dados no Android fica "desconhecido", nunca zero |
 | `StatsRecorder` | `StatsRepository` | A gravação é disparada pelos comandos da máquina de sessão no `ProtectionCoordinator` |
 | — | `ProtectionCoordinator` | Liga serviço e engine: eventos → limitador → detector → classificador → máquina de sessão → comandos, numa thread única |

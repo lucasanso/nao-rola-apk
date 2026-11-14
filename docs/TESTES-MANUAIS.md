@@ -10,8 +10,8 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.3.1.apk` | App aparece com o ícone do Não-Rola | |
-| P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.3.1 por cima | Configurações e contagem de hoje mantidas | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.4.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.4.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
 | P4 | Ativar serviço | *Acessibilidade › Apps instalados › Não-Rola* › ativar | Volte ao app: "Proteção ativa" | |
@@ -29,7 +29,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | Y4 | Vídeo comum (horizontal) | **Nada bloqueado** | |
 | Y5 | Vídeo comum vertical (não Short) | **Nada bloqueado** | |
 | Y6 | Vídeo comum em tela cheia | **Nada bloqueado** | |
-| Y7 | Rolar a Início com a prateleira de Shorts | **Nada bloqueado** (prateleira fica para a Fase 4) | |
+| Y7 | Rolar a Início com a prateleira de Shorts | Sem tela de bloqueio; a prateleira aparece coberta ("Shorts oculto") — veja a seção 9 | |
 | Y8 | Mini player aberto e ir para Shorts | Bloqueio | |
 | Y9 | Busca, inscrições, biblioteca, comentários | **Nada bloqueado** | |
 
@@ -44,7 +44,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | I5 | Reel recebido por DM, com "Liberar Reel recebido por mensagem" ligado | O Reel aberto toca; ao passar para o próximo, bloqueio | |
 | I6 | Mesmo cenário com a opção desligada | Bloqueio imediato | |
 | I6b | Reel de DM com conexão lenta (tela de carregamento antes do Reel) | O Reel aberto continua liberado | |
-| I7 | Rolar o feed com um Reel visível | Nada bloqueado no feed (cobertura é Fase 4); tocar no Reel abre o visualizador e bloqueia | |
+| I7 | Rolar o feed com um Reel visível | Sem tela de bloqueio no feed; a mídia do Reel aparece coberta ("Reels oculto"); tocar nele abre o visualizador e bloqueia | |
 
 ## 4. Tela de bloqueio
 
@@ -107,3 +107,50 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 | A1 | Tema claro e escuro do sistema | App e tela de bloqueio acompanham | |
 | A2 | *Ajustes › Cores do sistema* | Usa as cores do papel de parede | |
 | A3 | Fonte grande (Acessibilidade › Tamanho da fonte) | Textos legíveis, nada cortado | |
+
+## 9. Capas sobre feeds (0.4.0)
+
+Se algo não for coberto (ou for coberto por engano), faça uma captura de diagnóstico da tela e anote o ID.
+
+| ID | Cenário | Esperado | Resultado |
+|---|---|---|---|
+| FC1 | YouTube: Início com a prateleira de Shorts | Prateleira coberta com "Shorts oculto"; vídeos comuns visíveis | |
+| FC2 | YouTube: rolar a Início devagar e rápido | A capa acompanha a prateleira; anote se algo aparece por um instante | |
+| FC3 | YouTube: aba Shorts na barra inferior | Botão coberto; tocar nele ainda abre Shorts e bloqueia | |
+| FC4 | YouTube: Shorts nos resultados de busca e na página de um vídeo | Cobertos | |
+| FC5 | Instagram: feed com Reel e carrossel de Reels | Mídia do Reel e carrossel cobertos; fotos visíveis | |
+| FC6 | Instagram: aba Reels na barra inferior | Botão coberto | |
+| FC7 | Instagram: Reel recebido numa conversa | **Visível** na conversa | |
+| FC8 | Com capas na tela: tela inicial, recentes, outro app, cortina de notificações | Capas somem em menos de ~0,5 s | |
+| FC9 | Com capas na tela: abrir o teclado (busca) | Nada desenhado sobre o teclado | |
+| FC10 | Desligar "Esconder Shorts e Reels nos feeds" | Nenhuma capa de Shorts/Reels; o bloqueio do player continua | |
+| FC11 | Pausa temporária ativa | Sem capas de Shorts/Reels (anúncios continuam cobertos) | |
+| FC12 | Bloqueio total com a chave de feeds desligada | Capas aparecem mesmo assim | |
+| FC13 | Uso normal por 30 min com capas | Sem travamentos perceptíveis; anote a bateria | |
+
+## 10. Anúncios (0.4.0)
+
+| ID | Cenário | Esperado | Resultado |
+|---|---|---|---|
+| AD1 | YouTube: vídeo com anúncio pulável | Ao aparecer o botão "Pular", o anúncio é pulado sozinho (log: "Anúncio pulado") | |
+| AD2 | YouTube: anúncio não pulável | Continua tocando (limitação conhecida) | |
+| AD3 | YouTube: card "Patrocinado" na Início | Coberto com "Anúncio oculto" | |
+| AD4 | Instagram: post patrocinado no feed | Cabeçalho, mídia e botões cobertos | |
+| AD5 | Instagram: story patrocinado | Tela coberta; tocar passa para o próximo story | |
+| AD6 | Desligar *Ajustes › Anúncios › Bloquear anúncios* | Nada coberto nem pulado por causa de anúncio | |
+| SB1 | Samsung Internet › menu › Bloqueadores de anúncios | Não-Rola aparece na lista e pode ser ativado | |
+| SB2 | Com o bloqueador ativo, abrir um site de notícias com anúncios | Menos anúncios; o site continua funcionando | |
+| SB3 | Importar um arquivo hosts ou lista AdBlock | Mensagem com o número de regras; o Samsung Internet passa a usar a lista | |
+| SB4 | Remover a lista importada | Volta à lista do Não-Rola | |
+| SB5 | Tocar em "Configurações" do Não-Rola dentro do Samsung Internet | Abre a tela Anúncios do Não-Rola | |
+| SB6 | Desligar o serviço de acessibilidade | O bloqueador do Samsung Internet continua funcionando | |
+
+## 11. Apps de banco
+
+| ID | Cenário | Esperado | Resultado |
+|---|---|---|---|
+| N1 | Abrir o Nubank com o serviço ligado | Anote se o Nubank recusa (esperado: recusa) | |
+| N2 | Painel › Desligar para usar o banco › abrir o Nubank | Anote se o Nubank abre normalmente | |
+| N3 | Bloco "Não-Rola" nas Configurações rápidas | Um toque desliga; outro toque abre a tela para religar | |
+| N4 | Painel › Religar proteção | Proteção ativa de novo | |
+
