@@ -34,7 +34,8 @@ class NaoRolaAccessibilityService : AccessibilityService(), ScreenAccess {
         if (pkg == packageName) return
         try {
             val kind = EventKind.of(event.eventType)
-            if (kind == EventKind.SCROLLED) coordinator?.onScrolled(event.scrollDeltaY)
+            // -1 is how Android says "delta not reported"; the next evaluation repositions covers anyway.
+            if (kind == EventKind.SCROLLED && event.scrollDeltaY != UNDEFINED_DELTA) coordinator?.onScrolled(event.scrollDeltaY)
             coordinator?.onEvent(kind)
         } catch (e: Exception) {
             container.logger.error(TAG, "Falha ao tratar evento", e)
@@ -103,5 +104,6 @@ class NaoRolaAccessibilityService : AccessibilityService(), ScreenAccess {
     private companion object {
         const val TAG = "Servico"
         const val SYSTEM_PANEL_MIN_FRACTION = 0.3f
+        const val UNDEFINED_DELTA = -1
     }
 }

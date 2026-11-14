@@ -4,7 +4,7 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.4.0.apk`](release/NaoRola-0.4.0.apk) (3,4 MB, Android 12+). SHA-256: `6d2ba0e9bd136797ec24b3d319c291cb316f828317bbaa3e32d09bbdc4f31fec`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.4.0.apk`](release/NaoRola-0.4.0.apk) (3,4 MB, Android 12+). SHA-256: `12d2e34c977206194a107493b2c7b84ba00ea351792a276b32e61700708f1c1a`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual
 
