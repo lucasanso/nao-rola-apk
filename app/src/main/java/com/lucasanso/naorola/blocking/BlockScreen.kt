@@ -53,8 +53,7 @@ private data class BlockTexts(@StringRes val body: Int, @StringRes val back: Int
 
 private fun textsFor(surface: Surface) = when (surface) {
     Surface.SHORTS_PLAYER -> BlockTexts(R.string.block_body_shorts, R.string.block_back_youtube, R.string.block_leave_youtube)
-    Surface.REELS_VIEWER, Surface.FEED_REEL_ITEM ->
-        BlockTexts(R.string.block_body_reels, R.string.block_back_instagram, R.string.block_leave_instagram)
+    Surface.REELS_VIEWER -> BlockTexts(R.string.block_body_reels, R.string.block_back_instagram, R.string.block_leave_instagram)
     Surface.WEB_SHORTS -> BlockTexts(R.string.block_body_web_shorts, R.string.block_back, R.string.block_leave_browser)
     Surface.WEB_REELS -> BlockTexts(R.string.block_body_web_reels, R.string.block_back, R.string.block_leave_browser)
     // Going "back" inside an app made only of short videos lands on more short videos.

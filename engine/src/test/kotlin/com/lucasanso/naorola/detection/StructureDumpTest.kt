@@ -8,6 +8,7 @@ import com.lucasanso.naorola.detection.diagnostics.StructureDump
 import com.lucasanso.naorola.fixtures.FakeTree
 import com.lucasanso.naorola.fixtures.Screens
 import com.lucasanso.naorola.fixtures.node
+import com.lucasanso.naorola.fixtures.rounded
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -45,6 +46,28 @@ class StructureDumpTest {
             assertEquals(original is Classification.ShortVideo, reparsed is Classification.ShortVideo)
             assertEquals(original.context, reparsed.context)
         }
+    }
+
+    @Test fun roundTripKeepsRegionsAndHidesTheAdvertiser() {
+        val tree = Screens.youtubeHomeMixed()
+        val dump = StructureDump.write(tree)
+        assertFalse(dump.contains("Loja"))
+        assertTrue(dump.contains("\tpatrocinado"))
+        assertTrue(dump.contains("# proporcao=2.1667"))
+        listOf(
+            tree to YouTubeContentDetector(),
+            Screens.instagramFeedMixed() to InstagramContentDetector(),
+            Screens.instagramStoryAd() to InstagramContentDetector(),
+        ).forEach { (screen, detector) ->
+            val original = detector.detect(screen).regions
+            val reparsed = detector.detect(StructureDump.parse(StructureDump.write(screen))).regions
+            assertEquals(original.map { it.kind to it.bounds.rounded() }, reparsed.map { it.kind to it.bounds.rounded() })
+        }
+    }
+
+    @Test fun skipButtonSurvivesTheDump() {
+        val tree = Screens.youtubeAdPlaying(skipId = null, skipLabel = "Pular")
+        assertEquals(1, YouTubeContentDetector().detect(StructureDump.parse(StructureDump.write(tree))).actions.size)
     }
 
     @Test fun expectationLabelIsWrittenReadAndReplaced() {

@@ -52,3 +52,9 @@ fun node(
     key: Int = nextKey++,
     children: List<FakeNode> = emptyList(),
 ) = FakeNode(cls, id, bounds, scrollable, selected, visible, text, desc, rows, cols, key, children)
+
+/** Bounds rounded to 3 decimals (the precision of diagnostic dumps), for comparisons. */
+fun RelBounds.rounded(): RelBounds {
+    fun r(v: Float) = Math.round(v * 1000f) / 1000f
+    return RelBounds(r(left), r(top), r(right), r(bottom))
+}

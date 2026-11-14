@@ -118,7 +118,8 @@ class SettingsRepository(
             youtubeEnabled = p[Keys.YOUTUBE] ?: defaults.youtubeEnabled,
             instagramEnabled = p[Keys.INSTAGRAM] ?: defaults.instagramEnabled,
             browserEnabled = p[Keys.BROWSER] ?: defaults.browserEnabled,
-            feedReelsEnabled = p[Keys.FEED_REELS] ?: defaults.feedReelsEnabled,
+            hideInFeeds = p[Keys.HIDE_IN_FEEDS] ?: defaults.hideInFeeds,
+            adBlockEnabled = p[Keys.AD_BLOCK] ?: defaults.adBlockEnabled,
             otherAppsEnabled = p[Keys.OTHER_APPS] ?: defaults.otherAppsEnabled,
             toleranceSeconds = p[Keys.TOLERANCE_SECONDS] ?: defaults.toleranceSeconds,
             dailyLimitMinutes = p[Keys.DAILY_LIMIT_MINUTES] ?: defaults.dailyLimitMinutes,
@@ -151,7 +152,8 @@ class SettingsRepository(
         p[Keys.YOUTUBE] = s.youtubeEnabled
         p[Keys.INSTAGRAM] = s.instagramEnabled
         p[Keys.BROWSER] = s.browserEnabled
-        p[Keys.FEED_REELS] = s.feedReelsEnabled
+        p[Keys.HIDE_IN_FEEDS] = s.hideInFeeds
+        p[Keys.AD_BLOCK] = s.adBlockEnabled
         p[Keys.OTHER_APPS] = s.otherAppsEnabled
         p[Keys.TOLERANCE_SECONDS] = s.toleranceSeconds
         p[Keys.DAILY_LIMIT_MINUTES] = s.dailyLimitMinutes
@@ -180,7 +182,8 @@ class SettingsRepository(
         val YOUTUBE = booleanPreferencesKey("youtube_enabled")
         val INSTAGRAM = booleanPreferencesKey("instagram_enabled")
         val BROWSER = booleanPreferencesKey("browser_enabled")
-        val FEED_REELS = booleanPreferencesKey("feed_reels_enabled")
+        val HIDE_IN_FEEDS = booleanPreferencesKey("hide_in_feeds")
+        val AD_BLOCK = booleanPreferencesKey("ad_block_enabled")
         val OTHER_APPS = booleanPreferencesKey("other_apps_enabled")
         val TOLERANCE_SECONDS = intPreferencesKey("tolerance_seconds")
         val DAILY_LIMIT_MINUTES = intPreferencesKey("daily_limit_minutes")

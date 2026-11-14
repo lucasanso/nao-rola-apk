@@ -15,4 +15,10 @@ interface ScreenAccess {
     fun goBack(): Boolean
     fun goHome(): Boolean
     fun setMonitoredPackages(packages: Set<String>)
+
+    /** Top edge of the on-screen keyboard in screen pixels, or null when it is closed. */
+    fun inputMethodTop(): Int? = null
+
+    /** True when a large system panel (notification shade, quick settings) is open over the app. */
+    fun systemPanelOpen(): Boolean = false
 }

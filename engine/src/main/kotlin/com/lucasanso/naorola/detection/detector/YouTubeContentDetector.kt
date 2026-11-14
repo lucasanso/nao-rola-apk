@@ -1,5 +1,6 @@
 package com.lucasanso.naorola.detection.detector
 
+import com.lucasanso.naorola.detection.region.YouTubeRegionFinder
 import com.lucasanso.naorola.detection.rules.RuleEvaluator
 import com.lucasanso.naorola.detection.rules.YouTubeRules
 import com.lucasanso.naorola.detection.signal.DetectionResult
@@ -13,7 +14,7 @@ class YouTubeContentDetector(private val scanner: TreeScanner = TreeScanner()) :
     override fun supports(packageName: String) = packageName == YouTubeRules.PACKAGE
 
     override fun detect(tree: UiTree): DetectionResult {
-        val summary = scanner.scan(tree)
+        val summary = scanner.scan(tree, YouTubeRegionFinder.SCAN_REQUEST)
         val evaluation = RuleEvaluator.evaluate(summary, YouTubeRules.rules)
         return DetectionResult(
             detectorId = id,
@@ -21,6 +22,8 @@ class YouTubeContentDetector(private val scanner: TreeScanner = TreeScanner()) :
             signals = evaluation.signals,
             context = RuleEvaluator.contextOf(summary, YouTubeRules.contextRules),
             pageKey = evaluation.pager?.dominantChildKey,
+            regions = YouTubeRegionFinder.regions(summary),
+            actions = YouTubeRegionFinder.actions(summary),
             truncated = summary.truncated,
         )
     }

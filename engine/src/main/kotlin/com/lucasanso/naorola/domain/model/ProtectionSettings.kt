@@ -15,8 +15,13 @@ data class ProtectionSettings(
     val instagramEnabled: Boolean = true,
     /** Read the address bar of Chrome/Samsung Internet. Opt-in because it touches browsing. */
     val browserEnabled: Boolean = false,
-    /** Cover Reels inside the Instagram feed. Experimental, pending calibration. */
-    val feedReelsEnabled: Boolean = false,
+    /** Cover Shorts shelves, Reels posts and the Shorts/Reels tabs inside the apps' feeds. */
+    val hideInFeeds: Boolean = true,
+    /**
+     * Cover sponsored posts/stories and press "Skip ad" in YouTube. Independent of schedules and
+     * pauses: it is not about short videos.
+     */
+    val adBlockEnabled: Boolean = true,
     /** Block apps that are only short videos (TikTok, Kwai…). */
     val otherAppsEnabled: Boolean = false,
     /** Free time per entry before blocking; [UNLIMITED_TOLERANCE] = no per-entry cap. */

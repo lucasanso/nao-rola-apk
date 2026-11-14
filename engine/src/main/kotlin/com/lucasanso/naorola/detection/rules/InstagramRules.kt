@@ -13,6 +13,7 @@ import com.lucasanso.naorola.domain.model.ScreenContext
  */
 object InstagramRules {
     const val PACKAGE = "com.instagram.android"
+    private const val VIEWER_MIN_HEIGHT = 0.6f
 
     val INFO = RuleSetInfo(name = "Instagram", version = "2026.11.0", status = "parcialmente confirmados (abas)")
 
@@ -33,6 +34,16 @@ object InstagramRules {
     val CLIPS_IDS_OUTSIDE_VIEWER = setOf("clips_tab", "clips_header_title")
 
     const val REELS_TAB_ID = "clips_tab"
+
+    /** Header of the suggested-Reels carousel in the feed (confirmed). */
+    const val REELS_CAROUSEL_ID = "clips_header_title"
+
+    /** Reels are "clips" internally; any such id inside a feed row marks a Reel or Reels carousel. */
+    const val CLIPS_PREFIX = "clips_"
+    val CLIPS_FEED_EXCLUDE = setOf(REELS_TAB_ID)
+
+    /** First row of a feed post (candidates), used to group a post's rows. */
+    val POST_HEADER_IDS = setOf("row_feed_profile_header", "row_feed_photo_profile_header", "row_feed_photo_profile_name", "feed_post_header")
     const val FEED_TAB_ID = "feed_tab"
 
     /** Stories viewer ids start with this prefix. Never block Stories. */
@@ -41,7 +52,8 @@ object InstagramRules {
     val DIRECT_PREFIXES = setOf("direct_thread", "row_thread_composer")
 
     val rules: List<Rule> = listOf(
-        AnyIdRule(SIGNAL_VIEWER_ID, POSITIVE, 45, REELS_VIEWER_IDS),
+        // The viewer fills the screen; a Reel playing inside the feed has the same ids but is smaller.
+        AnyIdRule(SIGNAL_VIEWER_ID, POSITIVE, 45, REELS_VIEWER_IDS, minHeight = VIEWER_MIN_HEIGHT),
         IdPrefixRule(
             SIGNAL_CLIPS_NAMESPACE, POSITIVE, 20,
             prefix = "clips_", minDistinct = 2, exclude = REELS_VIEWER_IDS + CLIPS_IDS_OUTSIDE_VIEWER,

@@ -95,7 +95,6 @@ object BlockingPolicy {
     fun surfaceEnabled(settings: ProtectionSettings, surface: Surface): Boolean = when (surface) {
         Surface.SHORTS_PLAYER -> settings.youtubeEnabled
         Surface.REELS_VIEWER -> settings.instagramEnabled
-        Surface.FEED_REEL_ITEM -> settings.instagramEnabled && settings.feedReelsEnabled
         Surface.WEB_SHORTS -> settings.browserEnabled && settings.youtubeEnabled
         Surface.WEB_REELS -> settings.browserEnabled && settings.instagramEnabled
         Surface.SHORT_VIDEO_APP -> settings.otherAppsEnabled

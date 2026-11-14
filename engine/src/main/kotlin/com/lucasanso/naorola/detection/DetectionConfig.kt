@@ -9,6 +9,35 @@ object DetectionConfig {
     /** Children inspected per scrollable container to find the page that fills the screen. */
     const val MAX_CHILDREN_PER_SCROLLABLE = 8
 
+    /** Children read per node (protects against huge flat containers). */
+    const val MAX_CHILDREN_PER_NODE = 200
+
+    /** Visible children of one list tracked as feed items. */
+    const val MAX_ITEMS_PER_SCROLLABLE = 40
+
+    /**
+     * "Portrait card": a tall thumbnail (real height/width between these ratios) with a plausible
+     * card size. Two of them side by side form a Shorts shelf or grid row.
+     */
+    const val CARD_MIN_WIDTH = 0.18f
+    const val CARD_MAX_WIDTH = 0.62f
+    const val CARD_MIN_HEIGHT = 0.12f
+    const val CARD_MIN_ASPECT = 1.3f
+    const val CARD_MAX_ASPECT = 2.4f
+    const val CARD_DUPLICATE_IOU = 0.7f
+    const val PAIR_MIN_CENTER_DISTANCE = 0.2f
+    const val PAIR_MIN_VERTICAL_OVERLAP = 0.5f
+
+    /** A list whose visible children are all at least this fraction of its height is a pager. */
+    const val PAGER_PAGE_FRACTION = 0.9f
+
+    /** Covers smaller than this (fraction of the screen height) are not worth drawing. */
+    const val MIN_REGION_HEIGHT = 0.02f
+
+    /** Bottom navigation bar: tab buttons sit below this line and are at most this tall. */
+    const val NAV_MIN_TOP = 0.8f
+    const val NAV_MAX_HEIGHT = 0.12f
+
     /** Labels longer than this are not UI labels (tabs, buttons) and are ignored. */
     const val MAX_LABEL_LENGTH = 40
 

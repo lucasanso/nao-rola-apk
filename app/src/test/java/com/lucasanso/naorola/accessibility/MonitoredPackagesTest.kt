@@ -27,7 +27,7 @@ class MonitoredPackagesTest {
     }
 
     @Test fun nothingEnabledNeverMeansEveryApp() {
-        val s = ProtectionSettings(youtubeEnabled = false, instagramEnabled = false)
+        val s = ProtectionSettings(youtubeEnabled = false, instagramEnabled = false, adBlockEnabled = false)
         assertEquals(setOf(own), MonitoredPackages.compute(s, 0, false, own))
     }
 
@@ -36,6 +36,11 @@ class MonitoredPackagesTest {
         assertEquals(MonitoredPackages.ALL_SUPPORTED, MonitoredPackages.compute(total, 0, false, own))
         val discipline = Discipline.activate(ProtectionSettings(youtubeEnabled = false), 0, null, 5, DisciplineRules())
         assertEquals(MonitoredPackages.ALL_SUPPORTED, MonitoredPackages.compute(discipline, 1, false, own))
+    }
+
+    @Test fun adBlockObservesYouTubeAndInstagramEvenWithShortVideoProtectionOff() {
+        val s = ProtectionSettings(youtubeEnabled = false, instagramEnabled = false)
+        assertEquals(setOf(YouTubeRules.PACKAGE, InstagramRules.PACKAGE), MonitoredPackages.compute(s, 0, false, own))
     }
 
     @Test fun diagnosticModeObservesSupportedAppsEvenIfOff() {

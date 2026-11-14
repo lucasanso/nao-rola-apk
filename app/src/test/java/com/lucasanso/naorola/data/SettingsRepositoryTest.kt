@@ -42,6 +42,7 @@ class SettingsRepositoryTest {
         val s = repository(backgroundScope).settings.first()
         assertTrue(s.youtubeEnabled && s.instagramEnabled)
         assertFalse(s.browserEnabled)
+        assertTrue(s.hideInFeeds && s.adBlockEnabled)
         assertEquals(ProtectionMode.PERSONALIZED, s.mode)
     }
 
@@ -50,7 +51,10 @@ class SettingsRepositoryTest {
         val window = ScheduleWindow(setOf(DayOfWeek.MONDAY), 60, 120)
         val firstScope = CoroutineScope(backgroundScope.coroutineContext + Job())
         repository(firstScope, file).edit {
-            it.copy(mode = ProtectionMode.TOTAL, toleranceSeconds = 15, browserEnabled = true, activeWindows = listOf(window))
+            it.copy(
+                mode = ProtectionMode.TOTAL, toleranceSeconds = 15, browserEnabled = true, activeWindows = listOf(window),
+                hideInFeeds = false, adBlockEnabled = false,
+            )
         }
         firstScope.cancel() // closes the first DataStore, like an app restart
         val reloaded = repository(backgroundScope, file).settings.first()
@@ -58,6 +62,8 @@ class SettingsRepositoryTest {
         assertEquals(15, reloaded.toleranceSeconds)
         assertTrue(reloaded.browserEnabled)
         assertEquals(listOf(window), reloaded.activeWindows)
+        assertFalse(reloaded.hideInFeeds)
+        assertFalse(reloaded.adBlockEnabled)
     }
 
     @Test fun disciplineLocksEditsUntilExitIsConfirmed() = runTest(UnconfinedTestDispatcher()) {

@@ -3,7 +3,6 @@ package com.lucasanso.naorola.detection.classifier
 import com.lucasanso.naorola.detection.DetectionConfig
 import com.lucasanso.naorola.detection.signal.DetectionResult
 import com.lucasanso.naorola.detection.signal.Polarity
-import com.lucasanso.naorola.detection.tree.RelBounds
 import com.lucasanso.naorola.domain.model.ScreenContext
 import com.lucasanso.naorola.domain.model.Surface
 
@@ -20,7 +19,6 @@ sealed interface Classification {
         val surface: Surface,
         val confidence: Int,
         val pageKey: Int? = null,
-        val regions: List<RelBounds> = emptyList(),
     ) : Classification {
         override val context: ScreenContext get() = ScreenContext.SHORT_VIDEO
     }
@@ -44,7 +42,7 @@ class ShortVideoClassifier(
         return when {
             veto != null -> Classification.NotShortVideo(result.context, score, vetoedBy = veto.id)
             surface == null || score < threshold -> Classification.NotShortVideo(result.context, score)
-            else -> Classification.ShortVideo(surface, score, result.pageKey, result.regions)
+            else -> Classification.ShortVideo(surface, score, result.pageKey)
         }
     }
 }

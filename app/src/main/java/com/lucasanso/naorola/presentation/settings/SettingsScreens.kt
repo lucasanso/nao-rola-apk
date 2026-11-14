@@ -120,6 +120,10 @@ fun BlockingSettingsScreen(onBack: () -> Unit) {
                 update { it.copy(instagramEnabled = v) }
             }
             HorizontalDivider()
+            SwitchRow(stringResource(R.string.hide_feeds_title), stringResource(R.string.hide_feeds_body), s.hideInFeeds, optionsEnabled) { v ->
+                update { it.copy(hideInFeeds = v) }
+            }
+            HorizontalDivider()
             SwitchRow(stringResource(R.string.toggle_browser), stringResource(R.string.toggle_browser_body), s.browserEnabled, optionsEnabled) { v ->
                 update { it.copy(browserEnabled = v) }
             }

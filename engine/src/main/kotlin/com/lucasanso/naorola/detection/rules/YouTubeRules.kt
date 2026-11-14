@@ -12,6 +12,7 @@ import com.lucasanso.naorola.domain.model.ScreenContext
  */
 object YouTubeRules {
     const val PACKAGE = "com.google.android.youtube"
+    private const val PLAYER_MIN_HEIGHT = 0.6f
 
     val INFO = RuleSetInfo(name = "YouTube", version = "2026.11.0", status = "candidatos, não confirmados em aparelho")
 
@@ -38,8 +39,17 @@ object YouTubeRules {
     /** "Shorts" is a brand name and is not translated in the tab label. */
     val SHORTS_TAB_LABELS = setOf("shorts")
 
+    /** Shorts-related views are named "reel_…" internally. */
+    const val SHORTS_ID_PREFIX = "reel_"
+
+    /** "Skip ad" button of the player, older and newer layouts (candidates). */
+    val SKIP_AD_IDS = setOf("skip_ad_button", "modern_skip_ad_text", "skip_ad_button_text", "skip_ad_button_container")
+
+    /** Elements shown only while an ad plays (candidates). */
+    val AD_PLAYER_IDS = setOf("ad_progress_text", "ad_badge", "ad_text", "ad_countdown", "player_learn_more_button", "visit_advertiser")
+
     val rules: List<Rule> = listOf(
-        AnyIdRule(SIGNAL_PLAYER_ID, POSITIVE, 45, SHORTS_PLAYER_IDS),
+        AnyIdRule(SIGNAL_PLAYER_ID, POSITIVE, 45, SHORTS_PLAYER_IDS, minHeight = PLAYER_MIN_HEIGHT),
         IdPrefixRule(SIGNAL_REEL_NAMESPACE, POSITIVE, 20, prefix = "reel_", minDistinct = 2, exclude = SHORTS_PLAYER_IDS),
         FullScreenPagerRule(SIGNAL_PAGER, POSITIVE, 35),
         SelectedLabelRule(SIGNAL_TAB, POSITIVE, 25, SHORTS_TAB_LABELS),

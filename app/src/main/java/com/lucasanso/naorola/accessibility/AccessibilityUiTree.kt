@@ -26,6 +26,19 @@ class AccessibilityUiTree(
 
     override val root: UiNode? = rootInfo?.let { AccessibilityUiNode(it, this) }
 
+    override val aspectRatio: Float = reference.height().toFloat() / reference.width()
+
+    /** The app window, in screen pixels. */
+    val windowRect: Rect get() = Rect(reference)
+
+    /** Converts engine bounds back to screen pixels. */
+    fun toScreen(b: RelBounds): Rect = Rect(
+        reference.left + (b.left * reference.width()).toInt(),
+        reference.top + (b.top * reference.height()).toInt(),
+        reference.left + (b.right * reference.width()).toInt(),
+        reference.top + (b.bottom * reference.height()).toInt(),
+    )
+
     internal fun relativeBounds(info: AccessibilityNodeInfo): RelBounds {
         val r = Rect()
         info.getBoundsInScreen(r)
@@ -58,4 +71,21 @@ private class AccessibilityUiNode(
     override val childCount: Int get() = info.childCount
     override fun child(index: Int): UiNode? =
         runCatching { info.getChild(index) }.getOrNull()?.let { AccessibilityUiNode(it, tree) }
+
+    /** Clicks this node or its nearest clickable ancestor (the label is often inside the button). */
+    override fun click(): Boolean {
+        var current: AccessibilityNodeInfo? = info
+        repeat(MAX_CLICK_ANCESTORS) {
+            val node = current ?: return false
+            if (node.isClickable && node.isEnabled) {
+                return runCatching { node.performAction(AccessibilityNodeInfo.ACTION_CLICK) }.getOrDefault(false)
+            }
+            current = runCatching { node.parent }.getOrNull()
+        }
+        return false
+    }
+
+    private companion object {
+        const val MAX_CLICK_ANCESTORS = 4
+    }
 }

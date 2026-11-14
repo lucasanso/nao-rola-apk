@@ -1,5 +1,6 @@
 package com.lucasanso.naorola.tile
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
@@ -34,6 +35,8 @@ class QuickToggleTile : TileService() {
         }
     }
 
+    // The Intent overload is used only below Android 14, where it is the only one available.
+    @SuppressLint("StartActivityAndCollapseDeprecated")
     private fun openAccessibilitySettings() {
         val intent = SystemSettings.accessibilityIntent(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

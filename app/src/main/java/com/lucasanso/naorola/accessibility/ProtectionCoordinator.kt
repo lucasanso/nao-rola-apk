@@ -4,17 +4,26 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Rect
 import androidx.core.content.ContextCompat
+import com.lucasanso.naorola.R
 import com.lucasanso.naorola.blocking.AudioFocusMuter
 import com.lucasanso.naorola.blocking.BlockScreenContent
 import com.lucasanso.naorola.blocking.BlockingOverlayManager
+import com.lucasanso.naorola.blocking.CoverItem
+import com.lucasanso.naorola.blocking.RegionCoverOverlay
 import com.lucasanso.naorola.detection.classifier.Classification
 import com.lucasanso.naorola.detection.health.DetectionHealthMonitor
 import com.lucasanso.naorola.detection.health.HealthEvent
+import com.lucasanso.naorola.detection.signal.ActionKind
 import com.lucasanso.naorola.detection.signal.DetectionResult
+import com.lucasanso.naorola.detection.signal.Region
+import com.lucasanso.naorola.detection.signal.RegionKind
 import com.lucasanso.naorola.di.AppContainer
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ProtectionSettings
 import com.lucasanso.naorola.domain.policy.BlockingPolicy
+import com.lucasanso.naorola.domain.policy.CoverPolicy
 import com.lucasanso.naorola.domain.session.BlockingSessionMachine
 import com.lucasanso.naorola.domain.session.Command
 import com.lucasanso.naorola.domain.session.DailyExposureTracker
@@ -23,16 +32,19 @@ import com.lucasanso.naorola.domain.session.UserAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 
 /**
  * Glue between Android and the engine:
- * events → throttle → read screen → detector → classifier → session machine → commands.
+ * events → throttle → read screen → detector → classifier → session machine → commands,
+ * plus covers over parts of the screen and the "skip ad" press.
  *
  * Threading: the session machine and screen reads run on ONE background thread ([engine]);
  * windows and Compose run on the main thread; database/DataStore writes on IO.
@@ -67,13 +79,25 @@ class ProtectionCoordinator(
         BlockingPolicy.evaluate(settings, surface, now, ZoneId.systemDefault(), dailyUsage.usedToday(surface.platform, now))
     }
     private val overlay = BlockingOverlayManager(context, logger, onAction = ::onUserAction)
+    private val covers = RegionCoverOverlay(context, logger)
+
+    /** App the covers belong to (engine thread); null = no covers. */
+    @Volatile private var coverPackage: String? = null
+
+    /** Covers taken down because a system panel opened over [coversSuspendedFor]. */
+    @Volatile private var coversSuspendedFor: String? = null
+    private var coverGuard: Job? = null
+    private var lastSkipAt = Long.MIN_VALUE / 2
     private val audio = AudioFocusMuter(context)
     private val foregroundWatcher = ForegroundWatcher(engineScope, screen) { pkg ->
         handle(SessionInput.ForegroundChanged(clock.nowMillis(), pkg))
     }
     private val screenOffReceiver = object : BroadcastReceiver() {
         override fun onReceive(c: Context?, intent: Intent?) {
-            engineScope.launch { handle(SessionInput.ScreenOff(clock.nowMillis())) }
+            engineScope.launch {
+                clearCovers()
+                handle(SessionInput.ScreenOff(clock.nowMillis()))
+            }
         }
     }
 
@@ -108,10 +132,14 @@ class ProtectionCoordinator(
         }
     }
 
+    /** Called on the main thread when a monitored list scrolls; keeps covers on their content. */
+    fun onScrolled(deltaY: Int) = covers.onScrolled(deltaY)
+
     /** Called on the main thread when the service goes away. Never blocks. */
     fun stop() {
         runCatching { context.unregisterReceiver(screenOffReceiver) }
         overlay.hide()
+        covers.clear()
         audio.release()
         // Close the session (e.g. record exposure) after our own scopes are gone.
         container.appScope.launch(engine) { execute(machine.handle(SessionInput.ServiceStopping(clock.nowMillis())), persistOnly = true) }
@@ -123,11 +151,13 @@ class ProtectionCoordinator(
         val now = clock.nowMillis()
         throttle.onEvaluated(now)
         try {
+            val scrollMark = covers.scrollTotal
             val root = screen.activeRoot() ?: return
             val pkg = root.packageName?.toString() ?: return
             if (pkg == screen.ownPackage) return
             val detector = container.detectors.detectorFor(pkg)
             if (detector == null) {
+                clearCovers()
                 handle(SessionInput.ForegroundChanged(now, pkg))
                 return
             }
@@ -139,9 +169,104 @@ class ProtectionCoordinator(
             detectionHealth.observe(now, detection, classification)?.let(::onHealthEvent)
             logTransition(pkg, detection, classification)
             handle(SessionInput.Observed(now, pkg, classification))
+            updateCovers(pkg, tree, detection, classification, scrollMark, now)
+            pressActions(detection, now)
         } catch (e: Exception) {
             logger.error(TAG, "Falha ao avaliar a tela", e)
         }
+    }
+
+    /** Must run on [engine]. A short-video player gets the block screen, never covers. */
+    private fun updateCovers(
+        pkg: String,
+        tree: AccessibilityUiTree,
+        detection: DetectionResult,
+        classification: Classification,
+        scrollMark: Int,
+        now: Long,
+    ) {
+        if (classification is Classification.ShortVideo || coversSuspendedFor == pkg) {
+            clearCovers()
+            return
+        }
+        val zone = ZoneId.systemDefault()
+        val shown = detection.regions.filter { CoverPolicy.shows(settings, it.kind.coverKind, it.platform, now, zone) }
+        if (shown.isEmpty()) {
+            clearCovers()
+            return
+        }
+        val imeTop = runCatching { screen.inputMethodTop() }.getOrNull()
+        val items = shown.map { coverItem(tree, it, imeTop) }
+        val firstCovers = coverPackage == null
+        coverPackage = pkg
+        mainScope.launch { covers.show(items, scrollMark) }
+        if (firstCovers) logger.info(TAG, "Capas: ${shown.groupingBy { it.kind }.eachCount()}")
+        ensureCoverGuard()
+    }
+
+    private fun coverItem(tree: AccessibilityUiTree, region: Region, imeTop: Int?): CoverItem {
+        val clip = region.container?.let(tree::toScreen) ?: tree.windowRect
+        if (imeTop != null && imeTop < clip.bottom) clip.bottom = maxOf(clip.top, imeTop)
+        val label = when {
+            region.kind == RegionKind.AD -> R.string.cover_ad
+            region.platform == Platform.INSTAGRAM -> R.string.cover_reels
+            else -> R.string.cover_shorts
+        }
+        return CoverItem(
+            rect = tree.toScreen(region.bounds),
+            clip = Rect(clip),
+            label = context.getString(label),
+            shortLabel = context.getString(R.string.cover_short),
+            scrolls = region.container != null,
+        )
+    }
+
+    /** Must run on [engine]. */
+    private fun clearCovers() {
+        if (coverPackage == null) return
+        coverPackage = null
+        mainScope.launch { covers.clear() }
+    }
+
+    /**
+     * Events come only from monitored apps, so leaving the app (home, recents, another app) or
+     * pulling down the notification shade would not be noticed: while covers are up, check the
+     * front window a few times per second.
+     */
+    private fun ensureCoverGuard() {
+        if (coverGuard?.isActive == true) return
+        coverGuard = engineScope.launch {
+            while (isActive && (coverPackage != null || coversSuspendedFor != null)) {
+                delay(COVER_GUARD_MILLIS)
+                val front = runCatching { screen.foregroundAppPackage() }.getOrNull() ?: continue
+                val panel = runCatching { screen.systemPanelOpen() }.getOrDefault(false)
+                val owner = coverPackage ?: coversSuspendedFor ?: break
+                when {
+                    front != owner -> {
+                        coversSuspendedFor = null
+                        clearCovers()
+                    }
+                    panel && coverPackage != null -> {
+                        coversSuspendedFor = owner
+                        clearCovers()
+                    }
+                    !panel && coversSuspendedFor != null -> {
+                        coversSuspendedFor = null
+                        onEvent(EventKind.OTHER)
+                    }
+                }
+            }
+        }
+    }
+
+    /** Presses "Skip ad" when the ad blocker is on, at most once per [SKIP_MIN_INTERVAL_MILLIS]. */
+    private fun pressActions(detection: DetectionResult, now: Long) {
+        if (!settings.adBlockEnabled) return
+        val action = detection.actions.firstOrNull { it.kind == ActionKind.SKIP_AD } ?: return
+        if (now - lastSkipAt < SKIP_MIN_INTERVAL_MILLIS) return
+        lastSkipAt = now
+        val pressed = runCatching { action.target.click() }.getOrDefault(false)
+        logger.info(TAG, if (pressed) "Anúncio pulado" else "O botão de pular anúncio não respondeu")
     }
 
     private fun onHealthEvent(event: HealthEvent) {
@@ -248,5 +373,7 @@ class ProtectionCoordinator(
 
     private companion object {
         const val TAG = "Protecao"
+        const val COVER_GUARD_MILLIS = 300L
+        const val SKIP_MIN_INTERVAL_MILLIS = 1_500L
     }
 }

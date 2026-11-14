@@ -7,6 +7,18 @@ data class RelBounds(val left: Float, val top: Float, val right: Float, val bott
     val width: Float get() = (right - left).coerceAtLeast(0f)
     val height: Float get() = (bottom - top).coerceAtLeast(0f)
     val isEmpty: Boolean get() = width <= 0f || height <= 0f
+    val centerX: Float get() = (left + right) / 2f
+
+    fun intersect(other: RelBounds): RelBounds = RelBounds(
+        maxOf(left, other.left),
+        maxOf(top, other.top),
+        minOf(right, other.right),
+        minOf(bottom, other.bottom),
+    ).let { if (it.isEmpty) EMPTY else it }
+
+    fun intersects(other: RelBounds): Boolean = !intersect(other).isEmpty
+
+    fun verticalOverlap(other: RelBounds): Float = (minOf(bottom, other.bottom) - maxOf(top, other.top)).coerceAtLeast(0f)
 
     companion object {
         val EMPTY = RelBounds(0f, 0f, 0f, 0f)
@@ -46,10 +58,24 @@ interface UiNode {
     val identityKey: Int
     val childCount: Int
     fun child(index: Int): UiNode?
+
+    /**
+     * Presses this element (or its nearest clickable ancestor) on the user's behalf, e.g. the
+     * "Skip ad" button. Only real screens can do it; recorded/synthetic trees return false.
+     */
+    fun click(): Boolean = false
 }
 
 /** The screen of one app at one moment. */
 interface UiTree {
     val packageName: String
     val root: UiNode?
+
+    /** Height / width of the app window, to judge real shapes from relative bounds. */
+    val aspectRatio: Float get() = DEFAULT_ASPECT_RATIO
+
+    companion object {
+        /** A 1080 × 2340 phone screen. */
+        const val DEFAULT_ASPECT_RATIO = 2340f / 1080f
+    }
 }

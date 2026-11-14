@@ -33,7 +33,6 @@ class BlockingPolicyTest {
         assertTrue(policy(s, Surface.SHORTS_PLAYER).protects)
         assertTrue(policy(s, Surface.REELS_VIEWER).protects)
         assertEquals(InactiveReason.PLATFORM_OFF, policy(s, Surface.WEB_SHORTS).inactiveReason)
-        assertEquals(InactiveReason.PLATFORM_OFF, policy(s, Surface.FEED_REEL_ITEM).inactiveReason)
         assertEquals(InactiveReason.PLATFORM_OFF, policy(s, Surface.SHORT_VIDEO_APP).inactiveReason)
     }
 

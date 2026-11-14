@@ -69,6 +69,11 @@ class DiagnosticRecorder(
                 "sinais" to detection.signals.joinToString { "${it.id}:${it.polarity.name.first()}${it.weight}" }.ifEmpty { "nenhum" },
                 "contexto" to detection.context.name,
                 "classificacao" to describe(classification),
+                "regioes" to detection.regions.joinToString("; ") { r ->
+                    val b = r.bounds
+                    String.format(Locale.ROOT, "%s %.3f,%.3f,%.3f,%.3f", r.kind.name, b.left, b.top, b.right, b.bottom)
+                }.ifEmpty { "nenhuma" },
+                "acoes" to detection.actions.joinToString { it.kind.name }.ifEmpty { "nenhuma" },
             )
             directory.mkdirs()
             val file = File(directory, "estrutura-${tree.packageName}-${timestamp("yyyyMMdd-HHmmss")}.txt")

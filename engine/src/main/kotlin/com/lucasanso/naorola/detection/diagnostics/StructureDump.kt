@@ -1,6 +1,7 @@
 package com.lucasanso.naorola.detection.diagnostics
 
 import com.lucasanso.naorola.detection.DetectionConfig
+import com.lucasanso.naorola.detection.rules.AdRules
 import com.lucasanso.naorola.detection.tree.RelBounds
 import com.lucasanso.naorola.detection.tree.UiNode
 import com.lucasanso.naorola.detection.tree.UiTree
@@ -13,7 +14,8 @@ import java.util.Locale
  *
  * Flags: V visible, S scrollable, s selected, T has text, D has description.
  * Texts and descriptions are never written. The label column holds a token only when the
- * description/text is exactly a known navigation label (e.g. "shorts", "reels"), else "-".
+ * description/text is exactly a known navigation or ad label (e.g. "shorts", "pular anúncio"),
+ * else "-". Ad labels that may name the advertiser are written as "patrocinado".
  *
  * The same files are parsed back as test fixtures, so real screens become regression tests.
  */
@@ -21,6 +23,7 @@ object StructureDump {
     const val HEADER = "# naorola-structure-dump v1"
     private const val NONE = "-"
     private const val EXPECTATION_KEY = "esperado"
+    private const val ASPECT_KEY = "proporcao"
 
     /** What should have happened on the captured screen, set by the user in the app. */
     enum class Expectation(val label: String) {
@@ -57,12 +60,13 @@ object StructureDump {
         "shorts", "reels", "home", "início", "inicio", "subscriptions", "inscrições", "you", "você",
         "search", "pesquisar", "explore", "explorar", "profile", "perfil", "messages", "mensagens",
         "direct", "feed", "stories",
-    )
+    ) + AdRules.SKIP_LABELS + AdRules.SKIP_WEAK_LABELS
 
     fun write(tree: UiTree, notes: Map<String, String> = emptyMap(), maxNodes: Int = DetectionConfig.MAX_NODES): String {
         val out = StringBuilder()
         out.append(HEADER).append('\n')
         out.append("# package=").append(tree.packageName).append('\n')
+        out.append("# ").append(ASPECT_KEY).append('=').append(String.format(Locale.ROOT, "%.4f", tree.aspectRatio)).append('\n')
         notes.forEach { (k, v) -> out.append("# ").append(k).append('=').append(sanitize(v)).append('\n') }
         var written = 0
         val stack = ArrayDeque<Pair<UiNode, Int>>()
@@ -80,6 +84,7 @@ object StructureDump {
 
     fun parse(text: String): DumpTree {
         var packageName = ""
+        var aspect = UiTree.DEFAULT_ASPECT_RATIO
         val roots = ArrayList<DumpNode>()
         val path = ArrayList<DumpNode>()
         text.lineSequence().forEachIndexed { index, raw ->
@@ -87,6 +92,9 @@ object StructureDump {
             if (lineText.isEmpty()) return@forEachIndexed
             if (lineText.startsWith("#")) {
                 if (lineText.startsWith("# package=")) packageName = lineText.removePrefix("# package=").trim()
+                if (lineText.startsWith("# $ASPECT_KEY=")) {
+                    lineText.removePrefix("# $ASPECT_KEY=").trim().toFloatOrNull()?.takeIf { it > 0f }?.let { aspect = it }
+                }
                 return@forEachIndexed
             }
             val cols = lineText.split('\t')
@@ -112,7 +120,7 @@ object StructureDump {
             path += node
         }
         require(roots.size <= 1) { "Mais de uma raiz no arquivo" }
-        return DumpTree(packageName, roots.firstOrNull())
+        return DumpTree(packageName, roots.firstOrNull(), aspect)
     }
 
     private fun line(node: UiNode, depth: Int): String {
@@ -139,13 +147,21 @@ object StructureDump {
 
     private fun allowedLabel(node: UiNode): String? {
         val raw = (node.contentDescription ?: node.text)?.toString()?.trim()?.lowercase() ?: return null
-        return raw.takeIf { it in LABEL_ALLOWLIST }
+        return when {
+            raw in LABEL_ALLOWLIST -> raw
+            AdRules.isAdLabel(raw) -> AdRules.CANONICAL_AD_LABEL
+            else -> null
+        }
     }
 
     private fun sanitize(value: String) = value.replace('\t', ' ').replace('\n', ' ')
 }
 
-class DumpTree(override val packageName: String, override val root: DumpNode?) : UiTree
+class DumpTree(
+    override val packageName: String,
+    override val root: DumpNode?,
+    override val aspectRatio: Float = UiTree.DEFAULT_ASPECT_RATIO,
+) : UiTree
 
 class DumpNode(
     override val className: String?,

@@ -7,16 +7,12 @@ enum class Platform { YOUTUBE, INSTAGRAM, OTHER }
 enum class Surface(
     val platform: Platform,
     val viaBrowser: Boolean = false,
-    val regionBased: Boolean = false,
 ) {
     /** YouTube Shorts full-screen vertical player. */
     SHORTS_PLAYER(Platform.YOUTUBE),
 
     /** Instagram Reels full-screen vertical viewer. */
     REELS_VIEWER(Platform.INSTAGRAM),
-
-    /** A Reel inside Instagram's main feed (covered by region, experimental). */
-    FEED_REEL_ITEM(Platform.INSTAGRAM, regionBased = true),
 
     /** youtube.com/shorts/… opened in a browser. */
     WEB_SHORTS(Platform.YOUTUBE, viaBrowser = true),

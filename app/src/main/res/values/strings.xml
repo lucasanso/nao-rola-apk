@@ -325,5 +325,13 @@ Desligar aqui desativa o serviço de verdade. Para religar: botão “Religar pr
     <string name="about_rules_title">Regras de detecção</string>
     <string name="about_rule_line">%1$s %2$s — %3$s</string>
     <string name="about_limits_title">Limitações conhecidas</string>
-    <string name="about_limits_body">• As regras ainda não foram calibradas num aparelho real; algumas telas podem não ser reconhecidas.\n• Atualizações do YouTube e do Instagram podem quebrar a detecção até sair uma versão nova do Não-Rola.\n• A prateleira de Shorts e os Reels dentro do feed ainda não são cobertos.\n• O vídeo pode continuar tocando sob a tela de bloqueio até você tocar em Voltar.\n• Você continua dono do aparelho: dá para desativar o serviço nas configurações do Android.</string>
+    <string name="about_limits_body">• As regras de feeds e anúncios ainda não foram calibradas num aparelho real; algumas prateleiras, Reels e anúncios podem passar.\n• Atualizações do YouTube e do Instagram podem quebrar a detecção até sair uma versão nova do Não-Rola.\n• Ao rolar rápido, um item novo pode aparecer por um instante antes de ser coberto.\n• Anúncios do YouTube que não podem ser pulados continuam tocando; o Chrome não aceita bloqueadores de outros apps.\n• O vídeo pode continuar tocando sob a tela de bloqueio até você tocar em Voltar.\n• Você continua dono do aparelho: dá para desativar o serviço nas configurações do Android.</string>
+
+    <!-- Capas sobre feeds e anúncios -->
+    <string name="cover_shorts">Shorts oculto</string>
+    <string name="cover_reels">Reels oculto</string>
+    <string name="cover_ad">Anúncio oculto</string>
+    <string name="cover_short">Oculto</string>
+    <string name="hide_feeds_title">Esconder Shorts e Reels nos feeds</string>
+    <string name="hide_feeds_body">Cobre a prateleira de Shorts, os Reels no meio do feed e os botões das abas Shorts e Reels. Tocar no que está coberto abre o vídeo, que é bloqueado normalmente.</string>
 </resources>
