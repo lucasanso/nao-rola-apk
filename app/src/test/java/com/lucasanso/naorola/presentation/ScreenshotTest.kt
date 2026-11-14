@@ -141,7 +141,7 @@ class ScreenshotTest {
         usage.addEvent(YouTubeRules.PACKAGE, now - 9 * 60_000L, UsageEvents.Event.ACTIVITY_PAUSED)
         usage.addEvent(InstagramRules.PACKAGE, now - 8 * 60_000L, UsageEvents.Event.ACTIVITY_RESUMED)
         usage.addEvent(InstagramRules.PACKAGE, now - 60_000L, UsageEvents.Event.ACTIVITY_PAUSED)
-        app.container.onServiceConnected()
+        app.container.onServiceConnected(disableSelf = {})
         runBlocking {
             val stats = app.container.statsRepository
             repeat(4) { stats.record(BlockEvent(now - it * 600_000L, Surface.SHORTS_PLAYER, BlockOutcome.BLOCKED)) }

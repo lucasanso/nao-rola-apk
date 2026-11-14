@@ -22,7 +22,7 @@ class NaoRolaAccessibilityService : AccessibilityService(), ScreenAccess {
         super.onServiceConnected()
         try {
             coordinator = ProtectionCoordinator(this, this, container).also { it.start() }
-            container.onServiceConnected()
+            container.onServiceConnected(disableSelf = ::disableSelf)
         } catch (e: Exception) {
             container.logger.error(TAG, "Falha ao iniciar a proteção", e)
         }

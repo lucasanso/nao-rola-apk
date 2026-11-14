@@ -22,6 +22,7 @@ import com.lucasanso.naorola.monitoring.DiagnosticContext
 import com.lucasanso.naorola.monitoring.DiagnosticRecorder
 import com.lucasanso.naorola.monitoring.ServiceHealthMonitor
 import com.lucasanso.naorola.monitoring.UsageStatsReader
+import com.lucasanso.naorola.tile.QuickToggleTile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -92,14 +93,34 @@ class AppContainer(private val context: Context) {
     /** True while Android keeps our accessibility service bound and running. */
     val serviceConnected: StateFlow<Boolean> = _serviceConnected.asStateFlow()
 
-    fun onServiceConnected() {
+    /** Turns the running accessibility service off for real (AccessibilityService.disableSelf). */
+    @Volatile private var serviceDisabler: (() -> Unit)? = null
+
+    fun onServiceConnected(disableSelf: () -> Unit) {
+        serviceDisabler = disableSelf
         _serviceConnected.value = true
         appScope.launch { runCatching { statsRepository.recordProtection(ProtectionEventType.SERVICE_CONNECTED) } }
+        QuickToggleTile.refresh(context)
     }
 
     fun onServiceDisconnected() {
+        serviceDisabler = null
         _serviceConnected.value = false
         appScope.launch { runCatching { statsRepository.recordProtection(ProtectionEventType.SERVICE_DISCONNECTED) } }
+        QuickToggleTile.refresh(context)
+    }
+
+    /**
+     * Turns protection off right now, e.g. before opening a banking app that refuses to run while
+     * an accessibility service from outside the Play Store is on. The service is really disabled
+     * (nothing is hidden from the bank); turning it back on goes through Android's settings.
+     * Returns false when the service was not running.
+     */
+    fun disableServiceNow(): Boolean {
+        val disable = serviceDisabler ?: return false
+        logger.info("Servico", "Serviço desligado pelo usuário (ex.: para usar app de banco)")
+        disable()
+        return true
     }
 
     companion object {

@@ -13,13 +13,15 @@ import java.io.File
 
 /** Opens the Android settings pages the app depends on, with safe fallbacks. */
 object SystemSettings {
-    fun openAccessibility(context: Context) {
+    fun openAccessibility(context: Context) = start(context, accessibilityIntent(context))
+
+    /** Accessibility settings, highlighting our service on devices that support it. */
+    fun accessibilityIntent(context: Context): Intent {
         val component = ComponentName(context, NaoRolaAccessibilityService::class.java).flattenToString()
-        // Highlights our service on devices that support it; others just open the list.
-        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        return Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
             .putExtra(":settings:fragment_args_key", component)
             .putExtra(":settings:show_fragment_args", Bundle().apply { putString(":settings:fragment_args_key", component) })
-        start(context, intent)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     fun openAppDetails(context: Context) =

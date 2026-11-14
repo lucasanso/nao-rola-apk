@@ -11,7 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.ZoneId
@@ -45,6 +47,20 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardState())
 
+    val disclosureAccepted: StateFlow<Boolean> = container.settingsRepository.uiPreferences
+        .map { it.disclosureAccepted }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), false)
+
+    /** Really turns the accessibility service off (e.g. before opening a banking app). */
+    fun disableForBanking() {
+        if (container.disableServiceNow()) {
+            viewModelScope.launch {
+                delay(SETTLE_MILLIS) // let Android update its list of enabled services
+                refresh()
+            }
+        }
+    }
+
     /** The user saw the warning; it comes back if the problem happens again. */
     fun dismissSuspicion(platform: Platform) {
         viewModelScope.launch { container.settingsRepository.setDetectionSuspicion(platform, null) }
@@ -67,5 +83,6 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
 
     private companion object {
         const val STOP_TIMEOUT_MILLIS = 5_000L
+        const val SETTLE_MILLIS = 600L
     }
 }

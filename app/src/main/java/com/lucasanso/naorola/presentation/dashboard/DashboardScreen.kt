@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +43,7 @@ import java.util.Date
 fun DashboardScreen(onOpenPermissions: () -> Unit, onOpenDiagnostics: () -> Unit) {
     val viewModel = containerViewModel { DashboardViewModel(it) }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val disclosureAccepted by viewModel.disclosureAccepted.collectAsStateWithLifecycle()
     LifecycleResumeEffect(Unit) {
         viewModel.refresh()
         onPauseOrDispose { }
@@ -49,7 +54,7 @@ fun DashboardScreen(onOpenPermissions: () -> Unit, onOpenDiagnostics: () -> Unit
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        StatusCard(state, onOpenPermissions)
+        StatusCard(state, disclosureAccepted, onOpenPermissions, onDisableForBanking = viewModel::disableForBanking)
         state.suspectedDetection.sortedBy { it.ordinal }.forEach { platform ->
             SuspicionCard(platform, onOpenDiagnostics) { viewModel.dismissSuspicion(platform) }
         }
@@ -60,7 +65,14 @@ fun DashboardScreen(onOpenPermissions: () -> Unit, onOpenDiagnostics: () -> Unit
 }
 
 @Composable
-private fun StatusCard(state: DashboardState, onOpenPermissions: () -> Unit) {
+private fun StatusCard(
+    state: DashboardState,
+    disclosureAccepted: Boolean,
+    onOpenPermissions: () -> Unit,
+    onDisableForBanking: () -> Unit,
+) {
+    val context = LocalContext.current
+    var confirmBanking by remember { mutableStateOf(false) }
     val positive = !state.needsAttention
     val (title, body) = when (state.status) {
         ProtectionStatus.ACTIVE -> stringResource(R.string.status_active) to stringResource(R.string.status_active_body)
@@ -97,11 +109,35 @@ private fun StatusCard(state: DashboardState, onOpenPermissions: () -> Unit) {
                 if (state.disciplineActive) StatusPill(stringResource(R.string.badge_discipline), PillTone.NEUTRAL)
             }
         }
-        if (state.needsAttention) {
-            Button(onClick = onOpenPermissions, modifier = Modifier.fillMaxWidth()) {
+        when {
+            // Turned off on purpose (e.g. for a banking app): one tap back to the toggle.
+            state.status == ProtectionStatus.SERVICE_OFF && disclosureAccepted ->
+                Button(onClick = { SystemSettings.openAccessibility(context) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.status_action_reenable))
+                }
+            state.needsAttention -> Button(onClick = onOpenPermissions, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.status_action_fix))
             }
+            else -> TextButton(onClick = { confirmBanking = true }) {
+                Text(stringResource(R.string.bank_disable_action), color = MaterialTheme.colorScheme.onPrimaryContainer)
+            }
         }
+    }
+    if (confirmBanking) {
+        val body = stringResource(R.string.bank_dialog_body) +
+            if (state.disciplineActive) "\n\n" + stringResource(R.string.bank_dialog_discipline) else ""
+        AlertDialog(
+            onDismissRequest = { confirmBanking = false },
+            title = { Text(stringResource(R.string.bank_dialog_title)) },
+            text = { Text(body) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirmBanking = false
+                    onDisableForBanking()
+                }) { Text(stringResource(R.string.bank_dialog_confirm)) }
+            },
+            dismissButton = { TextButton(onClick = { confirmBanking = false }) { Text(stringResource(R.string.discipline_cancel)) } },
+        )
     }
 }
 
