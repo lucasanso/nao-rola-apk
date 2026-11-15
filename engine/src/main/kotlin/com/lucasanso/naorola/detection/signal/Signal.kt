@@ -25,6 +25,9 @@ enum class RegionKind(val coverKind: CoverKind) {
 
     /** A sponsored post, story or card. */
     AD(CoverKind.AD),
+
+    /** YouTube's Home feed (recommendations). */
+    HOME_FEED(CoverKind.HOME_FEED),
 }
 
 /**

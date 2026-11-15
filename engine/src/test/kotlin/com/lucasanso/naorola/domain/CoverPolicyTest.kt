@@ -43,6 +43,16 @@ class CoverPolicyTest {
         assertTrue(shows(ProtectionSettings(hideInFeeds = false, discipline = discipline), CoverKind.SHORT_VIDEO))
     }
 
+    @Test fun youtubeHomeIsOptInAndFollowsScheduleWhenAsked() {
+        assertFalse(shows(ProtectionSettings(), CoverKind.HOME_FEED))
+        val on = ProtectionSettings(hideYouTubeHome = true, youtubeEnabled = false)
+        assertTrue(shows(on, CoverKind.HOME_FEED))
+        assertFalse(shows(on, CoverKind.HOME_FEED, Platform.INSTAGRAM))
+        val paused = on.copy(snoozedUntil = now + 60_000)
+        assertFalse(shows(paused, CoverKind.HOME_FEED))
+        assertTrue(shows(paused.copy(homeFollowsSchedule = false), CoverKind.HOME_FEED))
+    }
+
     @Test fun adsDependOnlyOnTheirSwitch() {
         assertTrue(shows(ProtectionSettings(snoozedUntil = now + 60_000, youtubeEnabled = false), CoverKind.AD))
         assertFalse(shows(ProtectionSettings(adBlockEnabled = false), CoverKind.AD))

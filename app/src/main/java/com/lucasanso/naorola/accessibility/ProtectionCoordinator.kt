@@ -209,6 +209,7 @@ class ProtectionCoordinator(
         if (imeTop != null && imeTop < clip.bottom) clip.bottom = maxOf(clip.top, imeTop)
         val label = when {
             region.kind == RegionKind.AD -> R.string.cover_ad
+            region.kind == RegionKind.HOME_FEED -> R.string.cover_home
             region.platform == Platform.INSTAGRAM -> R.string.cover_reels
             else -> R.string.cover_shorts
         }

@@ -18,15 +18,21 @@ import com.lucasanso.naorola.domain.model.Platform
  */
 object YouTubeRegionFinder {
     const val KEY_SHORTS = "shorts"
+    const val KEY_HOME = "home"
 
-    val SCAN_REQUEST = ScanRequest(labelKey = ::keyOf, nodeIds = YouTubeRules.SKIP_AD_IDS)
+    val SCAN_REQUEST = ScanRequest(labelKey = ::keyOf, nodeIds = YouTubeRules.SKIP_AD_IDS, captureTopEditTexts = true)
 
-    private fun keyOf(label: String): String? =
-        AdRules.keyOf(label) ?: if (label in YouTubeRules.SHORTS_TAB_LABELS) KEY_SHORTS else null
+    private fun keyOf(label: String): String? = AdRules.keyOf(label) ?: when (label) {
+        in YouTubeRules.SHORTS_TAB_LABELS -> KEY_SHORTS
+        in YouTubeRules.HOME_TAB_LABELS -> KEY_HOME
+        else -> null
+    }
 
     fun regions(summary: ScreenSummary): List<Region> {
         val regions = ArrayList<Region>()
-        summary.mainFeed()?.let { feed ->
+        val feed = summary.mainFeed()
+        if (feed != null && isHomeFeed(summary)) regions += Region(feed.bounds, RegionKind.HOME_FEED, Platform.YOUTUBE)
+        if (feed != null) run {
             for (item in summary.itemsOf(feed)) {
                 val kind = when {
                     item.labels.any(AdRules::isAdLabel) -> RegionKind.AD
@@ -38,6 +44,16 @@ object YouTubeRegionFinder {
         }
         FeedRegions.navButton(summary, KEY_SHORTS)?.let { regions += Region(it, RegionKind.SHORT_VIDEO_TAB, Platform.YOUTUBE) }
         return regions
+    }
+
+    /**
+     * Home tab selected in the bottom bar and no search on screen (YouTube keeps Home selected while
+     * showing search results, which must stay visible).
+     */
+    fun isHomeFeed(summary: ScreenSummary): Boolean {
+        val homeSelected = summary.keyedLabels[KEY_HOME].orEmpty().any { FeedRegions.isNavButton(it.bounds) && it.node.isSelected }
+        val searching = summary.capturedTexts.isNotEmpty() || summary.ids.keys.any { it in YouTubeRules.SEARCH_IDS }
+        return homeSelected && !searching
     }
 
     /**

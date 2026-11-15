@@ -21,14 +21,14 @@ class YouTubeRegionFinderTest {
     @Test fun homeCoversAdAndShortsShelfButNotRegularVideos() {
         val result = detector.detect(Screens.youtubeHomeMixed())
         assertTrue(ShortVideoClassifier().classify(result) is Classification.NotShortVideo)
-        val feedRegions = result.regions.filter { it.kind != RegionKind.SHORT_VIDEO_TAB }
+        val feedRegions = result.regions.filter { it.kind != RegionKind.SHORT_VIDEO_TAB && it.kind != RegionKind.HOME_FEED }
         assertEquals(listOf(RegionKind.AD, RegionKind.SHORT_VIDEO_SHELF), feedRegions.map { it.kind })
         assertEquals(RelBounds(0f, 0.08f, 1f, 0.38f), feedRegions[0].bounds)
         assertEquals(RelBounds(0f, 0.38f, 1f, 0.8f), feedRegions[1].bounds.rounded())
     }
 
     @Test fun shortsTabButtonInTheBottomBarIsCovered() {
-        val tab = detector.detect(Screens.youtubeHomeOnlyVideos()).regions.single()
+        val tab = detector.detect(Screens.youtubeHomeOnlyVideos()).regions.single { it.kind != RegionKind.HOME_FEED }
         assertEquals(RegionKind.SHORT_VIDEO_TAB, tab.kind)
         assertEquals(RelBounds(0f, 0.93f, 0.25f, 1f), tab.bounds)
     }
@@ -55,6 +55,14 @@ class YouTubeRegionFinderTest {
     @Test fun shortsPlayerAndWatchPageHaveNoFeedCovers() {
         assertTrue(detector.detect(Screens.youtubeShortsTab()).regions.none { it.kind == RegionKind.SHORT_VIDEO_SHELF })
         assertTrue(detector.detect(Screens.youtubeWatchPage()).regions.isEmpty())
+    }
+
+    @Test fun homeFeedIsFoundOnlyWithHomeSelectedAndNoSearch() {
+        val home = detector.detect(Screens.youtubeHomeOnlyVideos()).regions.filter { it.kind == RegionKind.HOME_FEED }
+        assertEquals(listOf(RelBounds(0f, 0.08f, 1f, 0.93f)), home.map { it.bounds })
+        assertTrue(detector.detect(Screens.youtubeSearchResults()).regions.none { it.kind == RegionKind.HOME_FEED })
+        assertTrue(detector.detect(Screens.youtubeSubscriptions()).regions.none { it.kind == RegionKind.HOME_FEED })
+        assertTrue(detector.detect(Screens.youtubeWatchPage()).regions.none { it.kind == RegionKind.HOME_FEED })
     }
 
     @Test fun skipButtonFoundById() {

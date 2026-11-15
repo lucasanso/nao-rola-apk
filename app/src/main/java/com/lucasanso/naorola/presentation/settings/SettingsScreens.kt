@@ -129,6 +129,18 @@ fun BlockingSettingsScreen(onBack: () -> Unit) {
                 update { it.copy(hideInFeeds = v) }
             }
             HorizontalDivider()
+            SwitchRow(stringResource(R.string.hide_home_title), stringResource(R.string.hide_home_body), s.hideYouTubeHome, editable) { v ->
+                update { it.copy(hideYouTubeHome = v) }
+            }
+            if (s.hideYouTubeHome) {
+                SwitchRow(
+                    stringResource(R.string.hide_home_schedule_title),
+                    stringResource(R.string.hide_home_schedule_body),
+                    s.homeFollowsSchedule,
+                    editable,
+                ) { v -> update { it.copy(homeFollowsSchedule = v) } }
+            }
+            HorizontalDivider()
             SwitchRow(stringResource(R.string.toggle_browser), stringResource(R.string.toggle_browser_body), s.browserEnabled, optionsEnabled) { v ->
                 update { it.copy(browserEnabled = v) }
             }

@@ -4,7 +4,7 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.4.0.apk`](release/NaoRola-0.4.0.apk) (3,4 MB, Android 12+). SHA-256: `12d2e34c977206194a107493b2c7b84ba00ea351792a276b32e61700708f1c1a`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.4.1.apk`](release/NaoRola-0.4.1.apk) (3,4 MB, Android 12+). SHA-256: `53077e10db0146214a7b2c2315b36dc40660739a8602c986b456a61c4568d66b`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual
 
@@ -54,7 +54,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.4.0.apk
+adb install -r release/NaoRola-0.4.1.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -71,7 +71,7 @@ Versões futuras precisam ser assinadas com a **mesma chave** para instalar por 
 
 | Onde | O quê |
 |---|---|
-| *Ajustes › Bloqueio* | Modo **Personalizado** ou **Bloqueio total**. Plataformas (YouTube Shorts, Instagram Reels, navegador, apps só de vídeo curto). **Esconder Shorts e Reels nos feeds** (ligado por padrão). Tolerância por entrada (nenhuma, 5 s a 60 s ou sem limite). **Limite diário** somado por plataforma. Pausa temporária e sua duração. Reel recebido por DM liberado. |
+| *Ajustes › Bloqueio* | Modo **Personalizado** ou **Bloqueio total**. Plataformas (YouTube Shorts, Instagram Reels, navegador, apps só de vídeo curto). **Esconder Shorts e Reels nos feeds** (ligado por padrão). **Esconder a Início do YouTube** (desligado por padrão; opcionalmente segue horários e pausas): cobre as recomendações, mantendo busca, Inscrições e Você. Tolerância por entrada (nenhuma, 5 s a 60 s ou sem limite). **Limite diário** somado por plataforma. Pausa temporária e sua duração. Reel recebido por DM liberado. |
 | *Ajustes › Anúncios* | Capas sobre anúncios e "Pular anúncio" no YouTube/Instagram (vale também fora dos horários e durante pausas). Bloqueador do Samsung Internet: lista própria e importação de uma lista maior (AdBlock, hosts ou um domínio por linha). Explicação sobre o Chrome. |
 | *Ajustes › Horários e exceções* | Proteção sempre ativa ou só em horários semanais, exceções semanais (proteção desligada) e pausas programadas. |
 | *Ajustes › Modo Disciplina* | Duração (1 h a 24 h ou até sair pelo app), espera para sair (5 a 60 min) e regras: zerar tolerância e limite, suspender exceções, forçar todas as plataformas, manter Reel de DM, forçar Bloqueio total. Configurações ficam travadas; a pausa some da tela de bloqueio. |
@@ -218,11 +218,11 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.4.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.4.1 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-190 testes automatizados (136 no `:engine`, 54 no `:app`), mais 8 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
+192 testes automatizados (138 no `:engine`, 54 no `:app`), mais 8 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|

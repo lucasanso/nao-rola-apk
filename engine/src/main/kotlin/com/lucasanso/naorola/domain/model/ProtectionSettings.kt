@@ -22,6 +22,10 @@ data class ProtectionSettings(
      * pauses: it is not about short videos.
      */
     val adBlockEnabled: Boolean = true,
+    /** Cover YouTube's Home feed (recommendations); search, Subscriptions and Library stay. */
+    val hideYouTubeHome: Boolean = false,
+    /** Hidden Home follows schedules and pauses; false = always hidden while the switch is on. */
+    val homeFollowsSchedule: Boolean = true,
     /** Block apps that are only short videos (TikTok, Kwai…). */
     val otherAppsEnabled: Boolean = false,
     /** Free time per entry before blocking; [UNLIMITED_TOLERANCE] = no per-entry cap. */

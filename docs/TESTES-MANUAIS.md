@@ -10,7 +10,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.4.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.4.1.apk` | App aparece com o ícone do Não-Rola | |
 | P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.4.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
@@ -126,6 +126,9 @@ Se algo não for coberto (ou for coberto por engano), faça uma captura de diagn
 | FC10 | Desligar "Esconder Shorts e Reels nos feeds" | Nenhuma capa de Shorts/Reels; o bloqueio do player continua | |
 | FC11 | Pausa temporária ativa | Sem capas de Shorts/Reels (anúncios continuam cobertos) | |
 | FC12 | Bloqueio total com a chave de feeds desligada | Capas aparecem mesmo assim | |
+| FC14 | Ligar "Esconder a Início do YouTube" e abrir a Início | Feed coberto com "Início oculto"; busca, Inscrições e Você normais | |
+| FC15 | Buscar algo a partir da Início | Resultados da busca **visíveis** | |
+| FC16 | Pausa ativa com "Seguir horários e pausas" ligado / desligado | Início aparece / continua escondida | |
 | FC13 | Uso normal por 30 min com capas | Sem travamentos perceptíveis; anote a bateria | |
 
 ## 10. Anúncios (0.4.0)

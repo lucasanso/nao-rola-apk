@@ -145,6 +145,22 @@ object Screens {
         ),
     )
 
+    /** Search results: Home stays selected in the bar, but the query box is on top. */
+    fun youtubeSearchResults() = FakeTree(
+        YT, node(
+            cls = FRAME,
+            children = listOf(
+                node(cls = EDIT_TEXT, bounds = b(0.12f, 0.02f, 0.9f, 0.07f), text = "receita de pão"),
+                ytFeed(ytVideoCard(0.08f, 0.38f), ytVideoCard(0.38f, 0.68f)),
+                ytBottomBar(selected = "Home"),
+            ),
+        ),
+    )
+
+    fun youtubeSubscriptions() = FakeTree(
+        YT, node(cls = FRAME, children = listOf(ytFeed(ytVideoCard(0.08f, 0.38f), ytVideoCard(0.38f, 0.68f)), ytBottomBar(selected = "Subscriptions"))),
+    )
+
     /** Home inside a horizontal tab pager whose single page fills the screen. */
     fun youtubeHomeInsidePager() = FakeTree(
         YT, node(

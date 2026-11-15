@@ -120,6 +120,8 @@ class SettingsRepository(
             browserEnabled = p[Keys.BROWSER] ?: defaults.browserEnabled,
             hideInFeeds = p[Keys.HIDE_IN_FEEDS] ?: defaults.hideInFeeds,
             adBlockEnabled = p[Keys.AD_BLOCK] ?: defaults.adBlockEnabled,
+            hideYouTubeHome = p[Keys.HIDE_YT_HOME] ?: defaults.hideYouTubeHome,
+            homeFollowsSchedule = p[Keys.HOME_FOLLOWS_SCHEDULE] ?: defaults.homeFollowsSchedule,
             otherAppsEnabled = p[Keys.OTHER_APPS] ?: defaults.otherAppsEnabled,
             toleranceSeconds = p[Keys.TOLERANCE_SECONDS] ?: defaults.toleranceSeconds,
             dailyLimitMinutes = p[Keys.DAILY_LIMIT_MINUTES] ?: defaults.dailyLimitMinutes,
@@ -154,6 +156,8 @@ class SettingsRepository(
         p[Keys.BROWSER] = s.browserEnabled
         p[Keys.HIDE_IN_FEEDS] = s.hideInFeeds
         p[Keys.AD_BLOCK] = s.adBlockEnabled
+        p[Keys.HIDE_YT_HOME] = s.hideYouTubeHome
+        p[Keys.HOME_FOLLOWS_SCHEDULE] = s.homeFollowsSchedule
         p[Keys.OTHER_APPS] = s.otherAppsEnabled
         p[Keys.TOLERANCE_SECONDS] = s.toleranceSeconds
         p[Keys.DAILY_LIMIT_MINUTES] = s.dailyLimitMinutes
@@ -184,6 +188,8 @@ class SettingsRepository(
         val BROWSER = booleanPreferencesKey("browser_enabled")
         val HIDE_IN_FEEDS = booleanPreferencesKey("hide_in_feeds")
         val AD_BLOCK = booleanPreferencesKey("ad_block_enabled")
+        val HIDE_YT_HOME = booleanPreferencesKey("hide_youtube_home")
+        val HOME_FOLLOWS_SCHEDULE = booleanPreferencesKey("home_follows_schedule")
         val OTHER_APPS = booleanPreferencesKey("other_apps_enabled")
         val TOLERANCE_SECONDS = intPreferencesKey("tolerance_seconds")
         val DAILY_LIMIT_MINUTES = intPreferencesKey("daily_limit_minutes")

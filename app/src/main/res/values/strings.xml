@@ -332,6 +332,11 @@ Desligar aqui desativa o serviço de verdade. Para religar: botão “Religar pr
     <string name="cover_reels">Reels oculto</string>
     <string name="cover_ad">Anúncio oculto</string>
     <string name="cover_short">Oculto</string>
+    <string name="cover_home">Início oculto · use a busca ou Inscrições</string>
+    <string name="hide_home_title">Esconder a Início do YouTube</string>
+    <string name="hide_home_body">Cobre as recomendações da aba Início. Busca, Inscrições, Você e os vídeos que você abrir continuam normais.</string>
+    <string name="hide_home_schedule_title">Seguir horários e pausas</string>
+    <string name="hide_home_schedule_body">Ligado: a Início aparece fora dos horários de proteção e durante a pausa. Desligado: fica escondida sempre.</string>
     <string name="hide_feeds_title">Esconder Shorts e Reels nos feeds</string>
     <string name="hide_feeds_body">Cobre a prateleira de Shorts, os Reels no meio do feed e os botões das abas Shorts e Reels. Tocar no que está coberto abre o vídeo, que é bloqueado normalmente.</string>
 

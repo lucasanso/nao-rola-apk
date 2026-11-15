@@ -43,6 +43,11 @@ class MonitoredPackagesTest {
         assertEquals(setOf(YouTubeRules.PACKAGE, InstagramRules.PACKAGE), MonitoredPackages.compute(s, 0, false, own))
     }
 
+    @Test fun hiddenHomeObservesYouTube() {
+        val s = ProtectionSettings(youtubeEnabled = false, instagramEnabled = false, adBlockEnabled = false, hideYouTubeHome = true)
+        assertEquals(setOf(YouTubeRules.PACKAGE), MonitoredPackages.compute(s, 0, false, own))
+    }
+
     @Test fun diagnosticModeObservesSupportedAppsEvenIfOff() {
         val s = ProtectionSettings(youtubeEnabled = false, instagramEnabled = false)
         val packages = MonitoredPackages.compute(s, 0, diagnosticArmed = true, ownPackage = own)

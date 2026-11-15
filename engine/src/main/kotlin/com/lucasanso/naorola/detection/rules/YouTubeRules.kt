@@ -39,6 +39,12 @@ object YouTubeRules {
     /** "Shorts" is a brand name and is not translated in the tab label. */
     val SHORTS_TAB_LABELS = setOf("shorts")
 
+    /** Home tab label in the bottom bar. */
+    val HOME_TAB_LABELS = setOf("início", "inicio", "home")
+
+    /** Present on search screens; Home stays "selected" while showing search results. */
+    val SEARCH_IDS = setOf("search_edit_text", "search_query", "search_box", "results_header")
+
     /** Shorts-related views are named "reel_…" internally. */
     const val SHORTS_ID_PREFIX = "reel_"
 
