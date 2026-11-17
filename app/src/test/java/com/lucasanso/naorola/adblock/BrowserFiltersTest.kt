@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.lucasanso.naorola.NaoRolaApp
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -60,6 +61,7 @@ class BrowserFiltersTest {
     }
 
     @Test fun adultFilterAddsItsSitesToSamsungInternetAndRemovesThem() {
+        runBlocking { app.container.adultSyncReady.await() } // startup sync done: nothing else touches the list
         installSamsungInternet()
         val before = shadowOf(app).broadcastIntents.size
         filters.setAdultRules(listOf("||pornhub.com^"))

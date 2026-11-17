@@ -25,6 +25,7 @@ import com.lucasanso.naorola.monitoring.DiagnosticRecorder
 import com.lucasanso.naorola.monitoring.ServiceHealthMonitor
 import com.lucasanso.naorola.monitoring.UsageStatsReader
 import com.lucasanso.naorola.tile.QuickToggleTile
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -100,6 +101,9 @@ class AppContainer(val context: Context) {
     /** True while Android keeps our accessibility service bound and running. */
     val serviceConnected: StateFlow<Boolean> = _serviceConnected.asStateFlow()
 
+    /** Completed after the first sync of the adult filter with Samsung Internet's list. */
+    val adultSyncReady = CompletableDeferred<Unit>()
+
     init {
         // Loads the user's adult-site list and keeps Samsung Internet's blocker in step with the
         // adult filter switch.
@@ -108,6 +112,7 @@ class AppContainer(val context: Context) {
             settingsRepository.settings.map { it.adultBlockEnabled }.distinctUntilChanged().collect { on ->
                 runCatching { browserFilters.setAdultRules(if (on) adultSites.browserRules() else emptyList()) }
                     .onFailure { logger.error("FiltroAdulto", "Falha ao atualizar a lista do navegador", it) }
+                adultSyncReady.complete(Unit)
             }
         }
     }
