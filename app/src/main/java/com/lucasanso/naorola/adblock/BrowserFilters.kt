@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.core.net.toUri
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 /**
@@ -43,6 +42,9 @@ class BrowserFilters(private val context: Context, private val logger: AppLogger
     private val imported = File(directory, IMPORTED_FILE)
     private val lock = Any()
 
+    /** Adult-site rules added while the adult filter is on (see [setAdultRules]). */
+    @Volatile private var adultRules: List<String> = emptyList()
+
     private val _status = MutableStateFlow(Status())
     val status: StateFlow<Status> = _status.asStateFlow()
 
@@ -64,21 +66,10 @@ class BrowserFilters(private val context: Context, private val logger: AppLogger
 
     /** Reads a list chosen by the user (AdBlock, hosts or one domain per line). */
     fun import(uri: Uri): ImportResult {
-        val text = try {
-            context.contentResolver.openInputStream(uri)?.use { input ->
-                val out = ByteArrayOutputStream()
-                val buffer = ByteArray(BUFFER_BYTES)
-                while (true) {
-                    val read = input.read(buffer)
-                    if (read < 0) break
-                    out.write(buffer, 0, read)
-                    if (out.size() > MAX_IMPORT_BYTES) return ImportResult.TooLarge
-                }
-                out.toString(Charsets.UTF_8.name())
-            } ?: return ImportResult.Unreadable
-        } catch (e: Exception) {
-            logger.error(TAG, "Falha ao ler a lista importada", e)
-            return ImportResult.Unreadable
+        val text = when (val read = ListFileReader.read(context, uri, logger)) {
+            is ListFileReader.Read.Text -> read.value
+            ListFileReader.Read.TooLarge -> return ImportResult.TooLarge
+            ListFileReader.Read.Unreadable -> return ImportResult.Unreadable
         }
         val parsed = FilterList.parse(text)
         if (parsed.rules.isEmpty()) return ImportResult.Empty
@@ -92,6 +83,18 @@ class BrowserFilters(private val context: Context, private val logger: AppLogger
         notifyBrowsers()
         refreshStatus()
         return ImportResult.Imported(parsed.rules.size, parsed.ignoredLines, parsed.truncated)
+    }
+
+    /**
+     * Adds (or, with an empty list, removes) the adult filter's domains to what Samsung Internet
+     * blocks. The browser is asked to reload only when the served list really changed.
+     */
+    fun setAdultRules(rules: List<String>) {
+        val changed = synchronized(lock) {
+            adultRules = rules
+            rebuild()
+        }
+        if (changed) notifyBrowsers()
     }
 
     fun removeImported() {
@@ -129,16 +132,19 @@ class BrowserFilters(private val context: Context, private val logger: AppLogger
     private fun bundled(): List<String> =
         context.resources.openRawResource(R.raw.filtros_anuncios).bufferedReader().use { FilterList.parse(it.readText()).rules }
 
-    /** Writes the served file atomically, so the browser never reads half a list. */
-    private fun rebuild() {
+    /** Writes the served file atomically, so the browser never reads half a list. True if it changed. */
+    private fun rebuild(): Boolean {
         directory.mkdirs()
         val user = if (imported.exists()) imported.readLines().filter { it.isNotBlank() } else emptyList()
+        val content = FilterList.render(HEADER, bundled(), user, adultRules)
+        if (served.exists() && served.readText() == content) return false
         val temp = File(directory, "$SERVED_FILE.tmp")
-        temp.writeText(FilterList.render(HEADER, bundled(), user))
+        temp.writeText(content)
         if (!temp.renameTo(served)) {
             served.delete()
             temp.renameTo(served)
         }
+        return true
     }
 
     companion object {
@@ -146,8 +152,6 @@ class BrowserFilters(private val context: Context, private val logger: AppLogger
         private const val DIRECTORY = "adblock"
         private const val SERVED_FILE = "filtros.txt"
         private const val IMPORTED_FILE = "lista-importada.txt"
-        private const val MAX_IMPORT_BYTES = 8 * 1024 * 1024
-        private const val BUFFER_BYTES = 64 * 1024
         private const val HEADER = "Não-Rola · bloqueio de anúncios para o Samsung Internet"
 
         /** Samsung Internet's content-blocker contract (public interface names only). */

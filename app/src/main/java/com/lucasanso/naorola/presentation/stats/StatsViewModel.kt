@@ -12,6 +12,7 @@ import com.lucasanso.naorola.domain.stats.StatsCalculator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,6 +27,9 @@ data class StatsState(
     val estimate: AvoidedExposureEstimator.Estimate? = null,
     val today: LocalDate? = null,
     val selected: LocalDate? = null,
+    /** Adult-filter blocks in the period; shown apart, and only while the filter is on. */
+    val adultBlocked: Int = 0,
+    val adultFilterOn: Boolean = false,
 ) {
     val totalBlocked: Int get() = days.sumOf { it.blockedTotal }
     fun blockedOn(platform: Platform): Int = days.sumOf { it.blocked[platform] ?: 0 }
@@ -56,7 +60,10 @@ class StatsViewModel(private val container: AppContainer) : ViewModel() {
             } else {
                 null
             }
-            val series = StatsCalculator.dailySeries(days, stats.eventsSince(from), stats.exposuresSince(from), usage, zone)
+            val events = stats.eventsSince(from)
+            val (adultEvents, shortVideoEvents) = events.partition { it.surface.platform == Platform.ADULT }
+            val series = StatsCalculator.dailySeries(days, shortVideoEvents, stats.exposuresSince(from), usage, zone)
+            val adultOn = container.settingsRepository.settings.first().adultBlockEnabled
             val sessions = stats.exposuresSince(now - ESTIMATE_WINDOW_DAYS * DAY_MILLIS).map { it.durationMillis }
             val estimate = AvoidedExposureEstimator.estimate(series.sumOf { it.blockedTotal }, sessions)
             _state.update {
@@ -67,6 +74,8 @@ class StatsViewModel(private val container: AppContainer) : ViewModel() {
                     estimate = estimate,
                     today = today,
                     selected = it.selected ?: today,
+                    adultBlocked = adultEvents.size,
+                    adultFilterOn = adultOn,
                 )
             }
         }

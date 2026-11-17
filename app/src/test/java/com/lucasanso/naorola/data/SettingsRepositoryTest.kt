@@ -43,6 +43,7 @@ class SettingsRepositoryTest {
         assertTrue(s.youtubeEnabled && s.instagramEnabled)
         assertFalse(s.browserEnabled)
         assertTrue(s.hideInFeeds && s.adBlockEnabled)
+        assertFalse(s.adultBlockEnabled)
         assertEquals(ProtectionMode.PERSONALIZED, s.mode)
     }
 
@@ -53,7 +54,7 @@ class SettingsRepositoryTest {
         repository(firstScope, file).edit {
             it.copy(
                 mode = ProtectionMode.TOTAL, toleranceSeconds = 15, browserEnabled = true, activeWindows = listOf(window),
-                hideInFeeds = false, adBlockEnabled = false,
+                hideInFeeds = false, adBlockEnabled = false, adultBlockEnabled = true, adultSearchBlock = false,
             )
         }
         firstScope.cancel() // closes the first DataStore, like an app restart
@@ -64,6 +65,8 @@ class SettingsRepositoryTest {
         assertEquals(listOf(window), reloaded.activeWindows)
         assertFalse(reloaded.hideInFeeds)
         assertFalse(reloaded.adBlockEnabled)
+        assertTrue(reloaded.adultBlockEnabled)
+        assertFalse(reloaded.adultSearchBlock)
     }
 
     @Test fun disciplineLocksEditsUntilExitIsConfirmed() = runTest(UnconfinedTestDispatcher()) {

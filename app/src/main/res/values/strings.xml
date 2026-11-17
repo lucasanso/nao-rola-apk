@@ -376,4 +376,48 @@ Desligar aqui desativa o serviço de verdade. Para religar: botão “Religar pr
     <string name="ads_chrome_title">Chrome</string>
     <string name="ads_chrome_body">O Chrome não permite que outros apps bloqueiem os anúncios dele, então o Não-Rola não consegue agir ali. Alternativa do próprio Android, para o celular inteiro: Configurações › Conexões › Mais configurações de conexão › DNS privado, com um provedor que filtra anúncios (por exemplo dns.adguard-dns.com). Essa escolha é sua: as consultas de endereço passam por esse provedor.</string>
     <string name="ads_chrome_open">Abrir configurações de rede</string>
+
+    <!-- Filtro adulto -->
+    <string name="adult_title">Filtro adulto</string>
+    <string name="adult_summary_on">Ligado · sites e buscas nos navegadores</string>
+    <string name="adult_summary_off">Desligado</string>
+    <string name="adult_browsers_title">Navegadores</string>
+    <string name="adult_toggle">Bloquear sites pornográficos</string>
+    <string name="adult_toggle_body">Mostra a tela de bloqueio ao abrir um site adulto, inclusive por link e no modo anônimo. Não segue horários nem pausas e não tem botão de pausa.</string>
+    <string name="adult_search_toggle">Bloquear buscas explícitas</string>
+    <string name="adult_search_body">Google, Bing, DuckDuckGo e outros, com termos como “pornô” ou “xvideos”. Buscas sobre saúde e educação sexual continuam livres.</string>
+    <string name="adult_how_body">Funciona no Chrome, Samsung Internet, Firefox, Edge, Brave, Opera e DuckDuckGo, lendo só a barra de endereço. No Samsung Internet, com o bloqueador de anúncios do Não-Rola ativado, os sites da lista nem carregam. Endereços nunca são guardados.</string>
+    <plurals name="adult_list_count">
+        <item quantity="one">Lista do Não-Rola: %d site, além de palavras e domínios .xxx/.porn</item>
+        <item quantity="other">Lista do Não-Rola: %d sites, além de palavras e domínios .xxx/.porn</item>
+    </plurals>
+    <plurals name="adult_imported_count">
+        <item quantity="one">Lista importada: %d site</item>
+        <item quantity="other">Lista importada: %d sites</item>
+    </plurals>
+    <plurals name="adult_import_ok">
+        <item quantity="one">%d site importado.</item>
+        <item quantity="other">%d sites importados.</item>
+    </plurals>
+    <string name="adult_import_body">Para cobrir mais sites, importe uma lista pública de sites adultos que você baixou (formato hosts, AdBlock ou um domínio por linha).</string>
+    <string name="dns_title">DNS familiar (o celular todo)</string>
+    <string name="dns_body">Cobre o que a barra de endereço não mostra: links abertos dentro do Instagram, WhatsApp, X e outros apps, além de forçar a busca segura na maioria dos provedores. Usa o DNS privado do Android com um provedor que filtra conteúdo adulto. As consultas de endereço passam por esse provedor.</string>
+    <string name="dns_adguard">AdGuard Família</string>
+    <string name="dns_cleanbrowsing">CleanBrowsing Adulto</string>
+    <string name="dns_cloudflare">Cloudflare Família</string>
+    <string name="dns_status_on">Em uso: %1$s</string>
+    <string name="dns_status_off">DNS familiar não está em uso.</string>
+    <string name="dns_status_unknown">O Android não deixa ler o DNS atual.</string>
+    <string name="dns_enable">Usar este DNS</string>
+    <string name="dns_disable">Voltar ao automático</string>
+    <string name="dns_needs_grant">Para o Não-Rola trocar o DNS por você, libere uma vez pelo computador (o mesmo adb da instalação):</string>
+    <string name="dns_manual">Ou configure à mão: Configurações › Conexões › Mais configurações de conexão › DNS privado › Nome do host: %1$s</string>
+    <string name="adult_limits_title">O que este filtro não faz</string>
+    <string name="adult_limits_body">• Não analisa imagens nem vídeos: conteúdo adulto dentro de apps (X, Reddit, Telegram) só é barrado pelo DNS familiar, e apenas quando vem de domínios adultos.\n• Nenhuma lista cobre todos os sites; palavras no endereço e a lista importada ajudam.\n• Você continua dono do aparelho: dá para desligar o serviço ou o DNS nas configurações do Android. O Modo Disciplina trava estes ajustes e conta os desligamentos.</string>
+    <string name="block_body_adult_site">Este site foi bloqueado pelo filtro adulto.</string>
+    <string name="block_body_adult_search">Esta busca foi bloqueada pelo filtro adulto.</string>
+    <plurals name="stats_adult_blocked">
+        <item quantity="one">Filtro adulto: %d bloqueio</item>
+        <item quantity="other">Filtro adulto: %d bloqueios</item>
+    </plurals>
 </resources>

@@ -26,6 +26,13 @@ data class ProtectionSettings(
     val hideYouTubeHome: Boolean = false,
     /** Hidden Home follows schedules and pauses; false = always hidden while the switch is on. */
     val homeFollowsSchedule: Boolean = true,
+    /**
+     * Adult filter: blocks pornographic sites in browsers. Opt-in. Not affected by schedules,
+     * exceptions or pauses, and the block screen offers no pause.
+     */
+    val adultBlockEnabled: Boolean = false,
+    /** Adult filter also blocks searches for explicit terms. */
+    val adultSearchBlock: Boolean = true,
     /** Block apps that are only short videos (TikTok, Kwai…). */
     val otherAppsEnabled: Boolean = false,
     /** Free time per entry before blocking; [UNLIMITED_TOLERANCE] = no per-entry cap. */

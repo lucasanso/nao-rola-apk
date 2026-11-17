@@ -85,6 +85,13 @@ fun StatsScreen() {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (state.adultFilterOn) {
+                Text(
+                    pluralStringResource(R.plurals.stats_adult_blocked, state.adultBlocked, state.adultBlocked),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         SectionCard(title = stringResource(R.string.stats_per_day)) {

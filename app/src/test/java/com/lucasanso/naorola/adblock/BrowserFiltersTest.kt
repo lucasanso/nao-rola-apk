@@ -59,6 +59,18 @@ class BrowserFiltersTest {
         assertEquals(0, filters.status.value.importedRules)
     }
 
+    @Test fun adultFilterAddsItsSitesToSamsungInternetAndRemovesThem() {
+        installSamsungInternet()
+        val before = shadowOf(app).broadcastIntents.size
+        filters.setAdultRules(listOf("||pornhub.com^"))
+        assertTrue(providerText().contains("||pornhub.com^\n"))
+        assertEquals(before + 1, shadowOf(app).broadcastIntents.size)
+        filters.setAdultRules(listOf("||pornhub.com^")) // same list: no reload request
+        assertEquals(before + 1, shadowOf(app).broadcastIntents.size)
+        filters.setAdultRules(emptyList())
+        assertTrue(!providerText().contains("pornhub"))
+    }
+
     @Test fun fileWithoutRulesIsRejected() {
         val file = folder.newFile("vazio.txt").apply { writeText("! só comentários\n\n") }
         assertEquals(BrowserFilters.ImportResult.Empty, filters.import(Uri.fromFile(file)))

@@ -58,6 +58,8 @@ private fun textsFor(surface: Surface) = when (surface) {
     Surface.WEB_REELS -> BlockTexts(R.string.block_body_web_reels, R.string.block_back, R.string.block_leave_browser)
     // Going "back" inside an app made only of short videos lands on more short videos.
     Surface.SHORT_VIDEO_APP -> BlockTexts(R.string.block_body_app, null, R.string.block_leave_app)
+    Surface.ADULT_SITE -> BlockTexts(R.string.block_body_adult_site, R.string.block_back, R.string.block_leave_browser)
+    Surface.ADULT_SEARCH -> BlockTexts(R.string.block_body_adult_search, R.string.block_back, R.string.block_leave_browser)
 }
 
 @Composable

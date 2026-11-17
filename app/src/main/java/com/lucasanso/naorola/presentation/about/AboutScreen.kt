@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lucasanso.naorola.NaoRolaApp
 import com.lucasanso.naorola.R
+import com.lucasanso.naorola.detection.rules.AdultRules
 import com.lucasanso.naorola.detection.rules.BrowserRules
 import com.lucasanso.naorola.detection.rules.InstagramRules
 import com.lucasanso.naorola.detection.rules.YouTubeRules
@@ -45,7 +46,7 @@ fun AboutScreen(onBack: () -> Unit, onOpenDiagnostics: () -> Unit) {
             Text(stringResource(R.string.about_privacy_body), style = MaterialTheme.typography.bodyMedium)
         }
         SectionCard(title = stringResource(R.string.about_rules_title)) {
-            listOf(YouTubeRules.INFO, InstagramRules.INFO, BrowserRules.INFO).forEach { info ->
+            listOf(YouTubeRules.INFO, InstagramRules.INFO, BrowserRules.INFO, AdultRules.INFO).forEach { info ->
                 Text(
                     stringResource(R.string.about_rule_line, info.name, info.version, info.status),
                     style = MaterialTheme.typography.bodyMedium,

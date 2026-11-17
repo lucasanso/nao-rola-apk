@@ -113,6 +113,16 @@ class ScreenshotTest {
         }
     }
 
+    @Test fun adultFilterScreen() {
+        runBlocking { app.container.settingsRepository.edit { it.copy(adultBlockEnabled = true) } }
+        launch {
+            waitText("Proteção desligada")
+            rule.onNodeWithText("Ajustes").performClick(); waitText("Filtro adulto")
+            rule.onNodeWithText("Filtro adulto").performClick(); waitText("Bloquear sites pornográficos")
+            shot(it, "14-filtro-adulto")
+        }
+    }
+
     @Test fun detectionSuspicion() {
         simulateActiveProtection()
         runBlocking { app.container.settingsRepository.setDetectionSuspicion(Platform.YOUTUBE, System.currentTimeMillis()) }

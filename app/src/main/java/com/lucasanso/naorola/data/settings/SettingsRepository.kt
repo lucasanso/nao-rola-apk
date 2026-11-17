@@ -62,7 +62,7 @@ class SettingsRepository(
         val key = when (platform) {
             Platform.YOUTUBE -> Keys.SUSPECT_YOUTUBE
             Platform.INSTAGRAM -> Keys.SUSPECT_INSTAGRAM
-            Platform.OTHER -> return
+            Platform.OTHER, Platform.ADULT -> return
         }
         dataStore.edit { it[key] = sinceMillis ?: 0L }
     }
@@ -122,6 +122,8 @@ class SettingsRepository(
             adBlockEnabled = p[Keys.AD_BLOCK] ?: defaults.adBlockEnabled,
             hideYouTubeHome = p[Keys.HIDE_YT_HOME] ?: defaults.hideYouTubeHome,
             homeFollowsSchedule = p[Keys.HOME_FOLLOWS_SCHEDULE] ?: defaults.homeFollowsSchedule,
+            adultBlockEnabled = p[Keys.ADULT_BLOCK] ?: defaults.adultBlockEnabled,
+            adultSearchBlock = p[Keys.ADULT_SEARCH] ?: defaults.adultSearchBlock,
             otherAppsEnabled = p[Keys.OTHER_APPS] ?: defaults.otherAppsEnabled,
             toleranceSeconds = p[Keys.TOLERANCE_SECONDS] ?: defaults.toleranceSeconds,
             dailyLimitMinutes = p[Keys.DAILY_LIMIT_MINUTES] ?: defaults.dailyLimitMinutes,
@@ -158,6 +160,8 @@ class SettingsRepository(
         p[Keys.AD_BLOCK] = s.adBlockEnabled
         p[Keys.HIDE_YT_HOME] = s.hideYouTubeHome
         p[Keys.HOME_FOLLOWS_SCHEDULE] = s.homeFollowsSchedule
+        p[Keys.ADULT_BLOCK] = s.adultBlockEnabled
+        p[Keys.ADULT_SEARCH] = s.adultSearchBlock
         p[Keys.OTHER_APPS] = s.otherAppsEnabled
         p[Keys.TOLERANCE_SECONDS] = s.toleranceSeconds
         p[Keys.DAILY_LIMIT_MINUTES] = s.dailyLimitMinutes
@@ -190,6 +194,8 @@ class SettingsRepository(
         val AD_BLOCK = booleanPreferencesKey("ad_block_enabled")
         val HIDE_YT_HOME = booleanPreferencesKey("hide_youtube_home")
         val HOME_FOLLOWS_SCHEDULE = booleanPreferencesKey("home_follows_schedule")
+        val ADULT_BLOCK = booleanPreferencesKey("adult_block_enabled")
+        val ADULT_SEARCH = booleanPreferencesKey("adult_search_block")
         val OTHER_APPS = booleanPreferencesKey("other_apps_enabled")
         val TOLERANCE_SECONDS = intPreferencesKey("tolerance_seconds")
         val DAILY_LIMIT_MINUTES = intPreferencesKey("daily_limit_minutes")

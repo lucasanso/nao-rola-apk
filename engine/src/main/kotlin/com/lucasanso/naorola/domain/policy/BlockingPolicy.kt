@@ -1,6 +1,7 @@
 package com.lucasanso.naorola.domain.policy
 
 import com.lucasanso.naorola.domain.model.DisciplineState
+import com.lucasanso.naorola.domain.model.Platform
 import com.lucasanso.naorola.domain.model.ProtectionMode
 import com.lucasanso.naorola.domain.model.ProtectionSettings
 import com.lucasanso.naorola.domain.model.Surface
@@ -47,6 +48,7 @@ object BlockingPolicy {
         val total = settings.mode == ProtectionMode.TOTAL || (discipline && rules.forceTotalMode)
         val forceAll = total || (discipline && rules.forceAllPlatforms)
         val ignoreExceptions = total || (discipline && rules.suspendExceptions)
+        if (surface.platform == Platform.ADULT) return adultPolicy(settings, surface, total, discipline)
         val localTime = Instant.ofEpochMilli(now).atZone(zone).toLocalDateTime()
 
         val reason = when {
@@ -91,6 +93,26 @@ object BlockingPolicy {
         )
     }
 
+    /**
+     * The adult filter is its own module: only its switch (or Total mode) turns it on, schedules,
+     * exceptions and pauses do not apply, there is no free time and no pause button.
+     */
+    private fun adultPolicy(settings: ProtectionSettings, surface: Surface, total: Boolean, discipline: Boolean): EffectivePolicy {
+        val on = total || surfaceEnabled(settings, surface)
+        return EffectivePolicy(
+            protects = on,
+            inactiveReason = if (on) null else InactiveReason.PLATFORM_OFF,
+            allowanceMillis = 0L,
+            dailyLimitMillis = null,
+            dailyRemainingMillis = null,
+            snoozeAllowed = false,
+            snoozeMillis = settings.snoozeMinutes.coerceAtLeast(1) * DisciplineState.MILLIS_PER_MINUTE,
+            allowReelFromDirect = false,
+            totalMode = total,
+            disciplineActive = discipline,
+        )
+    }
+
     /** Whether the user's own switches cover this surface (before modes are applied). */
     fun surfaceEnabled(settings: ProtectionSettings, surface: Surface): Boolean = when (surface) {
         Surface.SHORTS_PLAYER -> settings.youtubeEnabled
@@ -98,6 +120,8 @@ object BlockingPolicy {
         Surface.WEB_SHORTS -> settings.browserEnabled && settings.youtubeEnabled
         Surface.WEB_REELS -> settings.browserEnabled && settings.instagramEnabled
         Surface.SHORT_VIDEO_APP -> settings.otherAppsEnabled
+        Surface.ADULT_SITE -> settings.adultBlockEnabled
+        Surface.ADULT_SEARCH -> settings.adultBlockEnabled && settings.adultSearchBlock
     }
 
     private const val MILLIS_PER_SECOND = 1_000L

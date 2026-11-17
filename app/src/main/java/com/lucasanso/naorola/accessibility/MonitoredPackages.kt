@@ -29,6 +29,7 @@ object MonitoredPackages {
         // Ads are covered/skipped even where short-video protection is off.
         if (settings.adBlockEnabled) result += setOf(YouTubeRules.PACKAGE, InstagramRules.PACKAGE)
         if (settings.hideYouTubeHome) result += YouTubeRules.PACKAGE
+        if (forceAll || settings.adultBlockEnabled) result += BrowserRules.PACKAGES
         if (diagnosticArmed) result += setOf(YouTubeRules.PACKAGE, InstagramRules.PACKAGE) + BrowserRules.PACKAGES
         // An empty list would mean "every app" to Android: fall back to our own package instead.
         if (result.isEmpty()) result += ownPackage

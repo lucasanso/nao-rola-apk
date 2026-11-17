@@ -4,6 +4,7 @@ import com.lucasanso.naorola.core.AppLogger
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.detection.classifier.Classification
 import com.lucasanso.naorola.detection.diagnostics.StructureDump
+import com.lucasanso.naorola.detection.rules.AdultRules
 import com.lucasanso.naorola.detection.rules.BrowserRules
 import com.lucasanso.naorola.detection.rules.InstagramRules
 import com.lucasanso.naorola.detection.rules.YouTubeRules
@@ -134,7 +135,7 @@ class DiagnosticRecorder(
     private companion object {
         const val TAG = "Diagnostico"
         val STAMP = Regex("""\d{8}-\d{6}(?=\.txt$)""")
-        val RULE_SETS = listOf(YouTubeRules.INFO, InstagramRules.INFO, BrowserRules.INFO)
+        val RULE_SETS = listOf(YouTubeRules.INFO, InstagramRules.INFO, BrowserRules.INFO, AdultRules.INFO)
             .joinToString { "${it.name} ${it.version}" }
     }
 }

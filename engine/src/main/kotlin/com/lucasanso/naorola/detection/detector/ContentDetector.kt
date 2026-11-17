@@ -1,5 +1,6 @@
 package com.lucasanso.naorola.detection.detector
 
+import com.lucasanso.naorola.detection.rules.AdultSiteMatcher
 import com.lucasanso.naorola.detection.signal.DetectionResult
 import com.lucasanso.naorola.detection.tree.UiTree
 
@@ -17,11 +18,11 @@ class DetectorRegistry(private val detectors: List<ContentDetector>) {
     fun detectorFor(packageName: String): ContentDetector? = detectors.firstOrNull { it.supports(packageName) }
 
     companion object {
-        fun default(): DetectorRegistry = DetectorRegistry(
+        fun default(adult: AdultSiteMatcher = AdultSiteMatcher()): DetectorRegistry = DetectorRegistry(
             listOf(
                 YouTubeContentDetector(),
                 InstagramContentDetector(),
-                BrowserContentDetector(),
+                BrowserContentDetector(adult = adult),
                 PackageContentDetector(),
             ),
         )

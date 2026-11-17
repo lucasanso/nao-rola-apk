@@ -18,7 +18,7 @@ enum class CoverKind { SHORT_VIDEO, AD, HOME_FEED }
 object CoverPolicy {
 
     fun shows(settings: ProtectionSettings, kind: CoverKind, platform: Platform, now: Long, zone: ZoneId): Boolean {
-        if (kind == CoverKind.AD) return settings.adBlockEnabled && platform != Platform.OTHER
+        if (kind == CoverKind.AD) return settings.adBlockEnabled && (platform == Platform.YOUTUBE || platform == Platform.INSTAGRAM)
         if (kind == CoverKind.HOME_FEED) {
             if (!settings.hideYouTubeHome || platform != Platform.YOUTUBE) return false
             if (!settings.homeFollowsSchedule) return true
@@ -28,7 +28,7 @@ object CoverPolicy {
         val surface = when (platform) {
             Platform.YOUTUBE -> Surface.SHORTS_PLAYER
             Platform.INSTAGRAM -> Surface.REELS_VIEWER
-            Platform.OTHER -> return false
+            Platform.OTHER, Platform.ADULT -> return false
         }
         val policy = BlockingPolicy.evaluate(settings, surface, now, zone)
         val forced = policy.totalMode || (policy.disciplineActive && settings.discipline.rules.forceAllPlatforms)

@@ -76,9 +76,12 @@ class AppSmokeTest {
             waitText("O Bloqueio total ignora as opções abaixo.")
             back()
 
+            rule.onNodeWithTag(TAG_SCREEN_CONTENT).performScrollToNode(hasText("Diagnóstico"))
             rule.onNodeWithText("Diagnóstico").performClick()
             waitText("Ative o serviço de acessibilidade para capturar.")
             back()
+            waitText("Sobre")
+            rule.onNodeWithTag(TAG_SCREEN_CONTENT).performScrollToNode(hasText("Sobre"))
             rule.onNodeWithText("Sobre").performClick()
             waitText("Regras de detecção")
             back()

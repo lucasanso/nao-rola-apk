@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.lucasanso.naorola.adblock.BrowserFilters
+import com.lucasanso.naorola.adult.AdultSiteStore
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.data.db.NaoRolaDatabase
 import com.lucasanso.naorola.data.log.LocalLogStore
@@ -29,6 +30,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -37,7 +40,7 @@ import java.io.File
  * Manual dependency injection: one instance of each shared object for the whole process,
  * used by both the accessibility service and the screens.
  */
-class AppContainer(private val context: Context) {
+class AppContainer(val context: Context) {
     val clock = Clock { System.currentTimeMillis() }
 
     /** Outlives the service and screens: used for writes that must finish. */
@@ -72,8 +75,9 @@ class AppContainer(private val context: Context) {
     }
 
     val browserFilters = BrowserFilters(context, logger)
+    val adultSites = AdultSiteStore(context, logger)
 
-    val detectors = DetectorRegistry.default()
+    val detectors = DetectorRegistry.default(adultSites.matcher)
     val classifier = ShortVideoClassifier()
     val health = ServiceHealthMonitor(context)
     val usageStats = UsageStatsReader(context, clock)
@@ -95,6 +99,18 @@ class AppContainer(private val context: Context) {
 
     /** True while Android keeps our accessibility service bound and running. */
     val serviceConnected: StateFlow<Boolean> = _serviceConnected.asStateFlow()
+
+    init {
+        // Loads the user's adult-site list and keeps Samsung Internet's blocker in step with the
+        // adult filter switch.
+        appScope.launch {
+            runCatching { adultSites.load() }.onFailure { logger.error("FiltroAdulto", "Falha ao carregar a lista", it) }
+            settingsRepository.settings.map { it.adultBlockEnabled }.distinctUntilChanged().collect { on ->
+                runCatching { browserFilters.setAdultRules(if (on) adultSites.browserRules() else emptyList()) }
+                    .onFailure { logger.error("FiltroAdulto", "Falha ao atualizar a lista do navegador", it) }
+            }
+        }
+    }
 
     /** Turns the running accessibility service off for real (AccessibilityService.disableSelf). */
     @Volatile private var serviceDisabler: (() -> Unit)? = null

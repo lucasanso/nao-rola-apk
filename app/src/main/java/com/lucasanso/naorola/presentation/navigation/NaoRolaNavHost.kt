@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lucasanso.naorola.R
 import com.lucasanso.naorola.presentation.about.AboutScreen
 import com.lucasanso.naorola.presentation.ads.AdsScreen
+import com.lucasanso.naorola.presentation.adult.AdultFilterScreen
 import com.lucasanso.naorola.presentation.dashboard.DashboardScreen
 import com.lucasanso.naorola.presentation.diagnostics.DiagnosticsScreen
 import com.lucasanso.naorola.presentation.discipline.DisciplineScreen
@@ -41,6 +42,7 @@ object Routes {
     const val SETTINGS = "settings"
     const val BLOCKING = "settings/blocking"
     const val ADS = "settings/ads"
+    const val ADULT = "settings/adult"
     const val DISCIPLINE = "settings/discipline"
     const val SCHEDULE = "settings/schedule"
     const val PERMISSIONS = "settings/permissions"
@@ -108,6 +110,7 @@ fun NaoRolaNavHost(requestedRoute: String? = null, onRouteHandled: () -> Unit = 
             composable(Routes.SETTINGS) { SettingsHubScreen(onNavigate = { nav.navigate(it) }) }
             composable(Routes.BLOCKING) { BlockingSettingsScreen(onBack = back) }
             composable(Routes.ADS) { AdsScreen(onBack = back) }
+            composable(Routes.ADULT) { AdultFilterScreen(onBack = back) }
             composable(Routes.PERMISSIONS) { PermissionsScreen(onBack = back) }
             composable(Routes.DISCIPLINE) { DisciplineScreen(onBack = back) }
             composable(Routes.SCHEDULE) { ScheduleScreen(onBack = back) }

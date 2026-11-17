@@ -10,6 +10,13 @@
         tools:ignore="ProtectedPermissions" />
     <!-- Lets the app explain that Advanced Protection disables non-accessibility-tool services. -->
     <uses-permission android:name="android.permission.QUERY_ADVANCED_PROTECTION_MODE" />
+    <!--
+      Never granted by installing: the user may grant it once with adb so the adult filter can
+      switch Android's Private DNS to a family filter (see PrivateDns).
+    -->
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <!-- Lets Samsung Internet list Não-Rola as an ad blocker (see ContentBlockerProvider). -->
     <uses-permission android:name="com.samsung.android.sbrowser.permission.CONTENTBLOCKER" />
 

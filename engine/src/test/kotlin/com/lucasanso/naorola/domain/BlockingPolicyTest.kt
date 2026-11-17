@@ -36,6 +36,21 @@ class BlockingPolicyTest {
         assertEquals(InactiveReason.PLATFORM_OFF, policy(s, Surface.SHORT_VIDEO_APP).inactiveReason)
     }
 
+    @Test fun adultFilterIsOptInWithoutFreeTimePauseOrSchedule() {
+        assertFalse(policy(ProtectionSettings(), Surface.ADULT_SITE).protects)
+        val s = ProtectionSettings(
+            adultBlockEnabled = true, toleranceSeconds = 60, dailyLimitMinutes = 30, snoozedUntil = now + hour,
+            activeWindows = listOf(ScheduleWindow(setOf(DayOfWeek.MONDAY), 0, 60)),
+            exceptionPeriods = listOf(ExceptionPeriod(now - hour, now + hour)),
+        )
+        val p = policy(s, Surface.ADULT_SITE)
+        assertTrue(p.protects)
+        assertEquals(0L, p.allowanceMillis)
+        assertFalse(p.snoozeAllowed)
+        assertTrue(policy(s, Surface.ADULT_SEARCH).protects)
+        assertFalse(policy(s.copy(adultSearchBlock = false), Surface.ADULT_SEARCH).protects)
+    }
+
     @Test fun platformSwitchesAreIndependent() {
         val s = ProtectionSettings(youtubeEnabled = false)
         assertFalse(policy(s, Surface.SHORTS_PLAYER).protects)
