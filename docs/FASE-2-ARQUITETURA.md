@@ -451,7 +451,7 @@ Orientação recebida: *"tudo deve ser configurável; um modo que bloqueia tudo 
 
 ---
 
-## 14. Como ficou na implementação (0.4.0)
+## 14. Como ficou na implementação (0.5.0)
 
 O plano acima foi seguido. Alguns nomes mudaram e algumas peças surgiram durante a implementação:
 
@@ -466,6 +466,7 @@ O plano acima foi seguido. Alguns nomes mudaram e algumas peças surgiram durant
 | — | `CoverPolicy` | Capas de vídeo curto seguem plataforma, horários e pausa; Bloqueio total e Disciplina forçam. Capas de anúncio dependem só da chave de anúncios |
 | — | `UiAction` + `UiNode.click()` | "Pular anúncio" do YouTube: clica no nó (ou no ancestral clicável), no máximo uma vez a cada 1,5 s |
 | — | `ContentBlockerProvider` + `BrowserFilters` + `FilterList` | Bloqueador para o Samsung Internet (interface pública "content blocker" API_1.0): lista própria + lista importada pelo usuário, sem internet |
+| — | `AdultSiteMatcher` + `AdultRules` (motor), `AdultSiteStore`, `PrivateDns` (app) | Filtro adulto: decide pelo endereço da barra (lista, subdomínio, TLD, palavras; buscas explícitas) em qualquer navegador suportado; superfícies próprias sem tolerância nem pausa; lista também no Samsung Internet; DNS privado familiar opcional (permissão concedida por adb) |
 | — | Botão "Desligar para usar o banco" + bloco de Configurações rápidas | Desliga o serviço de verdade (`disableSelf`) para apps de banco; nada é escondido |
 | `DailyUsageSync` | `DailyUsageHistory` | Guarda dias fechados; um dia sem dados no Android fica "desconhecido", nunca zero |
 | `StatsRecorder` | `StatsRepository` | A gravação é disparada pelos comandos da máquina de sessão no `ProtectionCoordinator` |

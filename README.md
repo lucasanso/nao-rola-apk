@@ -1,10 +1,10 @@
 # Não-Rola
 
-Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para que você continue usando essas plataformas para o conteúdo que escolheu ver, sem cair na rolagem infinita. Também esconde Shorts e Reels dos feeds e bloqueia anúncios no YouTube, no Instagram e no Samsung Internet.
+Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para que você continue usando essas plataformas para o conteúdo que escolheu ver, sem cair na rolagem infinita. Também esconde Shorts e Reels dos feeds, bloqueia anúncios no YouTube, no Instagram e no Samsung Internet e tem um filtro opcional de sites pornográficos.
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.4.1.apk`](release/NaoRola-0.4.1.apk) (3,4 MB, Android 12+). SHA-256: `53077e10db0146214a7b2c2315b36dc40660739a8602c986b456a61c4568d66b`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.5.0.apk`](release/NaoRola-0.5.0.apk) (3,4 MB, Android 12+). SHA-256: `6943c9a594600e10dbc136bd743bf76ba47aaa1038e37b49efb6f62146f9cdc9`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual
 
@@ -18,6 +18,7 @@ O **bloqueio do player** (Shorts e Reels abertos) foi confirmado num aparelho re
 | Anúncios no YouTube/Instagram: capas sobre patrocinados e "Pular anúncio" | Implementado (0.4.0); **a calibrar no aparelho** |
 | Bloqueador de anúncios do Samsung Internet | Implementado (0.4.0), pela interface oficial de bloqueadores do navegador |
 | Anúncios no Chrome | **Não é possível**: o Chrome não aceita bloqueadores de outros apps (alternativa: DNS privado) |
+| Filtro adulto: sites e buscas pornográficas nos navegadores, lista no Samsung Internet, DNS familiar opcional | Implementado (0.5.0); ids dos navegadores além do Chrome a confirmar |
 | Apps de banco (Nubank) | Botão e bloco de Configurações rápidas para desligar e religar o serviço de verdade (veja [Apps de banco](#apps-de-banco-nubank)) |
 | Shorts/Reels no navegador (Chrome, Samsung Internet) | Implementado (opcional); id da barra do Samsung Internet a confirmar |
 | Apps só de vídeo curto (TikTok, Kwai) | Implementado (opcional), por nome de pacote |
@@ -36,9 +37,9 @@ Geradas a partir do app real, com Robolectric e dados de exemplo.
 |---|---|---|---|---|---|
 | ![](docs/screenshots/02-painel-ativo.png) | ![](docs/screenshots/09-estatisticas.png) | ![](docs/screenshots/07-tela-de-bloqueio.png) | ![](docs/screenshots/04-bloqueio.png) | ![](docs/screenshots/11-disciplina.png) | ![](docs/screenshots/10-horarios.png) |
 
-| Anúncios | Painel (desligado) | Aviso de detecção | Permissões | Ajustes | Escuro | Bloqueio (escuro) |
-|---|---|---|---|---|---|---|
-| ![](docs/screenshots/13-anuncios.png) | ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/12-alerta-deteccao.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/03-ajustes.png) | ![](docs/screenshots/06-painel-escuro.png) | ![](docs/screenshots/08-tela-de-bloqueio-escuro.png) |
+| Filtro adulto | Anúncios | Painel (desligado) | Aviso de detecção | Permissões | Ajustes | Escuro | Bloqueio (escuro) |
+|---|---|---|---|---|---|---|---|
+| ![](docs/screenshots/14-filtro-adulto.png) | ![](docs/screenshots/13-anuncios.png) | ![](docs/screenshots/01-painel-desligado.png) | ![](docs/screenshots/12-alerta-deteccao.png) | ![](docs/screenshots/05-permissoes.png) | ![](docs/screenshots/03-ajustes.png) | ![](docs/screenshots/06-painel-escuro.png) | ![](docs/screenshots/08-tela-de-bloqueio-escuro.png) |
 
 ---
 
@@ -54,7 +55,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.4.1.apk
+adb install -r release/NaoRola-0.5.0.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -73,6 +74,7 @@ Versões futuras precisam ser assinadas com a **mesma chave** para instalar por 
 |---|---|
 | *Ajustes › Bloqueio* | Modo **Personalizado** ou **Bloqueio total**. Plataformas (YouTube Shorts, Instagram Reels, navegador, apps só de vídeo curto). **Esconder Shorts e Reels nos feeds** (ligado por padrão). **Esconder a Início do YouTube** (desligado por padrão; opcionalmente segue horários e pausas): cobre as recomendações, mantendo busca, Inscrições e Você. Tolerância por entrada (nenhuma, 5 s a 60 s ou sem limite). **Limite diário** somado por plataforma. Pausa temporária e sua duração. Reel recebido por DM liberado. |
 | *Ajustes › Anúncios* | Capas sobre anúncios e "Pular anúncio" no YouTube/Instagram (vale também fora dos horários e durante pausas). Bloqueador do Samsung Internet: lista própria e importação de uma lista maior (AdBlock, hosts ou um domínio por linha). Explicação sobre o Chrome. |
+| *Ajustes › Filtro adulto* | Bloquear sites pornográficos e buscas explícitas nos navegadores (desligado por padrão), importar lista de sites, DNS familiar (AdGuard Família, CleanBrowsing Adulto ou Cloudflare Família). |
 | *Ajustes › Horários e exceções* | Proteção sempre ativa ou só em horários semanais, exceções semanais (proteção desligada) e pausas programadas. |
 | *Ajustes › Modo Disciplina* | Duração (1 h a 24 h ou até sair pelo app), espera para sair (5 a 60 min) e regras: zerar tolerância e limite, suspender exceções, forçar todas as plataformas, manter Reel de DM, forçar Bloqueio total. Configurações ficam travadas; a pausa some da tela de bloqueio. |
 
@@ -109,6 +111,20 @@ Apps de banco como o Nubank consultam o Android (Play Integrity) e recusam funci
 - Para religar: **Religar proteção** no Painel, ou pelo bloco.
 
 Se o Nubank continuar recusando com o serviço desligado, a checagem é outra (apps instalados fora da loja) e só a distribuição pela Play Store resolveria. Durante o Modo Disciplina, cada desligamento é contado e aparece na tela da Disciplina.
+
+## Filtro adulto
+
+Opcional, desligado por padrão (*Ajustes › Filtro adulto*). Quando ligado:
+
+| Camada | O que faz | Precisa de |
+|---|---|---|
+| Barra de endereço | Tela de bloqueio ao abrir um site adulto (lista própria, subdomínios, domínios .xxx/.porn, palavras como "porn" no endereço) ou ao buscar termos explícitos. Chrome, Samsung Internet, Firefox, Edge, Brave, Opera e DuckDuckGo, inclusive no modo anônimo | Serviço de acessibilidade |
+| Samsung Internet | Os sites da lista nem carregam | Bloqueador do Não-Rola ativado no Samsung Internet |
+| DNS familiar | Bloqueia domínios adultos no celular todo, inclusive links abertos dentro do Instagram, WhatsApp e X, e força a busca segura na maioria dos provedores | Liberar uma vez pelo computador: `adb shell pm grant com.lucasanso.naorola android.permission.WRITE_SECURE_SETTINGS` (ou configurar o DNS privado à mão) |
+
+Sem tolerância, sem pausa e sem horários: o filtro vale o tempo todo. Buscas sobre saúde e educação sexual não são bloqueadas ("sexo" sozinho, por exemplo). Os bloqueios não aparecem no Painel; nas Estatísticas, ficam numa linha separada, só com o filtro ligado.
+
+**O que ele não faz:** não analisa imagens nem vídeos. Conteúdo adulto dentro de apps como X, Reddit e Telegram só é barrado pelo DNS familiar, e apenas quando vem de domínios adultos. Nenhuma lista cobre todos os sites; dá para importar uma lista maior. O serviço e o DNS podem ser desligados nas configurações do Android; o Modo Disciplina trava estes ajustes e conta os desligamentos.
 
 ## Anúncios
 
@@ -182,6 +198,7 @@ Detalhes em [docs/FASE-1-VIABILIDADE.md](docs/FASE-1-VIABILIDADE.md) e [docs/FAS
 ## Privacidade
 
 - **Sem permissão de internet**: o app não tem como enviar dados.
+- Filtro adulto: o endereço é interpretado em memória e só a conclusão ("site adulto", "busca explícita" ou nada) é usada; endereços nunca são guardados. O histórico guarda apenas o tipo e a hora do bloqueio. Com o DNS familiar, as consultas de endereço passam pelo provedor escolhido por você.
 - O Samsung Internet lê do Não-Rola apenas a lista de filtros (domínios de anúncios e o que você importou). O app não recebe nada do navegador.
 - O serviço só recebe eventos dos apps cuja proteção está ligada. Textos, mensagens, nomes e URLs são lidos só quando necessário, em memória, e **nunca** são guardados ou registrados em log.
 - Histórico local: horário e tipo de cada bloqueio, por 30 dias. Backup em nuvem e transferência entre aparelhos estão desativados.
@@ -218,11 +235,11 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.4.1 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.5.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-192 testes automatizados (138 no `:engine`, 54 no `:app`), mais 8 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
+208 testes automatizados (148 no `:engine`, 60 no `:app`), mais 9 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|
@@ -233,6 +250,7 @@ Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.
 | `DetectionHealthMonitorTest` | Aviso de falha de detecção: só após alguns segundos na aba sem player, nunca por Stories ou vídeo comum, some quando a detecção volta; inclui o detector real numa tela de Shorts "quebrada" |
 | `YouTubeRegionFinderTest` | Prateleira de Shorts só pelo formato, grade de Shorts, card "Patrocinado" (e vídeo chamado "Anúncio…" que não é anúncio), aba Shorts, pager de abas que não vira "feed", "Pular anúncio" por id, por rótulo e "Pular" só com anúncio na tela |
 | `InstagramRegionFinderTest` | Reel no feed, carrossel de Reels, post patrocinado inteiro, story patrocinado, cartões em pé que não são Reels, Reel enviado em conversa continua visível |
+| `AdultFilterTest` (motor e app) | Sites por lista, subdomínio, TLD e palavra; buscas explícitas em vários buscadores; buscas comuns e de saúde liberadas; lista importada; vários navegadores; DNS com e sem permissão |
 | `AdRulesTest`, `CoverPolicyTest`, `FilterListTest` | Rótulos de anúncio, quando cada capa aparece (chaves, pausa, Bloqueio total, Disciplina), listas AdBlock/hosts/domínios |
 | `ShortVideoClassifierTest`, `TreeScannerTest`, `StructureDumpTest` | Limiar, veto, limite de nós, itens de feed e cartões em pé, privacidade do resumo e do diagnóstico, ida e volta do formato (inclusive regiões, sem o nome do anunciante) |
 | `BlockingPolicyTest`, `DisciplineTest`, `ScheduleAndCodecTest` | Bloqueio total, limite diário, regras configuráveis da Disciplina, trava das configurações, horários (inclusive após a meia-noite) |

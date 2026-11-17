@@ -10,7 +10,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.4.1.apk` | App aparece com o ícone do Não-Rola | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.5.0.apk` | App aparece com o ícone do Não-Rola | |
 | P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.4.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
@@ -156,4 +156,21 @@ Se algo não for coberto (ou for coberto por engano), faça uma captura de diagn
 | N2 | Painel › Desligar para usar o banco › abrir o Nubank | Anote se o Nubank abre normalmente | |
 | N3 | Bloco "Não-Rola" nas Configurações rápidas | Um toque desliga; outro toque abre a tela para religar | |
 | N4 | Painel › Religar proteção | Proteção ativa de novo | |
+
+## 12. Filtro adulto (0.5.0)
+
+| ID | Cenário | Esperado | Resultado |
+|---|---|---|---|
+| X1 | Ligar o filtro e abrir um site da lista no Chrome | Tela de bloqueio "Este site foi bloqueado pelo filtro adulto", sem botão de pausa | |
+| X2 | Mesmo teste no modo anônimo do Chrome | Bloqueio | |
+| X3 | Samsung Internet, Firefox, Edge, Brave, Opera, DuckDuckGo (os que tiver) | Bloqueio; se algum não bloquear, captura de diagnóstico dele | |
+| X4 | Link de site adulto aberto pelo WhatsApp | Bloqueio ao abrir no navegador | |
+| X5 | Buscar "pornô" no Google | Bloqueio da busca | |
+| X6 | Buscar "sexo seguro", "pelada de futebol", "Essex" | **Nada bloqueado** | |
+| X7 | Desligar "Bloquear buscas explícitas" | X5 não bloqueia; X1 continua bloqueando | |
+| X8 | Samsung Internet com o bloqueador do Não-Rola ativo | Site da lista nem carrega | |
+| X9 | Rodar o comando adb da tela e tocar em "Usar este DNS" | Configurações › DNS privado mostra o provedor; site adulto não abre nem dentro do Instagram | |
+| X10 | "Voltar ao automático" | DNS privado volta a "Automático" | |
+| X11 | Painel e Estatísticas após bloqueios do filtro | Painel sem menção; Estatísticas com a linha "Filtro adulto" | |
+| X12 | Modo Disciplina ativo | Ajustes do filtro travados | |
 
