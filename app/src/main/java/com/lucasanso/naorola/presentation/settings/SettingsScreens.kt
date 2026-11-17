@@ -1,6 +1,13 @@
 package com.lucasanso.naorola.presentation.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +23,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lucasanso.naorola.R
+import com.lucasanso.naorola.core.Edition
 import com.lucasanso.naorola.domain.model.ProtectionMode
 import com.lucasanso.naorola.domain.model.ProtectionSettings
 import com.lucasanso.naorola.presentation.common.containerViewModel
@@ -46,7 +54,13 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
             )
             NavRow(
                 title = stringResource(R.string.settings_ads),
-                summary = stringResource(if (state.settings.adBlockEnabled) R.string.settings_ads_on else R.string.settings_ads_off),
+                summary = stringResource(
+                    when {
+                        !Edition.inAppAdBlock -> R.string.settings_ads_play
+                        state.settings.adBlockEnabled -> R.string.settings_ads_on
+                        else -> R.string.settings_ads_off
+                    },
+                ),
                 onClick = { onNavigate(Routes.ADS) },
             )
             NavRow(
@@ -87,6 +101,43 @@ fun SettingsHubScreen(onNavigate: (String) -> Unit) {
                 checked = state.ui.dynamicColor,
                 onCheckedChange = viewModel::setDynamicColor,
             )
+        }
+        SectionCard(title = stringResource(R.string.backup_title)) {
+            val message by viewModel.backupMessage.collectAsStateWithLifecycle()
+            val saver = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+                uri?.let(viewModel::exportTo)
+            }
+            val opener = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(viewModel::restoreFrom) }
+            Text(
+                stringResource(R.string.backup_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { saver.launch("naorola-configuracoes.json") }) { Text(stringResource(R.string.backup_save)) }
+                TextButton(onClick = { opener.launch(arrayOf("application/json", "text/plain", "*/*")) }) {
+                    Text(stringResource(R.string.backup_restore))
+                }
+            }
+            message?.let {
+                Text(
+                    stringResource(
+                        when (it) {
+                            BackupMessage.SAVED -> R.string.backup_saved
+                            BackupMessage.RESTORED -> R.string.backup_restored
+                            BackupMessage.LOCKED -> R.string.locked_by_discipline
+                            BackupMessage.INVALID -> R.string.backup_invalid
+                            BackupMessage.FAILED -> R.string.backup_failed
+                        },
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (it == BackupMessage.SAVED || it == BackupMessage.RESTORED) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.error
+                    },
+                )
+            }
         }
         SectionCard {
             NavRow(stringResource(R.string.settings_diagnostics), stringResource(R.string.settings_diagnostics_summary)) {

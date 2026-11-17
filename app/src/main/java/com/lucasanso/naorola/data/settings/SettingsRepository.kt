@@ -23,8 +23,13 @@ import com.lucasanso.naorola.domain.policy.SettingsEditGuard
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import org.json.JSONObject
 import java.io.IOException
+
+/** Outcome of restoring a settings file. */
+enum class RestoreResult { RESTORED, LOCKED_BY_DISCIPLINE, INVALID }
 
 /** App-only preferences that are not protection rules. */
 data class UiPreferences(val disclosureAccepted: Boolean = false, val dynamicColor: Boolean = false)
@@ -77,6 +82,60 @@ class SettingsRepository(
             result = SettingsEditGuard.apply(read(prefs), clock.nowMillis(), transform)
             (result as? EditResult.Applied)?.let { write(prefs, it.settings) }
         }
+        return result
+    }
+
+    /**
+     * Every saved setting as JSON, to move to another installation (e.g. from the APK to the Play
+     * Store version). Transient state (pause, detection warnings) is left out.
+     */
+    suspend fun exportBackup(): String {
+        val values = JSONObject()
+        for ((key, value) in preferences.first().asMap()) {
+            if (key.name in NOT_BACKED_UP) continue
+            val type = when (value) {
+                is Boolean -> "b"
+                is Int -> "i"
+                is Long -> "l"
+                is String -> "s"
+                else -> continue
+            }
+            values.put(key.name, JSONObject().put("t", type).put("v", value))
+        }
+        return JSONObject().put("formato", BACKUP_FORMAT).put("versao", BACKUP_VERSION).put("valores", values).toString(2)
+    }
+
+    /** Replaces the settings with a file from [exportBackup]. Refused while Discipline is active. */
+    suspend fun restoreBackup(text: String): RestoreResult {
+        val values = runCatching {
+            JSONObject(text).takeIf { it.optString("formato") == BACKUP_FORMAT }?.getJSONObject("valores")
+        }.getOrNull() ?: return RestoreResult.INVALID
+        var result = RestoreResult.RESTORED
+        dataStore.edit { prefs ->
+            if (read(prefs).discipline.isActive(clock.nowMillis())) {
+                result = RestoreResult.LOCKED_BY_DISCIPLINE
+                return@edit
+            }
+            val parsed = runCatching {
+                values.keys().asSequence().filter { it !in NOT_BACKED_UP }.map { name ->
+                    val entry = values.getJSONObject(name)
+                    val apply: (MutablePreferences) -> Unit = when (entry.getString("t")) {
+                        "b" -> { p -> p[booleanPreferencesKey(name)] = entry.getBoolean("v") }
+                        "i" -> { p -> p[intPreferencesKey(name)] = entry.getInt("v") }
+                        "l" -> { p -> p[longPreferencesKey(name)] = entry.getLong("v") }
+                        "s" -> { p -> p[stringPreferencesKey(name)] = entry.getString("v") }
+                        else -> { _ -> }
+                    }
+                    apply
+                }.toList()
+            }.getOrNull()
+            if (parsed == null) {
+                result = RestoreResult.INVALID
+                return@edit
+            }
+            parsed.forEach { it(prefs) }
+        }
+        if (result == RestoreResult.RESTORED) logger.info(TAG, "Configurações restauradas de arquivo")
         return result
     }
 
@@ -223,6 +282,11 @@ class SettingsRepository(
     }
 
     private companion object {
+        const val BACKUP_FORMAT = "naorola-configuracoes"
+        const val BACKUP_VERSION = 1
+
+        /** Transient state that must not travel between installations. */
+        val NOT_BACKED_UP = setOf("snoozed_until", "detection_suspect_youtube_since", "detection_suspect_instagram_since")
         const val TAG = "Settings"
     }
 }

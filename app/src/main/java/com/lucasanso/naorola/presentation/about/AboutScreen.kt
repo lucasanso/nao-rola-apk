@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lucasanso.naorola.NaoRolaApp
 import com.lucasanso.naorola.R
+import com.lucasanso.naorola.core.Edition
 import com.lucasanso.naorola.detection.rules.AdultRules
 import com.lucasanso.naorola.detection.rules.BrowserRules
 import com.lucasanso.naorola.detection.rules.InstagramRules
@@ -39,7 +40,7 @@ fun AboutScreen(onBack: () -> Unit, onOpenDiagnostics: () -> Unit) {
                 Spacer(Modifier.width(12.dp))
                 Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
             }
-            Text(stringResource(R.string.about_version, version), style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.about_version, "$version · ${Edition.name}"), style = MaterialTheme.typography.bodyMedium)
             Text(stringResource(R.string.about_philosophy), style = MaterialTheme.typography.bodyMedium)
         }
         SectionCard(title = stringResource(R.string.about_privacy_title)) {

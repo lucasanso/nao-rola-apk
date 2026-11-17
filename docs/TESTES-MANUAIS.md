@@ -10,7 +10,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.5.1.apk` | App aparece com o ícone do Não-Rola | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.6.0.apk` | App aparece com o ícone do Não-Rola | |
 | P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.4.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
@@ -159,6 +159,9 @@ Se algo não for coberto (ou for coberto por engano), faça uma captura de diagn
 | N5 | Sair do modo banco com a permissão do adb concedida | Proteção ativa sem passar pelas configurações; outros serviços de acessibilidade continuam como estavam | |
 | N6 | Bloco "Não-Rola": tocar com a proteção ativa, depois tocar de novo | Entra no modo banco; depois sai | |
 | N7 | Se N2 falhar | Anote a mensagem exata do Nubank | |
+| N8 | Edição Play (teste interno): instalar pela Play Store, ativar o serviço e abrir o Nubank | **Principal:** anote se o Nubank abre com a proteção ligada e, se não, com o modo banco | |
+| K1 | *Ajustes › Backup › Salvar em arquivo*, desinstalar, reinstalar, *Restaurar* | Ajustes, horários e regras voltam; estatísticas começam do zero | |
+| K2 | Edição Play: *Ajustes › Anúncios* | Explica que a versão da Play não bloqueia anúncios dentro de outros apps; Samsung Internet continua | |
 
 ## 12. Filtro adulto (0.5.0)
 

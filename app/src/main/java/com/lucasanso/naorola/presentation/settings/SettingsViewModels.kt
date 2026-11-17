@@ -5,7 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.lucasanso.naorola.data.settings.UiPreferences
 import com.lucasanso.naorola.di.AppContainer
 import com.lucasanso.naorola.domain.model.ProtectionSettings
+import android.net.Uri
+import com.lucasanso.naorola.data.settings.RestoreResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -30,9 +35,36 @@ class BlockingSettingsViewModel(private val container: AppContainer) : ViewModel
     }
 }
 
+enum class BackupMessage { SAVED, RESTORED, LOCKED, INVALID, FAILED }
+
 data class SettingsHubState(val settings: ProtectionSettings = ProtectionSettings(), val ui: UiPreferences = UiPreferences())
 
 class SettingsHubViewModel(private val container: AppContainer) : ViewModel() {
+    private val _backupMessage = MutableStateFlow<BackupMessage?>(null)
+    val backupMessage: StateFlow<BackupMessage?> = _backupMessage.asStateFlow()
+
+    /** Writes the settings to a file the user picked (e.g. before reinstalling from the Play Store). */
+    fun exportTo(uri: Uri) = viewModelScope.launch(Dispatchers.IO) {
+        _backupMessage.value = runCatching {
+            val json = container.settingsRepository.exportBackup()
+            container.context.contentResolver.openOutputStream(uri, "wt")!!.use { it.write(json.toByteArray()) }
+        }.fold(onSuccess = { BackupMessage.SAVED }, onFailure = {
+            container.logger.error("Settings", "Falha ao salvar configurações", it)
+            BackupMessage.FAILED
+        })
+    }
+
+    fun restoreFrom(uri: Uri) = viewModelScope.launch(Dispatchers.IO) {
+        val text = runCatching {
+            container.context.contentResolver.openInputStream(uri)!!.use { it.readBytes().toString(Charsets.UTF_8) }
+        }.getOrNull()
+        _backupMessage.value = when (text?.let { container.settingsRepository.restoreBackup(it) }) {
+            RestoreResult.RESTORED -> BackupMessage.RESTORED
+            RestoreResult.LOCKED_BY_DISCIPLINE -> BackupMessage.LOCKED
+            else -> BackupMessage.INVALID
+        }
+    }
+
     val state: StateFlow<SettingsHubState> = combine(
         container.settingsRepository.settings,
         container.settingsRepository.uiPreferences,

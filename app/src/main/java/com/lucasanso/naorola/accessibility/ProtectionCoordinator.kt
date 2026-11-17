@@ -12,6 +12,7 @@ import com.lucasanso.naorola.blocking.BlockScreenContent
 import com.lucasanso.naorola.blocking.BlockingOverlayManager
 import com.lucasanso.naorola.blocking.CoverItem
 import com.lucasanso.naorola.blocking.RegionCoverOverlay
+import com.lucasanso.naorola.core.Edition
 import com.lucasanso.naorola.detection.classifier.Classification
 import com.lucasanso.naorola.detection.health.DetectionHealthMonitor
 import com.lucasanso.naorola.detection.health.HealthEvent
@@ -104,7 +105,7 @@ class ProtectionCoordinator(
     fun start() {
         mainScope.launch {
             container.settingsRepository.settings.collect {
-                settings = it
+                settings = Edition.effective(it)
                 applyMonitoredPackages()
             }
         }

@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.lucasanso.naorola.R
 import com.lucasanso.naorola.adblock.BrowserFilters
+import com.lucasanso.naorola.core.Edition
 import com.lucasanso.naorola.core.SystemSettings
 import com.lucasanso.naorola.di.AppContainer
 import com.lucasanso.naorola.presentation.common.containerViewModel
@@ -85,18 +86,22 @@ fun AdsScreen(onBack: () -> Unit) {
         if (state.locked) NoticeCard(stringResource(R.string.locked_by_discipline))
 
         SectionCard(title = stringResource(R.string.ads_apps_title)) {
-            SwitchRow(
-                title = stringResource(R.string.ads_toggle),
-                body = stringResource(R.string.ads_toggle_body),
-                checked = state.enabled,
-                enabled = state.loaded && !state.locked,
-                onCheckedChange = { viewModel.setEnabled(it) },
-            )
-            Text(
-                stringResource(R.string.ads_apps_limits),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (Edition.inAppAdBlock) {
+                SwitchRow(
+                    title = stringResource(R.string.ads_toggle),
+                    body = stringResource(R.string.ads_toggle_body),
+                    checked = state.enabled,
+                    enabled = state.loaded && !state.locked,
+                    onCheckedChange = { viewModel.setEnabled(it) },
+                )
+                Text(
+                    stringResource(R.string.ads_apps_limits),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                Text(stringResource(R.string.ads_play_edition), style = MaterialTheme.typography.bodyMedium)
+            }
         }
 
         SectionCard(title = stringResource(R.string.ads_browsers_title)) {

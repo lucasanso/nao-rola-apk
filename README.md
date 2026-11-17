@@ -4,7 +4,9 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.5.1.apk`](release/NaoRola-0.5.1.apk) (3,4 MB, Android 12+). SHA-256: `741bfd26cf726b615c22527e64c972e3cd144d2d52cb40f485cfe7789a2efff4`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.6.0.apk`](release/NaoRola-0.6.0.apk) (3,4 MB, Android 12+). SHA-256: `a95dce091c8138ac0f5d290a3965a9647e7154e3d533102aae69deef4904b910`.
+>
+> **Google Play (teste interno):** [`release/NaoRola-0.6.0-play.aab`](release/NaoRola-0.6.0-play.aab), para enviar no Play Console. Passo a passo em [docs/PLAY-STORE.md](docs/PLAY-STORE.md). Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual
 
@@ -19,7 +21,7 @@ O **bloqueio do player** (Shorts e Reels abertos) foi confirmado num aparelho re
 | Bloqueador de anúncios do Samsung Internet | Implementado (0.4.0), pela interface oficial de bloqueadores do navegador |
 | Anúncios no Chrome | **Não é possível**: o Chrome não aceita bloqueadores de outros apps (alternativa: DNS privado) |
 | Filtro adulto: sites e buscas pornográficas nos navegadores, lista no Samsung Internet, DNS familiar opcional | Implementado (0.5.0); ids dos navegadores além do Chrome a confirmar |
-| Apps de banco (Nubank) | **Modo banco** (0.5.1): retira o serviço de acessibilidade do aparelho até você voltar; a testar com o Nubank (veja [Apps de banco](#apps-de-banco-nubank)) |
+| Apps de banco (Nubank) | O Nubank recusa o app instalado por APK mesmo no modo banco: a saída é a **edição Google Play** (teste interno), veja [Apps de banco](#apps-de-banco-nubank) |
 | Shorts/Reels no navegador (Chrome, Samsung Internet) | Implementado (opcional); id da barra do Samsung Internet a confirmar |
 | Apps só de vídeo curto (TikTok, Kwai) | Implementado (opcional), por nome de pacote |
 | Painel: status, bloqueados hoje, tempo no app, tempo com vídeo curto | Implementado |
@@ -55,7 +57,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.5.1.apk
+adb install -r release/NaoRola-0.6.0.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -75,6 +77,7 @@ Versões futuras precisam ser assinadas com a **mesma chave** para instalar por 
 | *Ajustes › Bloqueio* | Modo **Personalizado** ou **Bloqueio total**. Plataformas (YouTube Shorts, Instagram Reels, navegador, apps só de vídeo curto). **Esconder Shorts e Reels nos feeds** (ligado por padrão). **Esconder a Início do YouTube** (desligado por padrão; opcionalmente segue horários e pausas): cobre as recomendações, mantendo busca, Inscrições e Você. Tolerância por entrada (nenhuma, 5 s a 60 s ou sem limite). **Limite diário** somado por plataforma. Pausa temporária e sua duração. Reel recebido por DM liberado. |
 | *Ajustes › Anúncios* | Capas sobre anúncios e "Pular anúncio" no YouTube/Instagram (vale também fora dos horários e durante pausas). Bloqueador do Samsung Internet: lista própria e importação de uma lista maior (AdBlock, hosts ou um domínio por linha). Explicação sobre o Chrome. |
 | *Ajustes › Filtro adulto* | Bloquear sites pornográficos e buscas explícitas nos navegadores (desligado por padrão), importar lista de sites, DNS familiar (AdGuard Família, CleanBrowsing Adulto ou Cloudflare Família). |
+| *Ajustes › Backup das configurações* | Salvar todos os ajustes num arquivo e restaurar depois de reinstalar (por exemplo, ao trocar o APK pela versão da Play). O histórico de estatísticas não vai junto. |
 | *Ajustes › Horários e exceções* | Proteção sempre ativa ou só em horários semanais, exceções semanais (proteção desligada) e pausas programadas. |
 | *Ajustes › Modo Disciplina* | Duração (1 h a 24 h ou até sair pelo app), espera para sair (5 a 60 min) e regras: zerar tolerância e limite, suspender exceções, forçar todas as plataformas, manter Reel de DM, forçar Bloqueio total. Configurações ficam travadas; a pausa some da tela de bloqueio. |
 
@@ -116,7 +119,7 @@ adb shell pm grant com.lucasanso.naorola android.permission.WRITE_SECURE_SETTING
 
 **O que o Não-Rola não faz:** não finge ter vindo da Play Store (por exemplo, com `adb install -i com.android.vending`), não muda de nome e não se esconde do banco. Isso seria enganar uma checagem antifraude enquanto o app continua capaz de controlar a tela.
 
-**Se o banco recusar mesmo no modo banco,** a checagem dele é pela origem do app (instalado fora da Play Store). Aí as saídas legítimas são desinstalar o Não-Rola antes de usar o banco, ou distribuí-lo pela Play Store (por exemplo, numa faixa de teste interno, com conta de desenvolvedor de US$ 25 e a declaração de uso de acessibilidade).
+**O Nubank recusou mesmo no modo banco** (teste no aparelho, 0.5.1). A checagem dele é pela **origem** do app: instalado fora da Play Store. A saída legítima é instalar o Não-Rola **pela Play Store**, na faixa de teste interno, que é privada e não precisa de lançamento público. O passo a passo completo, com conta, declarações, texto da acessibilidade, migração com backup e atualizações, está em [docs/PLAY-STORE.md](docs/PLAY-STORE.md). A edição Play é igual à do APK, exceto pelas capas e pelo "Pular anúncio" dentro do YouTube/Instagram, que a política da loja proíbe.
 
 Durante o Modo Disciplina, o modo banco funciona e cada desligamento fica registrado.
 
@@ -227,6 +230,12 @@ Requisitos: JDK 17+ e Android SDK com a plataforma 37. O Gradle 9.9 é baixado p
 ```
 
 ```bash
+./gradlew :app:bundleRelease -Pplay
+```
+
+O segundo comando gera a edição Google Play (AAB), sem capas de anúncio nem "Pular anúncio" dentro de outros apps.
+
+```bash
 ./gradlew :app:testDebugUnitTest --tests "*ScreenshotTest*" -Pscreenshots
 ```
 
@@ -243,11 +252,11 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.5.1 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.6.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-210 testes automatizados (148 no `:engine`, 62 no `:app`), mais 9 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
+213 testes automatizados (148 no `:engine`, 65 no `:app`), mais 9 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|
@@ -270,6 +279,7 @@ Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.
 | `BlockScreenTest`, `BlockingOverlayManagerTest` | Botões da tela de bloqueio e janela do overlay |
 | `RegionCoverOverlayTest` | Uma janela para todas as capas, sem receber toques; capas seguem a rolagem; resultado atrasado realinhado; janela removida quando não há capas |
 | `BrowserFiltersTest`, `AdsScreenTest` | Lista entregue ao Samsung Internet, importação de arquivo hosts mesclada e aviso de recarga, tela de Anúncios e abertura direta pelo Samsung Internet |
+| `SettingsRepositoryTest` (backup), `EditionTest` | Backup leva os ajustes para outra instalação sem a pausa em curso; recusado na Disciplina e para arquivos estranhos; edição Play nunca bloqueia anúncios dentro de outros apps |
 | `BankingToggleTest` | Modo banco: componente desativado e serviço fora da lista do Android, inclusive com o serviço já desligado; volta pelas configurações ou direto com a permissão do adb (sem tocar nos serviços de outros apps); bloco de Configurações rápidas |
 | `ServiceLifecycleTest` | Serviço ligado/desligado pelo usuário refletido no app |
 | `AppSmokeTest`, `DisciplineFlowTest`, `ScheduleFlowTest` | Passeio por todas as telas gravando alterações; ativar a Disciplina trava as configurações e inicia a espera para sair; criar horário e exceção |

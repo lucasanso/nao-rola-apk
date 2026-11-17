@@ -6,6 +6,13 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+/**
+ * `-Pplay` builds the Google Play edition. Play policy forbids blocking or interfering with other
+ * apps' ads, so that edition leaves out ad covers and "Skip ad" inside YouTube/Instagram (the
+ * Samsung Internet blocker uses the browser's own API and stays). Everything else is identical.
+ */
+val playEdition = project.hasProperty("play")
+
 val keystoreProps = Properties().apply {
     val f = rootProject.file("keystore.properties")
     if (f.exists()) f.inputStream().use { load(it) }
@@ -19,8 +26,10 @@ android {
         applicationId = "com.lucasanso.naorola"
         minSdk = 31
         targetSdk = 37
-        versionCode = 8
-        versionName = "0.5.1"
+        versionCode = 9
+        versionName = "0.6.0"
+        buildConfigField("boolean", "IN_APP_AD_BLOCK", (!playEdition).toString())
+        buildConfigField("String", "EDITION", if (playEdition) "\"Google Play\"" else "\"APK\"")
     }
 
     signingConfigs {
@@ -50,7 +59,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     testOptions { unitTests.isIncludeAndroidResources = true }
     // Room schemas as assets of the DEBUG variant only (local unit tests read the variant's merged
     // assets), so migrations are tested against the real exported schemas. Release does not ship them.

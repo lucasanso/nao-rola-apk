@@ -348,6 +348,16 @@
     <string name="settings_ads_off">Desligado nos apps · Samsung Internet à parte</string>
     <string name="ads_title">Anúncios</string>
     <string name="ads_apps_title">YouTube e Instagram</string>
+    <string name="backup_title">Backup das configurações</string>
+    <string name="backup_body">Guarda seus ajustes, horários e regras num arquivo, para restaurar depois de reinstalar o Não-Rola (por exemplo, ao trocar o APK pela versão da Play Store). O histórico de estatísticas não vai junto.</string>
+    <string name="backup_save">Salvar em arquivo</string>
+    <string name="backup_restore">Restaurar</string>
+    <string name="backup_saved">Configurações salvas.</string>
+    <string name="backup_restored">Configurações restauradas.</string>
+    <string name="backup_invalid">Este arquivo não é um backup do Não-Rola.</string>
+    <string name="backup_failed">Não foi possível salvar o arquivo.</string>
+    <string name="settings_ads_play">Samsung Internet</string>
+    <string name="ads_play_edition">Esta é a versão da Google Play. As regras da loja não permitem bloquear anúncios dentro de outros apps, então ela não cobre anúncios nem toca em “Pular anúncio” no YouTube e no Instagram. A versão completa (APK) faz isso. O bloqueador do Samsung Internet funciona nas duas.</string>
     <string name="ads_toggle">Bloquear anúncios</string>
     <string name="ads_toggle_body">Cobre posts, cards e stories patrocinados e toca em “Pular anúncio” no YouTube assim que o botão aparece. Vale também fora dos horários e durante pausas.</string>
     <string name="ads_apps_limits">O que não dá para fazer: anúncios do YouTube que não podem ser pulados continuam tocando (o app só toca no botão que o próprio YouTube mostra), e um anúncio novo pode aparecer por um instante antes de ser coberto.</string>

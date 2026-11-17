@@ -98,4 +98,29 @@ class SettingsRepositoryTest {
         repo.setSnoozedUntil(42L)
         assertEquals(42L, repo.settings.first().snoozedUntil)
     }
+
+    @Test fun backupMovesSettingsToAnotherInstallation() = runTest(UnconfinedTestDispatcher()) {
+        val window = ScheduleWindow(setOf(DayOfWeek.FRIDAY), 600, 900)
+        val source = repository(backgroundScope, File(folder.root, "origem.preferences_pb"))
+        source.edit { it.copy(toleranceSeconds = 30, adultBlockEnabled = true, hideYouTubeHome = true, activeWindows = listOf(window)) }
+        source.setSnoozedUntil(now + 60_000) // transient: does not travel
+        val json = source.exportBackup()
+
+        val target = repository(backgroundScope, File(folder.root, "destino.preferences_pb"))
+        assertEquals(com.lucasanso.naorola.data.settings.RestoreResult.RESTORED, target.restoreBackup(json))
+        val restored = target.settings.first()
+        assertEquals(30, restored.toleranceSeconds)
+        assertTrue(restored.adultBlockEnabled && restored.hideYouTubeHome)
+        assertEquals(listOf(window), restored.activeWindows)
+        assertEquals(0L, restored.snoozedUntil)
+    }
+
+    @Test fun backupIsRefusedDuringDisciplineAndWhenNotOurs() = runTest(UnconfinedTestDispatcher()) {
+        val repo = repository(backgroundScope)
+        assertEquals(com.lucasanso.naorola.data.settings.RestoreResult.INVALID, repo.restoreBackup("{\"x\":1}"))
+        assertEquals(com.lucasanso.naorola.data.settings.RestoreResult.INVALID, repo.restoreBackup("não é json"))
+        val json = repo.exportBackup()
+        repo.changeDiscipline { s, t -> Discipline.activate(s, t, null, 5, DisciplineRules()) }
+        assertEquals(com.lucasanso.naorola.data.settings.RestoreResult.LOCKED_BY_DISCIPLINE, repo.restoreBackup(json))
+    }
 }
