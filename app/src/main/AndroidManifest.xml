@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- No INTERNET permission: the app cannot send data anywhere. -->
+
+    <!-- Optional, granted by the user in Settings: time spent inside YouTube/Instagram. -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <!-- Lets the app explain that Advanced Protection disables non-accessibility-tool services. -->
+    <uses-permission android:name="android.permission.QUERY_ADVANCED_PROTECTION_MODE" />
+    <!--
+      Never granted by installing: the user may grant it once with adb so the adult filter can
+      switch Android's Private DNS to a family filter (see PrivateDns).
+    -->
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <!-- Lets Samsung Internet list Não-Rola as an ad blocker (see ContentBlockerProvider). -->
+    <uses-permission android:name="com.samsung.android.sbrowser.permission.CONTENTBLOCKER" />
+
+    <!-- Package visibility limited to the apps the protection is about. -->
+    <queries>
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.instagram.android" />
+        <package android:name="com.android.chrome" />
+        <package android:name="com.sec.android.app.sbrowser" />
+        <package android:name="com.sec.android.app.sbrowser.beta" />
+        <package android:name="com.zhiliaoapp.musically" />
+        <package android:name="com.ss.android.ugc.trill" />
+        <package android:name="com.zhiliaoapp.musically.go" />
+        <package android:name="com.kwai.video" />
+    </queries>
+
+    <application
+        android:name=".NaoRolaApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.NaoRola">
+
+        <!-- Samsung Internet content-blocker interface. -->
+        <meta-data
+            android:name="com.samsung.android.sbrowser.contentBlocker.interfaceVersion"
+            android:value="API_1.0" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Samsung Internet opens this from its ad-blocker list ("settings" of the blocker). -->
+            <intent-filter>
+                <action android:name="com.samsung.android.sbrowser.contentBlocker.ACTION_SETTING" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Only the system can bind: BIND_ACCESSIBILITY_SERVICE is a system-only permission. -->
+        <service
+            android:name=".accessibility.NaoRolaAccessibilityService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Quick Settings tile to turn protection off/on quickly (e.g. around banking apps). -->
+        <service
+            android:name=".tile.QuickToggleTile"
+            android:exported="true"
+            android:icon="@drawable/ic_mark"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Read-only ad-block list for Samsung Internet; it is public data, so no permission. -->
+        <provider
+            android:name=".adblock.ContentBlockerProvider"
+            android:authorities="${applicationId}.contentBlocker.contentProvider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            tools:ignore="ExportedContentProvider" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

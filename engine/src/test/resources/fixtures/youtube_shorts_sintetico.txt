@@ -1,0 +1,9 @@
+# naorola-structure-dump v1
+# package=com.google.android.youtube
+# origem=SINTÉTICO (escrito à mão a partir dos ids candidatos; substituir por captura real)
+0	android.widget.FrameLayout	-	0.000,0.000,1.000,1.000	V	-	-
+1	androidx.recyclerview.widget.RecyclerView	com.google.android.youtube:id/reel_recycler	0.000,0.000,1.000,0.930	VS	50,1	-
+2	android.view.ViewGroup	com.google.android.youtube:id/reel_player_page_container	0.000,0.000,1.000,0.930	V	-	-
+1	android.view.ViewGroup	com.google.android.youtube:id/pivot_bar	0.000,0.930,1.000,1.000	V	-	-
+2	android.view.ViewGroup	-	0.000,0.930,0.250,1.000	VD	-	home
+2	android.view.ViewGroup	-	0.250,0.930,0.500,1.000	VsD	-	shorts

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  packageNames is replaced at runtime with only the apps whose protection is on
+  (see MonitoredPackages). isAccessibilityTool is false: Não-Rola is not an accessibility tool.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled|typeViewClicked|typeViewSelected"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/a11y_service_description"
+    android:isAccessibilityTool="false"
+    android:notificationTimeout="100"
+    android:packageNames="com.google.android.youtube,com.instagram.android"
+    android:settingsActivity="com.lucasanso.naorola.MainActivity"
+    android:summary="@string/a11y_service_summary" />

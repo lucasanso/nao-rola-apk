@@ -240,6 +240,8 @@ Permissões previstas (mínimas):
 3. No S26: qual versão de Android/One UI aparece? A **Proteção Avançada** está ativa? Você consegue usar **depuração USB** (`adb`)?
 4. Quer bloquear **Shorts no navegador** (Fase 4)? Isso exige ler a barra de endereço do Chrome/Samsung Internet.
 
+**Respostas (10/11/2026):** (1) **bloquear** os Reels no feed principal, contrariando a recomendação. Isso será feito como função experimental, com as limitações descritas na Fase 2, seção 6.2. (2) **Sim**, e a opção deve ser configurável. (3) Aparelho ainda não disponível. (4) **Sim**, bloquear no navegador. Detalhes em [FASE-2-ARQUITETURA.md](FASE-2-ARQUITETURA.md).
+
 ---
 
 ## Referências
