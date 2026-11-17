@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.lucasanso.naorola.adblock.BrowserFilters
+import com.lucasanso.naorola.accessibility.ServiceComponent
 import com.lucasanso.naorola.adult.AdultSiteStore
 import com.lucasanso.naorola.core.Clock
 import com.lucasanso.naorola.data.db.NaoRolaDatabase
@@ -145,6 +146,37 @@ class AppContainer(val context: Context) {
         logger.info("Servico", "Serviço desligado pelo usuário (ex.: para usar app de banco)")
         disable()
         return true
+    }
+
+    private val _bankMode = MutableStateFlow(runCatching { ServiceComponent.isDisabled(context) }.getOrDefault(false))
+
+    /** True while the accessibility service component is removed for banking apps. */
+    val bankMode: StateFlow<Boolean> = _bankMode.asStateFlow()
+
+    /**
+     * Bank mode: turns the service off and disables its component, so Não-Rola has no
+     * accessibility service at all until [exitBankMode]. Works whether or not it was running.
+     */
+    fun enterBankMode() {
+        logger.info("Servico", "Modo banco: serviço de acessibilidade retirado")
+        disableServiceNow()
+        ServiceComponent.removeFromEnabledList(context)
+        ServiceComponent.setEnabled(context, false)
+        _bankMode.value = true
+        QuickToggleTile.refresh(context)
+    }
+
+    /**
+     * Brings the component back. Returns true when the service was switched back on directly
+     * (permission granted by adb); false means the user turns it on in Android's settings.
+     */
+    fun exitBankMode(): Boolean {
+        ServiceComponent.setEnabled(context, true)
+        _bankMode.value = false
+        val direct = ServiceComponent.addToEnabledList(context)
+        logger.info("Servico", "Modo banco encerrado" + if (direct) " (serviço religado)" else " (religar nas configurações)")
+        QuickToggleTile.refresh(context)
+        return direct
     }
 
     companion object {

@@ -51,6 +51,8 @@ class PermissionsViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) { health.value = container.health.snapshot(emptySet()) }
     }
 
+    fun exitBankMode(): Boolean = container.exitBankMode().also { refresh() }
+
     fun acceptDisclosure() {
         viewModelScope.launch { container.settingsRepository.setDisclosureAccepted(true) }
     }
@@ -86,7 +88,12 @@ fun PermissionsScreen(onBack: () -> Unit) {
             body = stringResource(R.string.perm_a11y_body) + "\n\n" + stringResource(R.string.perm_a11y_steps),
             action = stringResource(R.string.perm_a11y_action),
         ) {
-            if (state.disclosureAccepted) SystemSettings.openAccessibility(context) else showDisclosure = true
+            when {
+                // In bank mode the service is not even listed in Android's settings: bring it back first.
+                health?.bankMode == true -> if (!viewModel.exitBankMode()) SystemSettings.openAccessibility(context)
+                state.disclosureAccepted -> SystemSettings.openAccessibility(context)
+                else -> showDisclosure = true
+            }
         }
         if (health?.accessibilityEnabled == false) {
             PermissionCard(

@@ -51,13 +51,19 @@ class DashboardViewModel(private val container: AppContainer) : ViewModel() {
         .map { it.disclosureAccepted }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), false)
 
-    /** Really turns the accessibility service off (e.g. before opening a banking app). */
-    fun disableForBanking() {
-        if (container.disableServiceNow()) {
-            viewModelScope.launch {
-                delay(SETTLE_MILLIS) // let Android update its list of enabled services
-                refresh()
-            }
+    /** Removes the accessibility service until the user comes back (banking apps). */
+    fun enterBankMode() {
+        container.enterBankMode()
+        settleAndRefresh()
+    }
+
+    /** True when the service came back by itself; otherwise the caller opens the settings. */
+    fun exitBankMode(): Boolean = container.exitBankMode().also { settleAndRefresh() }
+
+    private fun settleAndRefresh() {
+        viewModelScope.launch {
+            delay(SETTLE_MILLIS) // let Android update its list of services
+            refresh()
         }
     }
 

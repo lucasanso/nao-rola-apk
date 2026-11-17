@@ -10,6 +10,7 @@ import android.os.Process
 import android.provider.Settings
 import android.security.advancedprotection.AdvancedProtectionManager
 import com.lucasanso.naorola.accessibility.NaoRolaAccessibilityService
+import com.lucasanso.naorola.accessibility.ServiceComponent
 
 /** Real state of everything the protection depends on, read from the system each time. */
 data class HealthSnapshot(
@@ -19,6 +20,8 @@ data class HealthSnapshot(
     /** null when the system does not report it (Android < 16 or not allowed to ask). */
     val advancedProtectionOn: Boolean?,
     val installedApps: Set<String>,
+    /** The service component is removed for banking apps (see ServiceComponent). */
+    val bankMode: Boolean = false,
 )
 
 class ServiceHealthMonitor(private val context: Context) {
@@ -29,6 +32,7 @@ class ServiceHealthMonitor(private val context: Context) {
         ignoringBatteryOptimizations = isIgnoringBatteryOptimizations(),
         advancedProtectionOn = advancedProtectionOn(),
         installedApps = packagesOfInterest.filterTo(HashSet()) { isInstalled(it) },
+        bankMode = runCatching { ServiceComponent.isDisabled(context) }.getOrDefault(false),
     )
 
     fun isAccessibilityServiceEnabled(): Boolean {

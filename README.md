@@ -4,7 +4,7 @@ Aplicativo Android que interrompe **YouTube Shorts** e **Instagram Reels** para 
 
 > **Consumir com intenção, não por impulso.**
 
-> **APK:** [`release/NaoRola-0.5.0.apk`](release/NaoRola-0.5.0.apk) (3,4 MB, Android 12+). SHA-256: `fa3b0c069f8556e850343b3bad31293fcbfac828571ce84d32ded1c35f1c0891`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
+> **APK:** [`release/NaoRola-0.5.1.apk`](release/NaoRola-0.5.1.apk) (3,4 MB, Android 12+). SHA-256: `741bfd26cf726b615c22527e64c972e3cd144d2d52cb40f485cfe7789a2efff4`. Assinado com a mesma chave das versões anteriores: instala por cima, sem perder configurações nem histórico.
 
 ## Estado atual
 
@@ -19,7 +19,7 @@ O **bloqueio do player** (Shorts e Reels abertos) foi confirmado num aparelho re
 | Bloqueador de anúncios do Samsung Internet | Implementado (0.4.0), pela interface oficial de bloqueadores do navegador |
 | Anúncios no Chrome | **Não é possível**: o Chrome não aceita bloqueadores de outros apps (alternativa: DNS privado) |
 | Filtro adulto: sites e buscas pornográficas nos navegadores, lista no Samsung Internet, DNS familiar opcional | Implementado (0.5.0); ids dos navegadores além do Chrome a confirmar |
-| Apps de banco (Nubank) | Botão e bloco de Configurações rápidas para desligar e religar o serviço de verdade (veja [Apps de banco](#apps-de-banco-nubank)) |
+| Apps de banco (Nubank) | **Modo banco** (0.5.1): retira o serviço de acessibilidade do aparelho até você voltar; a testar com o Nubank (veja [Apps de banco](#apps-de-banco-nubank)) |
 | Shorts/Reels no navegador (Chrome, Samsung Internet) | Implementado (opcional); id da barra do Samsung Internet a confirmar |
 | Apps só de vídeo curto (TikTok, Kwai) | Implementado (opcional), por nome de pacote |
 | Painel: status, bloqueados hoje, tempo no app, tempo com vídeo curto | Implementado |
@@ -55,7 +55,7 @@ Desde 30/09/2026, no Brasil, o Android exige que APKs instalados fora de lojas v
 4. Conecte o cabo, aceite a autorização no celular e rode:
 
 ```bash
-adb install -r release/NaoRola-0.5.0.apk
+adb install -r release/NaoRola-0.5.1.apk
 ```
 
 ### Opção B: pelo arquivo
@@ -104,13 +104,21 @@ Passo a passo no S26:
 
 ## Apps de banco (Nubank)
 
-Apps de banco como o Nubank consultam o Android (Play Integrity) e recusam funcionar quando há um **serviço de acessibilidade ligado de um app que não veio da Play Store**. É uma defesa contra golpes que usam acessibilidade para controlar o celular. O Não-Rola não tenta se esconder nem contornar essa checagem: o caminho honesto é desligar o serviço enquanto usa o banco.
+Apps de banco como o Nubank procuram, entre os apps instalados, os que vieram de fora da Play Store e **declaram** um serviço de acessibilidade, mesmo desligado. É a defesa contra golpes que usam acessibilidade para controlar o celular. Por isso, só desligar o serviço não basta.
 
-- No Painel, toque em **Desligar para usar o banco**. O serviço é desligado de verdade (como nas configurações do Android).
-- Ou adicione o bloco **Não-Rola** às Configurações rápidas (puxe a cortina › lápis › arraste o bloco). Um toque desliga; com ele desligado, o toque abre a tela de acessibilidade para religar.
-- Para religar: **Religar proteção** no Painel, ou pelo bloco.
+**Modo banco (0.5.1).** No Painel, toque em **Modo banco (Nubank e outros bancos)**, ou use o bloco **Não-Rola** das Configurações rápidas. O Não-Rola desliga o serviço e **desativa o próprio componente de acessibilidade**. O app continua instalado, com o mesmo nome e a mesma assinatura, mas sem nenhum serviço capaz de ver ou controlar a tela, e nada é bloqueado. É exatamente o que o banco quer garantir.
 
-Se o Nubank continuar recusando com o serviço desligado, a checagem é outra (apps instalados fora da loja) e só a distribuição pela Play Store resolveria. Durante o Modo Disciplina, cada desligamento é contado e aparece na tela da Disciplina.
+**Para voltar:** toque em **Sair do modo banco** no Painel ou no bloco. O componente volta, e você religa o serviço em *Acessibilidade › Não-Rola*. Se você liberou a permissão por `adb` (a mesma do DNS familiar), o serviço volta sozinho.
+
+```bash
+adb shell pm grant com.lucasanso.naorola android.permission.WRITE_SECURE_SETTINGS
+```
+
+**O que o Não-Rola não faz:** não finge ter vindo da Play Store (por exemplo, com `adb install -i com.android.vending`), não muda de nome e não se esconde do banco. Isso seria enganar uma checagem antifraude enquanto o app continua capaz de controlar a tela.
+
+**Se o banco recusar mesmo no modo banco,** a checagem dele é pela origem do app (instalado fora da Play Store). Aí as saídas legítimas são desinstalar o Não-Rola antes de usar o banco, ou distribuí-lo pela Play Store (por exemplo, numa faixa de teste interno, com conta de desenvolvedor de US$ 25 e a declaração de uso de acessibilidade).
+
+Durante o Modo Disciplina, o modo banco funciona e cada desligamento fica registrado.
 
 ## Filtro adulto
 
@@ -235,11 +243,11 @@ keyAlias=naorola
 keyPassword=...
 ```
 
-Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.5.0 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
+Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.5.1 foram assinados com a mesma chave de release, gerada no ambiente de build e entregue fora do Git. Para publicar atualizações por cima deles, é preciso usar essa chave.
 
 ## Testes
 
-208 testes automatizados (148 no `:engine`, 60 no `:app`), mais 9 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
+210 testes automatizados (148 no `:engine`, 62 no `:app`), mais 9 de captura de tela. Testes e lint também rodam no GitHub Actions a cada pull request e a cada push na `main` (`.github/workflows/ci.yml`).
 
 | Suíte | Cobre |
 |---|---|
@@ -262,7 +270,7 @@ Sem esse arquivo, o release é assinado com a chave de debug. Os APKs 0.1.0 a 0.
 | `BlockScreenTest`, `BlockingOverlayManagerTest` | Botões da tela de bloqueio e janela do overlay |
 | `RegionCoverOverlayTest` | Uma janela para todas as capas, sem receber toques; capas seguem a rolagem; resultado atrasado realinhado; janela removida quando não há capas |
 | `BrowserFiltersTest`, `AdsScreenTest` | Lista entregue ao Samsung Internet, importação de arquivo hosts mesclada e aviso de recarga, tela de Anúncios e abertura direta pelo Samsung Internet |
-| `BankingToggleTest` | Desligar para usar o banco (Painel e bloco de Configurações rápidas) e religar |
+| `BankingToggleTest` | Modo banco: componente desativado e serviço fora da lista do Android, inclusive com o serviço já desligado; volta pelas configurações ou direto com a permissão do adb (sem tocar nos serviços de outros apps); bloco de Configurações rápidas |
 | `ServiceLifecycleTest` | Serviço ligado/desligado pelo usuário refletido no app |
 | `AppSmokeTest`, `DisciplineFlowTest`, `ScheduleFlowTest` | Passeio por todas as telas gravando alterações; ativar a Disciplina trava as configurações e inicia a espera para sair; criar horário e exceção |
 | `ScheduleFormatTest` | Janelas (meia-noite, dias) e rótulos |
@@ -287,7 +295,7 @@ release/  APK instalável
 - O vídeo pode continuar tocando sob a tela de bloqueio até você tocar em Voltar (o pedido de foco de áudio é só uma tentativa).
 - As capas de feed e de anúncios ainda não foram calibradas em aparelho: algumas prateleiras, Reels ou anúncios podem passar. Ao rolar rápido, um item novo pode aparecer por um instante antes de ser coberto.
 - Anúncios do YouTube que não podem ser pulados continuam tocando. O Chrome não aceita bloqueadores de outros apps.
-- Apps de banco podem recusar funcionar com o serviço ligado; use o desligamento rápido (veja [Apps de banco](#apps-de-banco-nubank)).
+- Apps de banco podem recusar o Não-Rola instalado; o modo banco retira o serviço de acessibilidade, mas um banco que olhe só a origem do app continuará recusando (veja [Apps de banco](#apps-de-banco-nubank)).
 - A estimativa de exposição evitada é conservadora e só aparece com pelo menos 10 sessões de vídeo curto medidas.
 - O tempo dentro dos apps depende do acesso aos dados de uso e do que o Android ainda guarda: dias antigos sem registro aparecem como "sem dados".
 - O Android pode encerrar o serviço por falha, atualização ou economia de bateria; o Painel mostra quando isso acontece.

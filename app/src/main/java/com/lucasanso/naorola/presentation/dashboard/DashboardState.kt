@@ -14,7 +14,7 @@ import com.lucasanso.naorola.domain.policy.InactiveReason
 import com.lucasanso.naorola.monitoring.HealthSnapshot
 import java.time.ZoneId
 
-enum class ProtectionStatus { ACTIVE, PAUSED, SERVICE_OFF, SERVICE_NOT_RUNNING, ADVANCED_PROTECTION }
+enum class ProtectionStatus { ACTIVE, PAUSED, SERVICE_OFF, SERVICE_NOT_RUNNING, ADVANCED_PROTECTION, BANK_MODE }
 
 enum class PlatformKey { YOUTUBE, INSTAGRAM, BROWSER, OTHER_APPS }
 
@@ -49,7 +49,8 @@ data class DashboardState(
     val suspectedDetection: Set<Platform> = emptySet(),
 ) {
     val blockedTotal: Int get() = blockedYoutube + blockedInstagram + blockedOther
-    val needsAttention: Boolean get() = status != ProtectionStatus.ACTIVE && status != ProtectionStatus.PAUSED
+    val needsAttention: Boolean
+        get() = status != ProtectionStatus.ACTIVE && status != ProtectionStatus.PAUSED && status != ProtectionStatus.BANK_MODE
 }
 
 /** Pure mapping from system facts + settings + stats to what the dashboard shows. */
@@ -70,6 +71,7 @@ object DashboardStateFactory {
         val discipline = settings.discipline.isActive(now)
         val total = settings.mode == ProtectionMode.TOTAL || (discipline && settings.discipline.rules.forceTotalMode)
         val status = when {
+            health.bankMode -> ProtectionStatus.BANK_MODE
             health.advancedProtectionOn == true -> ProtectionStatus.ADVANCED_PROTECTION
             !health.accessibilityEnabled -> ProtectionStatus.SERVICE_OFF
             !serviceConnected -> ProtectionStatus.SERVICE_NOT_RUNNING

@@ -79,13 +79,15 @@
     <string name="tile_label">Não-Rola</string>
     <string name="tile_on">Ligado</string>
     <string name="tile_off">Desligado</string>
-    <string name="bank_disable_action">Desligar para usar o banco</string>
-    <string name="bank_dialog_title">Desligar o Não-Rola agora?</string>
-    <string name="bank_dialog_body">Bancos como o Nubank recusam apps instalados fora da Play Store com acessibilidade ligada. É uma proteção contra golpes, e o Não-Rola não tenta se esconder dela.
-
-Desligar aqui desativa o serviço de verdade. Para religar: botão “Religar proteção” no Painel, o bloco “Não-Rola” nas configurações rápidas ou Acessibilidade › Apps instalados › Não-Rola.</string>
+    <string name="bank_disable_action">Modo banco (Nubank e outros bancos)</string>
+    <string name="bank_dialog_title">Entrar no modo banco?</string>
+    <string name="bank_dialog_body">Bancos como o Nubank recusam abrir quando encontram, instalado, um app de fora da Play Store que declara um serviço de acessibilidade, mesmo desligado. É uma proteção contra golpes, e o Não-Rola não se esconde dela.\n\nNo modo banco, o Não-Rola desliga e retira o próprio serviço de acessibilidade: o app continua instalado, mas sem nenhum acesso à tela, e nada é bloqueado. Para voltar, toque em “Sair do modo banco” aqui ou no bloco das Configurações rápidas.</string>
     <string name="bank_dialog_discipline">O Modo Disciplina está ativo: este desligamento fica registrado.</string>
-    <string name="bank_dialog_confirm">Desligar</string>
+    <string name="bank_dialog_confirm">Entrar no modo banco</string>
+    <string name="bank_exit">Sair do modo banco</string>
+    <string name="status_bank_mode">Modo banco ativo</string>
+    <string name="status_bank_mode_body">O Não-Rola está sem serviço de acessibilidade até você sair deste modo. Nada é bloqueado.</string>
+    <string name="tile_bank">Modo banco</string>
     <string name="status_action_reenable">Religar proteção</string>
 
     <!-- Detection health -->

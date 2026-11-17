@@ -12,10 +12,10 @@ import com.lucasanso.naorola.R
 import com.lucasanso.naorola.core.SystemSettings
 
 /**
- * Quick Settings tile: shows whether protection is running. Tapping it while on turns the
- * service off (e.g. before opening a banking app); tapping it while off opens the accessibility
- * settings so the user turns it back on. Android does not let apps turn an accessibility service
- * on by themselves, and Não-Rola does not try to.
+ * Quick Settings tile for banking apps: tapping it while protection runs enters bank mode (the
+ * accessibility service is removed); tapping it in bank mode brings the service back — directly
+ * if the user granted the permission by adb, otherwise through Android's accessibility settings.
+ * Tapping it while the service is simply off opens those settings.
  */
 class QuickToggleTile : TileService() {
     private val container get() = (application as NaoRolaApp).container
@@ -27,31 +27,41 @@ class QuickToggleTile : TileService() {
 
     override fun onClick() {
         super.onClick()
-        if (container.serviceConnected.value) {
-            container.disableServiceNow()
-            render(connected = false)
-        } else {
-            openAccessibilitySettings()
+        when {
+            container.bankMode.value -> if (!container.exitBankMode()) openAccessibilitySettings()
+            container.serviceConnected.value -> container.enterBankMode()
+            else -> openAccessibilitySettings()
         }
+        render()
     }
 
     // The Intent overload is used only below Android 14, where it is the only one available.
     @SuppressLint("StartActivityAndCollapseDeprecated")
     private fun openAccessibilitySettings() {
         val intent = SystemSettings.accessibilityIntent(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startActivityAndCollapse(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE))
-        } else {
-            @Suppress("DEPRECATION")
-            startActivityAndCollapse(intent)
-        }
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startActivityAndCollapse(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE))
+            } else {
+                @Suppress("DEPRECATION")
+                startActivityAndCollapse(intent)
+            }
+        }.onFailure { SystemSettings.openAccessibility(this) } // tile not attached to the shade
     }
 
-    private fun render(connected: Boolean = container.serviceConnected.value) {
+    private fun render() {
         val tile = qsTile ?: return
+        val bank = container.bankMode.value
+        val connected = !bank && container.serviceConnected.value
         tile.state = if (connected) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.label = getString(R.string.tile_label)
-        tile.subtitle = getString(if (connected) R.string.tile_on else R.string.tile_off)
+        tile.subtitle = getString(
+            when {
+                bank -> R.string.tile_bank
+                connected -> R.string.tile_on
+                else -> R.string.tile_off
+            },
+        )
         tile.updateTile()
     }
 

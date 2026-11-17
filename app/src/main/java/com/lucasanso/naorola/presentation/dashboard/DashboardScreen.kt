@@ -54,7 +54,7 @@ fun DashboardScreen(onOpenPermissions: () -> Unit, onOpenDiagnostics: () -> Unit
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        StatusCard(state, disclosureAccepted, onOpenPermissions, onDisableForBanking = viewModel::disableForBanking)
+        StatusCard(state, disclosureAccepted, onOpenPermissions, onEnterBankMode = viewModel::enterBankMode, onExitBankMode = viewModel::exitBankMode)
         state.suspectedDetection.sortedBy { it.ordinal }.forEach { platform ->
             SuspicionCard(platform, onOpenDiagnostics) { viewModel.dismissSuspicion(platform) }
         }
@@ -69,7 +69,8 @@ private fun StatusCard(
     state: DashboardState,
     disclosureAccepted: Boolean,
     onOpenPermissions: () -> Unit,
-    onDisableForBanking: () -> Unit,
+    onEnterBankMode: () -> Unit,
+    onExitBankMode: () -> Boolean,
 ) {
     val context = LocalContext.current
     var confirmBanking by remember { mutableStateOf(false) }
@@ -85,11 +86,20 @@ private fun StatusCard(
             stringResource(R.string.status_not_running) to stringResource(R.string.status_not_running_body)
         ProtectionStatus.ADVANCED_PROTECTION ->
             stringResource(R.string.status_advanced_protection) to stringResource(R.string.status_advanced_protection_body)
+        ProtectionStatus.BANK_MODE -> stringResource(R.string.status_bank_mode) to stringResource(R.string.status_bank_mode_body)
     }
     SectionCard(
-        containerColor = if (positive) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer,
+        containerColor = when {
+            state.status == ProtectionStatus.BANK_MODE -> MaterialTheme.colorScheme.secondaryContainer
+            positive -> MaterialTheme.colorScheme.primaryContainer
+            else -> MaterialTheme.colorScheme.errorContainer
+        },
     ) {
-        val onColor = if (positive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
+        val onColor = when {
+            state.status == ProtectionStatus.BANK_MODE -> MaterialTheme.colorScheme.onSecondaryContainer
+            positive -> MaterialTheme.colorScheme.onPrimaryContainer
+            else -> MaterialTheme.colorScheme.onErrorContainer
+        }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painterResource(if (positive) R.drawable.ic_mark else R.drawable.ic_warning),
@@ -110,7 +120,12 @@ private fun StatusCard(
             }
         }
         when {
-            // Turned off on purpose (e.g. for a banking app): one tap back to the toggle.
+            state.status == ProtectionStatus.BANK_MODE ->
+                Button(
+                    onClick = { if (!onExitBankMode()) SystemSettings.openAccessibility(context) },
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.bank_exit)) }
+            // Turned off on purpose: one tap back to the toggle.
             state.status == ProtectionStatus.SERVICE_OFF && disclosureAccepted ->
                 Button(onClick = { SystemSettings.openAccessibility(context) }, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.status_action_reenable))
@@ -118,8 +133,11 @@ private fun StatusCard(
             state.needsAttention -> Button(onClick = onOpenPermissions, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.status_action_fix))
             }
-            else -> TextButton(onClick = { confirmBanking = true }) {
-                Text(stringResource(R.string.bank_disable_action), color = MaterialTheme.colorScheme.onPrimaryContainer)
+        }
+        // Bank mode is offered in every state except itself: banks may complain even with the service off.
+        if (state.status != ProtectionStatus.BANK_MODE && (disclosureAccepted || state.status == ProtectionStatus.ACTIVE)) {
+            TextButton(onClick = { confirmBanking = true }) {
+                Text(stringResource(R.string.bank_disable_action), color = onColor)
             }
         }
     }
@@ -133,7 +151,7 @@ private fun StatusCard(
             confirmButton = {
                 TextButton(onClick = {
                     confirmBanking = false
-                    onDisableForBanking()
+                    onEnterBankMode()
                 }) { Text(stringResource(R.string.bank_dialog_confirm)) }
             },
             dismissButton = { TextButton(onClick = { confirmBanking = false }) { Text(stringResource(R.string.discipline_cancel)) } },

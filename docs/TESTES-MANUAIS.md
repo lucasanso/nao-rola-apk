@@ -10,7 +10,7 @@ Legenda do resultado: ✅ passou · ❌ falhou · ⚠️ parcial (descreva).
 
 | ID | Cenário | Passos | Esperado | Resultado |
 |---|---|---|---|---|
-| P1 | Instalação | `adb install -r release/NaoRola-0.5.0.apk` | App aparece com o ícone do Não-Rola | |
+| P1 | Instalação | `adb install -r release/NaoRola-0.5.1.apk` | App aparece com o ícone do Não-Rola | |
 | P1b | Atualização | Com uma versão anterior instalada e usada, instalar a 0.4.0 por cima | Configurações e contagem de hoje mantidas | |
 | P2 | Estado inicial | Abrir o app | Painel mostra "Proteção desligada" e o botão Resolver | |
 | P3 | Divulgação | Resolver › Abrir configurações de acessibilidade | Aviso "Antes de ativar" aparece antes das configurações do Android | |
@@ -153,9 +153,12 @@ Se algo não for coberto (ou for coberto por engano), faça uma captura de diagn
 | ID | Cenário | Esperado | Resultado |
 |---|---|---|---|
 | N1 | Abrir o Nubank com o serviço ligado | Anote se o Nubank recusa (esperado: recusa) | |
-| N2 | Painel › Desligar para usar o banco › abrir o Nubank | Anote se o Nubank abre normalmente | |
-| N3 | Bloco "Não-Rola" nas Configurações rápidas | Um toque desliga; outro toque abre a tela para religar | |
-| N4 | Painel › Religar proteção | Proteção ativa de novo | |
+| N2 | Painel › Modo banco › Entrar no modo banco › abrir o Nubank | **Principal:** anote se o Nubank abre normalmente | |
+| N3 | No modo banco: *Configurações › Acessibilidade* | O Não-Rola não aparece na lista de serviços | |
+| N4 | Sair do modo banco (sem a permissão do adb) | Abre a tela de acessibilidade; o Não-Rola volta a aparecer e pode ser religado | |
+| N5 | Sair do modo banco com a permissão do adb concedida | Proteção ativa sem passar pelas configurações; outros serviços de acessibilidade continuam como estavam | |
+| N6 | Bloco "Não-Rola": tocar com a proteção ativa, depois tocar de novo | Entra no modo banco; depois sai | |
+| N7 | Se N2 falhar | Anote a mensagem exata do Nubank | |
 
 ## 12. Filtro adulto (0.5.0)
 
